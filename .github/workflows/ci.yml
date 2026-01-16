@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 기술 스택 결정 후 주석 해제
+      # - name: Install dependencies
+      #   run: npm ci
+
+      # - name: Run linter
+      #   run: npm run lint
+
+      # - name: Run tests
+      #   run: npm test
+
+      - name: Check files
+        run: |
+          echo "✅ CI pipeline ready"
+          echo "📁 Project structure:"
+          ls -la
+
+  # build:
+  #   runs-on: ubuntu-latest
+  #   needs: lint
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build
+  #       run: npm run build

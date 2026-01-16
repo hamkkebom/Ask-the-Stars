@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "local-db": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp/postgres",
+        "--dsn",
+        "postgresql://user:password@localhost:5432/hankaebom"
+      ],
+      "description": "Local PostgreSQL connection for development"
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-firebase"],
+      "description": "Firebase Admin SDK integration"
+    }
+  },
+  "globalTools": [],
+  "settings": {
+    "timeout": 30000,
+    "retryCount": 3
+  }
+}

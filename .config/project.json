@@ -1,0 +1,12 @@
+{
+  "projectId": "YOUR_GOOGLE_CLOUD_PROJECT_ID",
+  "region": "asia-northeast3",
+  "environment": "development",
+  "firebase": {
+    "projectId": "YOUR_FIREBASE_PROJECT_ID"
+  },
+  "settings": {
+    "allowAutoProjectCreation": false,
+    "requireApprovalForDeployment": true
+  }
+}

@@ -1,0 +1,25 @@
+# Prettier 포맷팅 제외 파일
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Artifacts
+artifacts/recordings/
+
+# Markdown with special formatting
+*.md
+
+# Generated files
+*.min.js
+*.min.css
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

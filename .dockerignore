@@ -1,0 +1,16 @@
+# Docker ignore
+.git
+.gitignore
+.agent
+.context
+.config
+artifacts
+docs
+tests
+*.md
+.env
+.env.example
+__pycache__
+*.pyc
+node_modules
+.pytest_cache

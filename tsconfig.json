@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ask-the-stars/types": ["packages/types/src"],
+      "@ask-the-stars/ui": ["packages/ui/src"],
+      "@ask-the-stars/utils": ["packages/utils/src"],
+      "@ask-the-stars/database": ["packages/database/src"]
+    }
+  },
+  "include": [],
+  "exclude": ["node_modules", "dist", ".turbo"]
+}

@@ -21,7 +21,7 @@ COPY packages ./packages
 RUN npm install --legacy-peer-deps
 
 # Build the api project
-RUN npx turbo run build --filter=api
+RUN npx turbo run build --filter=@ask-the-stars/api
 
 # Production stage
 FROM node:22-alpine AS runner

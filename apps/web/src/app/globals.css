@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@source "../../../";
+@source "../../../../packages/ui";
+
+@theme {
+  /* Cosmic Midnight Palette */
+  --color-background: 0 0% 2%; /* Void Black #050505 */
+  --color-foreground: 0 0% 100%;
+
+  /* Vibrant Block Palette */
+  --vibrant-cyan: 184 100% 50%; /* #00F0FF */
+  --vibrant-magenta: 346 100% 62%; /* #FF3D71 approx, adjusted for visibility */
+  --vibrant-green: 111 100% 54%; /* #39FF14 */
+
+  --color-card: 0 0% 4%;
+  --color-card-foreground: 0 0% 100%;
+
+  --color-popover: hsl(224 71% 4%);
+  --color-popover-foreground: hsl(210 40% 98%);
+
+  --color-primary: hsl(263 70% 50%); /* Nebula Purple */
+  --color-primary-foreground: hsl(210 40% 98%);
+
+  --color-secondary: hsl(45 93% 58%); /* Star Gold */
+  --color-secondary-foreground: hsl(224 71% 4%);
+
+  --color-muted: hsl(217 33% 17%);
+  --color-muted-foreground: hsl(215 20% 65%);
+
+  --color-accent: hsl(190 95% 39%); /* Cyan Glow */
+  --color-accent-foreground: hsl(224 71% 4%);
+
+  --color-destructive: hsl(0 62% 30%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  --color-border: hsl(217 33% 17%);
+  --color-input: hsl(217 33% 17%);
+  --color-ring: hsl(263 70% 50%);
+
+  --radius: 0.75rem;
+
+  /* Custom Animations */
+  --animate-fade-in: fade-in 0.5s ease-out;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* Base Styles */
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  background-image:
+    radial-gradient(circle at 50% 0%, hsl(263 70% 50% / 0.15), transparent 50%),
+    radial-gradient(circle at 0% 50%, hsl(190 95% 39% / 0.1), transparent 50%);
+  background-attachment: fixed;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.1); /* Purple Glow */
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(217 33% 17%);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(215 20% 65%);
+}

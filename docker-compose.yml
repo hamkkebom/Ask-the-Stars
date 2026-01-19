@@ -1,28 +1,36 @@
-# docker-compose.yml
-# 기술 스택 결정 후 내용 작성
-
 version: '3.8'
 
 services:
-  app:
-    build: .
+  postgres:
+    image: postgres:17-alpine
+    container_name: ask-stars-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ask_the_stars
     ports:
-      - "8080:8080"
-    env_file:
-      - .env
-    # volumes:
-    #   - .:/app
-    # depends_on:
-    #   - db
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # db:
-  #   image: postgres:15-alpine
-  #   environment:
-  #     POSTGRES_DB: hankaebom
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #   volumes:
-  #     - db_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7.4-alpine
+    container_name: ask-stars-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-# volumes:
-#   db_data:
+volumes:
+  postgres-data:
+  redis-data:

@@ -1,0 +1,19 @@
+# 루트 설정 파일
+/package.json @team-lead
+/turbo.json @team-lead
+/.github/ @team-lead
+
+# 프론트엔드
+/apps/web/ @frontend-team
+
+# 백엔드
+/apps/api/ @backend-team
+
+# 공유 패키지
+/packages/ui/ @frontend-team
+/packages/database/ @backend-team
+/packages/types/ @backend-team @frontend-team
+/packages/utils/ @backend-team @frontend-team
+
+# 문서
+/docs/ @team-lead

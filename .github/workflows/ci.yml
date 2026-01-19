@@ -1,43 +1,39 @@
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
+  push:
     branches: [main, develop]
 
 jobs:
-  lint:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 22
+          cache: 'pnpm'
 
-      # 기술 스택 결정 후 주석 해제
-      # - name: Install dependencies
-      #   run: npm ci
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      # - name: Run linter
-      #   run: npm run lint
+      - name: Lint
+        run: pnpm lint
 
-      # - name: Run tests
-      #   run: npm test
+      - name: Type check
+        run: pnpm type-check
 
-      - name: Check files
-        run: |
-          echo "✅ CI pipeline ready"
-          echo "📁 Project structure:"
-          ls -la
+      - name: Test
+        run: pnpm test
 
-  # build:
-  #   runs-on: ubuntu-latest
-  #   needs: lint
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Build
-  #       run: npm run build
+      - name: Build
+        run: pnpm build

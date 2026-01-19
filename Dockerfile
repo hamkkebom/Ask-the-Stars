@@ -1,20 +1,37 @@
-# Dockerfile
-# 기술 스택 결정 후 주석 해제 및 수정
+# Build stage
+FROM node:22-alpine AS builder
 
-# === Node.js 예시 ===
-FROM node:20-alpine AS base
 WORKDIR /app
-# COPY package*.json ./
-# RUN npm ci --only=production
-# COPY . .
-# EXPOSE 8080
-# CMD ["npm", "start"]
 
-# === Python 예시 ===
-# FROM python:3.11-slim
-# WORKDIR /app
-# COPY requirements.txt .
-# RUN pip install --no-cache-dir -r requirements.txt
-# COPY . .
-# EXPOSE 8080
-# CMD ["python", "-m", "uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Copy root workspace files
+COPY package*.json ./
+COPY turbo.json ./
+COPY tsconfig.json ./
+
+# Copy apps/api and packages
+COPY apps/api ./apps/api
+COPY packages ./packages
+
+# Install all dependencies (including dev)
+RUN npm install
+
+# Build the api project
+RUN npx turbo run build --filter=api
+
+# Production stage
+FROM node:22-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copy built files and production node_modules
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+
+# EXPOSE is documented for Cloud Run, but it uses $PORT
+EXPOSE 8080
+
+CMD ["node", "apps/api/dist/main"]

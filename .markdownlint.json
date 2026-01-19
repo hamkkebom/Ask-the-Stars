@@ -1,0 +1,18 @@
+{
+  "default": true,
+  "MD009": {
+    "br_spaces": 2
+  },
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD029": {
+    "style": "ordered"
+  },
+  "MD033": {
+    "allowed_elements": ["br", "img", "details", "summary"]
+  },
+  "MD040": true,
+  "MD041": false,
+  "MD060": false
+}

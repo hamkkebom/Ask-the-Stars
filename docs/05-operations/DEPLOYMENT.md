@@ -238,5 +238,5 @@ pnpm start
 
 - 🕐 운영 배포는 업무 시간 외 (22:00 이후) 권장
 - 📊 배포 후 15분간 모니터링 필수
-- 📝 배포 이력은 [CHANGELOG.md](./CHANGELOG.md)에 기록
+- 📝 배포 이력은 [CHANGELOG.md](../../CHANGELOG.md)에 기록
 - 🚨 긴급 이슈 시 [INCIDENT_RESPONSE.md](./INCIDENT_RESPONSE.md) 참조

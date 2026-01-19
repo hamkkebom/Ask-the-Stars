@@ -11,7 +11,7 @@
 
 보안 취약점을 발견하셨을 경우, **공개 이슈(Public Issue)로 등록하지 마시고** 아래의 비공개 경로를 이용해 주세요.
 
-1.  **비공개 이메일**: `security@hankaebom.com`
+1.  **비공개 이메일**: `security@hamkkebom.com`
 2.  **GitHub Security Advisories**: 본 저장소 상단의 `Security` 탭 -> `Advisories` -> `Report a vulnerability` 버튼 클릭
 
 ### 제보 시 포함 사항

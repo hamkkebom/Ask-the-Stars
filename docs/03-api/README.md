@@ -1,7 +1,7 @@
 # 📡 API 명세서 (API Reference)
 
 > **Updated At**: 2026-01-19
-> **Base URL**: `https://api.hankaebom.com/api`
+> **Base URL**: `https://api.hamkkebom.com/api`
 > **Format**: JSON
 
 이 문서는 NestJS 컨트롤러 코드(`apps/api/src/**/*.controller.ts`)를 기반으로 작성된 **실제 API 명세**입니다.

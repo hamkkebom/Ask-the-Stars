@@ -35,6 +35,7 @@
     "@nestjs/platform-express": "^11.1.12",
     "@nestjs/platform-socket.io": "^11.1.12",
     "@nestjs/websockets": "^11.1.12",
+    "@prisma/client": "6.19.2",
     "@sentry/node": "^9.4.0",
     "@supabase/supabase-js": "^2.47.10",
     "@types/nodemailer": "^7.0.5",

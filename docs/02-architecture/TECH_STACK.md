@@ -114,7 +114,8 @@ graph TD
     CDN -->|Next.js App| Vercel[Vercel Frontend\n(Seoul PoP)]
     CDN -->|Images/Videos| R2[Cloudflare R2 & Stream]
     
-    Vercel -->|API Calls| CloudRun[Google Cloud Run\n(Backend API)]
+    Vercel -->|API Calls| Firebase[Firebase Hosting Proxy\n(Global CDN)]
+    Firebase -->|Proxy Request| CloudRun[Google Cloud Run\n(Backend API)]
     
     subgraph Data Layer
         CloudRun -->|ORM| DB[(Supabase PostgreSQL)]
@@ -133,7 +134,7 @@ graph TD
 
 ### 주요 보안 정책
 *   **Authentication**: Passport.js + JWT (Access/Refresh Token Rotation)
-*   **CORS**: `api.hankaebom.com` <-> `hankaebom.com` 간 엄격한 오리진 제한
+*   **CORS**: `api.hamkkebom.com` <-> `hamkkebom.com` 간 엄격한 오리진 제한
 *   **Rate Limiting**: Cloudflare & NestJS Throttler 적용
 
 ### 환경 변수 관리 (`.env`)

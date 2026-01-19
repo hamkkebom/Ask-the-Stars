@@ -44,7 +44,7 @@ async function runSmokeTest() {
   // 2. Signup Test
   const timestamp = Date.now();
   const testUser = {
-    email: `smoke-test-${timestamp}@hankaebom.com`,
+    email: `smoke-test-${timestamp}@hamkkebom.com`,
     password: 'SmokeTestPass123!',
     name: 'Smoke Tester',
     role: 'client'

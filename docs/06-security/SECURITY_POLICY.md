@@ -48,10 +48,10 @@
 *   개인정보(전화번호, 이메일)는 전송 시 **TLS 1.2+** 암호화 필수
 
 ### CORS 정책
-*   **Allowed Origins**: `https://hankaebom.com`, `http://localhost:3000`
+*   **Allowed Origins**: `https://hamkkebom.com`, `http://localhost:3000`
 *   **Credentials**: `true` (쿠키 허용)
 
 ---
 
 ## 4️⃣ 보안 취약점 리보트
-보안 관련 이슈 발견 시 `security@hankaebom.com`으로 제보해 주시면 즉시 검토하겠습니다.
+보안 관련 이슈 발견 시 `security@hamkkebom.com`으로 제보해 주시면 즉시 검토하겠습니다.

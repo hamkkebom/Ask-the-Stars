@@ -1,9 +1,9 @@
 # 한깨봄 (Hankaebom) - AI 영상 제작 인재 생태계 플랫폼
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![CI](https://github.com/hankaebom/ask-the-stars/actions/workflows/ci.yml/badge.svg)](https://github.com/hankaebom/ask-the-stars/actions/workflows/ci.yml)
-[![CD API](https://github.com/hankaebom/ask-the-stars/actions/workflows/cd-api.yml/badge.svg)](https://github.com/hankaebom/ask-the-stars/actions/workflows/cd-api.yml)
-[![CD Web](https://github.com/hankaebom/ask-the-stars/actions/workflows/cd-web.yml/badge.svg)](https://github.com/hankaebom/ask-the-stars/actions/workflows/cd-web.yml)
+[![CI](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/ci.yml/badge.svg)](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/ci.yml)
+[![CD API](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/cd-api.yml/badge.svg)](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/cd-api.yml)
+[![CD Web](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/cd-web.yml/badge.svg)](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/cd-web.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black)](https://nextjs.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-11.1.12-red)](https://nestjs.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)](https://www.typescriptlang.org/)

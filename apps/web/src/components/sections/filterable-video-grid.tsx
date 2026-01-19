@@ -15,7 +15,8 @@ const GENERATE_MOCK_VIDEOS = (count: number): VideoProps[] => {
     matchScore: 80 + Math.floor(Math.random() * 20),
     duration: `${Math.floor(Math.random() * 10) + 2}m`,
     tags: i % 2 === 0 ? ['사주', '신년', '운세'] : ['타로', '연애', '고민'],
-    description: 'This is a description.'
+    description: 'This is a description.',
+    category: FILTERS[(i % (FILTERS.length - 1)) + 1]
   }));
 };
 

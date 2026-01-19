@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+
 
 interface FeedbackTemplate {
   id: string;
@@ -68,11 +68,16 @@ const priorityConfig = {
 export default function FeedbackTemplatesPage() {
   const [templates, setTemplates] = useState<FeedbackTemplate[]>(mockTemplates);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newTemplate, setNewTemplate] = useState({
+  const [newTemplate, setNewTemplate] = useState<{
+    name: string;
+    type: string;
+    content: string;
+    priority: 'LOW' | 'NORMAL' | 'HIGH';
+  }>({
     name: '',
     type: '자막',
     content: '',
-    priority: 'NORMAL' as const,
+    priority: 'NORMAL',
   });
 
   const handleCreate = () => {

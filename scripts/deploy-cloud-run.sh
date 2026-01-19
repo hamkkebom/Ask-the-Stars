@@ -20,7 +20,7 @@ gcloud run deploy $SERVICE_NAME \
   --platform managed \
   --region $REGION \
   --allow-unauthenticated \
-  --set-env-vars="NODE_ENV=production,PORT=8080" \
+  --set-env-vars="NODE_ENV=production,PORT=8080,WS_CORS_ORIGIN=https://hankaebom.com,https://www.hankaebom.com,https://ask-the-stars-kappa.vercel.app,http://localhost:3000" \
   --description="Ask the Stars API (Supabase + R2 Stack)"
 
 echo "✅ Deployment complete!"

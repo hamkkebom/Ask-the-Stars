@@ -14,8 +14,7 @@ import {
   Globe,
   Save,
   RotateCcw,
-  ChevronRight,
-  Toggle
+  ChevronRight
 } from 'lucide-react';
 
 // Settings sections

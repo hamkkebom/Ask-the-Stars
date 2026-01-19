@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Upload, FileVideo, X, ChevronLeft } from 'lucide-react';
+import { Upload, ChevronLeft } from 'lucide-react';
 
-export default function UploadPage() {
+function UploadContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -308,6 +308,14 @@ export default function UploadPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function UploadPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UploadContent />
+    </Suspense>
   );
 }
 

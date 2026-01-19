@@ -5,7 +5,6 @@ import { formatCurrency } from '@/lib/utils';
 import {
   BarChart3,
   TrendingUp,
-  TrendingDown,
   Users,
   Video,
   DollarSign,

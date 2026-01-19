@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -49,7 +49,7 @@ function formatNumber(num: number): string {
   return num.toString();
 }
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 
@@ -58,13 +58,7 @@ export default function SearchPage() {
   const [filter, setFilter] = useState<'all' | 'video' | 'counselor'>('all');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (initialQuery) {
-      handleSearch(initialQuery);
-    }
-  }, [initialQuery]);
-
-  const handleSearch = async (searchQuery: string) => {
+  const handleSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) return;
 
     setIsLoading(true);
@@ -78,7 +72,13 @@ export default function SearchPage() {
 
     setResults(filtered);
     setIsLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (initialQuery) {
+      handleSearch(initialQuery);
+    }
+  }, [initialQuery, handleSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,5 +235,13 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }

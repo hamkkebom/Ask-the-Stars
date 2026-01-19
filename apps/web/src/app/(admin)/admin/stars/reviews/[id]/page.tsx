@@ -50,7 +50,109 @@ const formatTime = (seconds: number) => {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
-export default function ReviewDetailPage({ params }: { params: { id: string } }) {
+// Video player component moved outside
+function VideoPlayerComp({
+  videoRef,
+  src,
+  label,
+  showAnnotation = true,
+  targetVersion,
+  isPlaying,
+  onToggle,
+  aspectRatio,
+  isMuted,
+  setDuration,
+  setCurrentTime,
+  annotationRef,
+  annotationTool,
+  handleAnnotationMouseDown,
+  handleAnnotationMouseMove,
+  handleAnnotationMouseUp,
+  currentAnnotation,
+  renderAnnotation,
+  selectedFeedback
+}: {
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  src: string;
+  label?: string;
+  showAnnotation?: boolean;
+  targetVersion?: number;
+  isPlaying: boolean;
+  onToggle: () => void;
+  aspectRatio: AspectRatio;
+  isMuted: boolean;
+  setDuration: (d: number) => void;
+  setCurrentTime: (t: number) => void;
+  annotationRef?: React.RefObject<SVGSVGElement | null>;
+  annotationTool?: AnnotationType | null;
+  handleAnnotationMouseDown?: (e: React.MouseEvent<SVGSVGElement>) => void;
+  handleAnnotationMouseMove?: (e: React.MouseEvent<SVGSVGElement>) => void;
+  handleAnnotationMouseUp?: () => void;
+  currentAnnotation?: Annotation | null;
+  renderAnnotation?: (annotation: Annotation, opacity?: number) => React.ReactNode;
+  selectedFeedback?: Feedback | null;
+}) {
+  return (
+    <div className="relative w-full h-full bg-black overflow-hidden rounded-lg">
+      {/* Version Label */}
+      {label && (
+        <div className="absolute top-2 left-2 z-10 px-2 py-1 rounded bg-black/70 text-white text-xs font-medium">
+          {label}
+        </div>
+      )}
+
+      {/* Video */}
+      <video
+        ref={videoRef}
+        src={src}
+        className={cn(
+          "w-full h-full",
+          aspectRatio === '9:16' ? "object-contain" : "object-cover"
+        )}
+        muted={isMuted}
+        loop
+        playsInline
+        onTimeUpdate={(e) => {
+           setCurrentTime(e.currentTarget.currentTime);
+        }}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onClick={onToggle}
+      />
+
+      {/* Play overlay */}
+      {!isPlaying && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
+          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+            <Play className="w-6 h-6 text-white ml-1" />
+          </div>
+        </div>
+      )}
+
+      {/* Annotation SVG Overlay */}
+      {showAnnotation && renderAnnotation && (
+        <svg
+          ref={annotationRef}
+          className={cn(
+            "absolute inset-0 w-full h-full",
+            annotationTool ? "cursor-crosshair" : "pointer-events-none"
+          )}
+          onMouseDown={handleAnnotationMouseDown}
+          onMouseMove={handleAnnotationMouseMove}
+          onMouseUp={handleAnnotationMouseUp}
+          onMouseLeave={handleAnnotationMouseUp}
+        >
+          {currentAnnotation && renderAnnotation(currentAnnotation, 0.7)}
+          {/* Show annotation if feedback belongs to this version OR if it's the active feedback being checked */}
+          {selectedFeedback?.annotation &&
+           (selectedFeedback.version === targetVersion || !targetVersion) &&
+           renderAnnotation(selectedFeedback.annotation)}
+        </svg>
+      )}
+    </div>
+  );
+}
+
+export default function ReviewDetailPage({ params }: { params: Promise<{ id: string }> }) {
   // View mode
   const [viewMode, setViewMode] = useState<ViewMode>('single');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
@@ -299,81 +401,8 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
     }
   };
 
-  // Video player component
-  const VideoPlayer = ({
-    videoRef,
-    src,
-    label,
-    showAnnotation = true,
-    targetVersion,
-    isPlaying,
-    onToggle
-  }: {
-    videoRef: React.RefObject<HTMLVideoElement | null>;
-    src: string;
-    label?: string;
-    showAnnotation?: boolean;
-    targetVersion?: number;
-    isPlaying: boolean;
-    onToggle: () => void;
-  }) => (
-    <div className="relative w-full h-full bg-black overflow-hidden rounded-lg">
-      {/* Version Label */}
-      {label && (
-        <div className="absolute top-2 left-2 z-10 px-2 py-1 rounded bg-black/70 text-white text-xs font-medium">
-          {label}
-        </div>
-      )}
+// Video player component moved outside
 
-      {/* Video */}
-      <video
-        ref={videoRef}
-        src={src}
-        className={cn(
-          "w-full h-full",
-          aspectRatio === '9:16' ? "object-contain" : "object-cover"
-        )}
-        muted={isMuted}
-        loop
-        playsInline
-        onTimeUpdate={(e) => {
-          if (videoRef === videoRefA) setCurrentTime(e.currentTarget.currentTime);
-        }}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-        onClick={onToggle}
-      />
-
-      {/* Play overlay */}
-      {!isPlaying && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
-          <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-            <Play className="w-6 h-6 text-white ml-1" />
-          </div>
-        </div>
-      )}
-
-      {/* Annotation SVG Overlay */}
-      {showAnnotation && (
-        <svg
-          ref={annotationRef}
-          className={cn(
-            "absolute inset-0 w-full h-full",
-            annotationTool ? "cursor-crosshair" : "pointer-events-none"
-          )}
-          onMouseDown={handleAnnotationMouseDown}
-          onMouseMove={handleAnnotationMouseMove}
-          onMouseUp={handleAnnotationMouseUp}
-          onMouseLeave={handleAnnotationMouseUp}
-        >
-          {currentAnnotation && renderAnnotation(currentAnnotation, 0.7)}
-          {/* Show annotation if feedback belongs to this version OR if it's the active feedback being checked */}
-          {selectedFeedback?.annotation &&
-           (selectedFeedback.version === targetVersion || !targetVersion) &&
-           renderAnnotation(selectedFeedback.annotation)}
-        </svg>
-      )}
-    </div>
-  );
 
   return (
     <div className="space-y-4">
@@ -537,7 +566,7 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
             )}>
               {viewMode === 'single' ? (
                 /* Single Video View */
-                <VideoPlayer
+                <VideoPlayerComp
                   videoRef={videoRefA}
                   src={selectedVersionA.url}
                   label={`v${selectedVersionA.version}`}
@@ -545,12 +574,24 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
                   targetVersion={selectedVersionA.version}
                   isPlaying={isPlayingA}
                   onToggle={() => togglePlayPause('A')}
+                  aspectRatio={aspectRatio}
+                  isMuted={isMuted}
+                  setDuration={setDuration}
+                  setCurrentTime={setCurrentTime}
+                  annotationRef={annotationRef}
+                  annotationTool={annotationTool}
+                  handleAnnotationMouseDown={handleAnnotationMouseDown}
+                  handleAnnotationMouseMove={handleAnnotationMouseMove}
+                  handleAnnotationMouseUp={handleAnnotationMouseUp}
+                  currentAnnotation={currentAnnotation}
+                  renderAnnotation={renderAnnotation}
+                  selectedFeedback={selectedFeedback}
                 />
               ) : (
                 /* A/B Compare View - 가로는 좌우, 세로는 상하 배치 */
                 <div className="flex flex-row gap-2 h-full">
                   <div className="relative flex-1 h-full transition-all">
-                    <VideoPlayer
+                    <VideoPlayerComp
                       videoRef={videoRefA}
                       src={selectedVersionA.url}
                       label={`v${selectedVersionA.version} (현재)`}
@@ -558,11 +599,23 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
                       targetVersion={selectedVersionA.version}
                       isPlaying={isPlayingA}
                       onToggle={() => togglePlayPause('A')}
+                      aspectRatio={aspectRatio}
+                      isMuted={isMuted}
+                      setDuration={setDuration}
+                      setCurrentTime={setCurrentTime}
+                      annotationRef={annotationRef}
+                      annotationTool={annotationTool}
+                      handleAnnotationMouseDown={handleAnnotationMouseDown}
+                      handleAnnotationMouseMove={handleAnnotationMouseMove}
+                      handleAnnotationMouseUp={handleAnnotationMouseUp}
+                      currentAnnotation={currentAnnotation}
+                      renderAnnotation={renderAnnotation}
+                      selectedFeedback={selectedFeedback}
                     />
                   </div>
                   <div className="w-px h-full bg-white/20" />
                   <div className="relative flex-1 h-full transition-all">
-                    <VideoPlayer
+                    <VideoPlayerComp
                       videoRef={videoRefB}
                       src={selectedVersionB.url}
                       label={`v${selectedVersionB.version} (이전)`}
@@ -570,6 +623,18 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
                       targetVersion={selectedVersionB.version}
                       isPlaying={isPlayingB}
                       onToggle={() => togglePlayPause('B')}
+                      aspectRatio={aspectRatio}
+                      isMuted={isMuted}
+                      setDuration={setDuration}
+                      setCurrentTime={setCurrentTime}
+                      annotationRef={annotationRef}
+                      annotationTool={annotationTool}
+                      handleAnnotationMouseDown={handleAnnotationMouseDown}
+                      handleAnnotationMouseMove={handleAnnotationMouseMove}
+                      handleAnnotationMouseUp={handleAnnotationMouseUp}
+                      currentAnnotation={currentAnnotation}
+                      renderAnnotation={renderAnnotation}
+                      selectedFeedback={selectedFeedback}
                     />
                   </div>
                 </div>
@@ -938,7 +1003,7 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
                 취소
               </button>
               <button
-                onClick={() => { console.log('Action:', showActionModal, actionFeedback); setShowActionModal(null); setActionFeedback(''); }}
+                onClick={() => { setShowActionModal(null); setActionFeedback(''); }}
                 className={cn(
                   "flex-1 py-2 rounded-lg text-white font-medium",
                   showActionModal === 'approve' ? "bg-green-600 hover:bg-green-500" :

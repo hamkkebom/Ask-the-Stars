@@ -48,13 +48,15 @@ const serviceStats = [
   { name: 'AI 공모전', icon: Trophy, value: 3, change: '진행중', color: 'text-purple-400', href: '/admin/contests' },
 ];
 
-function StatsCard({ title, value, icon: Icon, change, color }: {
+interface StatsCardProps {
   title: string;
   value: string;
   icon: any;
   change?: string;
   color: string;
-}) {
+}
+
+function StatsCard({ title, value, icon: Icon, change, color }: StatsCardProps) {
   return (
     <GlassCard className="p-6">
       <div className="flex items-center justify-between">

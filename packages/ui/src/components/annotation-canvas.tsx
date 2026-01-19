@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Canvas as FabricCanvas, Circle, Rect, Line, Path, Point } from 'fabric';
+import { Canvas as FabricCanvas, Circle, Rect, Line, Point } from 'fabric';
 
 export type AnnotationType = 'point' | 'circle' | 'rect' | 'arrow' | 'freehand';
 
@@ -75,7 +75,7 @@ export const AnnotationCanvas: React.FC<AnnotationCanvasProps> = ({
     const canvas = fabricRef.current;
     if (!canvas) return;
 
-    const handleMouseDown = (e: { e: MouseEvent; pointer?: Point }) => {
+    const handleMouseDown = (e: any) => {
       if (tool === 'freehand' || !e.pointer) return;
 
       const pointer = e.pointer;

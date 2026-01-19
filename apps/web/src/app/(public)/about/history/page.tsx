@@ -4,7 +4,21 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Building2, Rocket, Award, Users, Globe, Sparkles, TrendingUp, MapPin, Target } from 'lucide-react';
 
-const milestones = [
+interface HistoryEvent {
+  month: string;
+  title: string;
+  description: string;
+  icon: any;
+  highlight?: boolean;
+  isFirst?: boolean;
+}
+
+interface Milestone {
+  year: string;
+  events: HistoryEvent[];
+}
+
+const milestones: Milestone[] = [
   {
     year: "2024",
     events: [

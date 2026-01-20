@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "engines": {
-    "node": "22.x",
+    "node": "20.x",
     "pnpm": ">=9.0.0"
   },
   "packageManager": "pnpm@9.15.2",
@@ -22,7 +22,8 @@
     "test": "turbo test",
     "test:e2e": "turbo test:e2e",
     "prepare": "husky",
-    "sync:stack": "node scripts/sync-tech-stack.js"
+    "sync:stack": "node scripts/sync-tech-stack.js",
+    "postinstall": "prisma generate --schema=packages/database/prisma/schema.prisma"
   },
   "devDependencies": {
     "husky": "^9.1.7",

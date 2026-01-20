@@ -1,5 +1,0 @@
-{
-
-  "buildCommand": "pnpm --filter @ask-the-stars/database db:generate && pnpm --filter @ask-the-stars/web build",
-  "outputDirectory": "apps/web/.next"
-}

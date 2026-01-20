@@ -1,0 +1,81 @@
+# 🗺️ 로컬 사이트맵 (자동 생성됨)
+
+> 이 파일은 `scripts/generate-local-sitemap.js` 스크립트에 의해 자동 생성되었습니다.
+> **Ctrl + 클릭** (또는 Cmd + 클릭)하시면 브라우저에서 열립니다.
+
+## 📌 주요 페이지 바로가기
+
+- [**🏠 메인 홈페이지**](http://localhost:3000) `(/)`
+- [**페이지**](http://localhost:3000/about) `(/about)`
+- [**페이지**](http://localhost:3000/about/contact) `(/about/contact)`
+- [**페이지**](http://localhost:3000/about/culture) `(/about/culture)`
+- [**페이지**](http://localhost:3000/about/history) `(/about/history)`
+- [**페이지**](http://localhost:3000/about/vision) `(/about/vision)`
+- [**🛠️ 관리자**](http://localhost:3000/admin) `(/admin)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/analytics) `(/admin/analytics)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/clients) `(/admin/clients)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/contests) `(/admin/contests)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/education) `(/admin/education)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/finance) `(/admin/finance)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/settings) `(/admin/settings)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/stars) `(/admin/stars)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/stars/payouts) `(/admin/stars/payouts)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/stars/projects) `(/admin/stars/projects)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/stars/requests) `(/admin/stars/requests)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/stars/reviews) `(/admin/stars/reviews)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/stars/reviews/1) `(/admin/stars/reviews/[id])`
+- [**🛠️ 관리자**](http://localhost:3000/admin/studio) `(/admin/studio)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/talent) `(/admin/talent)`
+- [**🛠️ 관리자**](http://localhost:3000/admin/tasks) `(/admin/tasks)`
+- [**페이지**](http://localhost:3000/auth/forgot-password) `(/auth/forgot-password)`
+- [**🔐 로그인**](http://localhost:3000/auth/login) `(/auth/login)`
+- [**페이지**](http://localhost:3000/auth/reset-password) `(/auth/reset-password)`
+- [**📝 회원가입**](http://localhost:3000/auth/signup) `(/auth/signup)`
+- [**📝 회원가입**](http://localhost:3000/auth/signup/client) `(/auth/signup/client)`
+- [**📝 회원가입**](http://localhost:3000/auth/signup/contestant) `(/auth/signup/contestant)`
+- [**📝 회원가입**](http://localhost:3000/auth/signup/marketing) `(/auth/signup/marketing)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/auth/signup/stars) `(/auth/signup/stars)`
+- [**📝 회원가입**](http://localhost:3000/auth/signup/student) `(/auth/signup/student)`
+- [**페이지**](http://localhost:3000/auth/verify-email) `(/auth/verify-email)`
+- [**페이지**](http://localhost:3000/contests) `(/contests)`
+- [**페이지**](http://localhost:3000/counselor/dashboard) `(/counselor/dashboard)`
+- [**💬 피드백**](http://localhost:3000/counselor/feedback) `(/counselor/feedback)`
+- [**페이지**](http://localhost:3000/counselor/my-videos) `(/counselor/my-videos)`
+- [**페이지**](http://localhost:3000/counselor/profile) `(/counselor/profile)`
+- [**페이지**](http://localhost:3000/counselor/requests) `(/counselor/requests)`
+- [**페이지**](http://localhost:3000/counselors) `(/counselors)`
+- [**페이지**](http://localhost:3000/counselors/1) `(/counselors/[id])`
+- [**페이지**](http://localhost:3000/dashboard) `(/dashboard)`
+- [**🎓 교육**](http://localhost:3000/education) `(/education)`
+- [**🎓 교육**](http://localhost:3000/education/session) `(/education/session)`
+- [**페이지**](http://localhost:3000/moon/advertising/analytics) `(/moon/advertising/analytics)`
+- [**페이지**](http://localhost:3000/moon/advertising/campaigns) `(/moon/advertising/campaigns)`
+- [**💬 피드백**](http://localhost:3000/moon/feedback/review-queue) `(/moon/feedback/review-queue)`
+- [**💬 피드백**](http://localhost:3000/moon/feedback/templates) `(/moon/feedback/templates)`
+- [**💬 피드백**](http://localhost:3000/moon/feedback/video-review/1) `(/moon/feedback/video-review/[id])`
+- [**페이지**](http://localhost:3000/moon/management/dashboard) `(/moon/management/dashboard)`
+- [**페이지**](http://localhost:3000/moon/management/freelancers) `(/moon/management/freelancers)`
+- [**페이지**](http://localhost:3000/moon/management/project-requests) `(/moon/management/project-requests)`
+- [**페이지**](http://localhost:3000/moon/management/project-requests/create) `(/moon/management/project-requests/create)`
+- [**페이지**](http://localhost:3000/moon/settlement/primary-settlement) `(/moon/settlement/primary-settlement)`
+- [**페이지**](http://localhost:3000/moon/settlement/secondary-settlement) `(/moon/settlement/secondary-settlement)`
+- [**페이지**](http://localhost:3000/privacy) `(/privacy)`
+- [**페이지**](http://localhost:3000/requests/1) `(/requests/[id])`
+- [**페이지**](http://localhost:3000/requests/new) `(/requests/new)`
+- [**페이지**](http://localhost:3000/search) `(/search)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/dashboard) `(/stars/dashboard)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/earnings) `(/stars/earnings)`
+- [**💬 피드백**](http://localhost:3000/stars/feedback) `(/stars/feedback)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/my-projects) `(/stars/my-projects)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/my-projects/detail/1) `(/stars/my-projects/detail/[id])`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/performance) `(/stars/performance)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/portfolio) `(/stars/portfolio)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/profile) `(/stars/profile)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/project-board) `(/stars/project-board)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/request-detail/1) `(/stars/request-detail/[id])`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/resources) `(/stars/resources)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/settings) `(/stars/settings)`
+- [**🌟 프리랜서 (Stars)**](http://localhost:3000/stars/upload) `(/stars/upload)`
+- [**페이지**](http://localhost:3000/terms) `(/terms)`
+- [**📺 영상 브라우저**](http://localhost:3000/videos) `(/videos)`
+- [**📺 영상 브라우저**](http://localhost:3000/videos/1) `(/videos/[id])`

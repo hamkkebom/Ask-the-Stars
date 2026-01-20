@@ -1,6 +1,10 @@
 {
   "name": "ask-the-stars",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "engines": {
     "node": "22.x",
     "pnpm": ">=9.0.0"

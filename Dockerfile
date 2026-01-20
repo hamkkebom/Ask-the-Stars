@@ -6,9 +6,11 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
+# Install pnpm
+RUN npm install -g pnpm@9.15.2
+
 # Copy root workspace files
-# We use package-lock.json if available, otherwise npm will generate one.
-COPY package.json ./
+COPY package.json pnpm-lock.yaml ./
 COPY turbo.json ./
 COPY tsconfig.json ./
 
@@ -16,9 +18,8 @@ COPY tsconfig.json ./
 COPY apps/api ./apps/api
 COPY packages ./packages
 
-# Install dependencies using npm (more stable in alpine than pnpm setup)
-# We use --legacy-peer-deps to avoid strict peer dependency conflicts in monorepos involved with incompatible prisma versions
-RUN npm install --legacy-peer-deps
+# Install dependencies using pnpm
+RUN pnpm install --frozen-lockfile
 
 # Build the api project
 RUN npx turbo run build --filter=@ask-the-stars/api
@@ -31,6 +32,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Copy built files and production node_modules
+# We copy from the built app and the root node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /app/node_modules ./node_modules

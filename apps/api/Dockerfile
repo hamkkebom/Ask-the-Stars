@@ -1,7 +1,7 @@
 # Build stage
 FROM node:22-slim AS builder
 
-RUN npm install -g pnpm && npm install -g @nestjs/cli && npm install -g prisma@6.3.1
+RUN npm install -g pnpm && npm install -g @nestjs/cli
 
 WORKDIR /app
 
@@ -14,7 +14,6 @@ COPY packages/database/package.json ./packages/database/
 
 # Install dependencies (requires openssl for Prisma)
 RUN apt-get update -y && apt-get install -y openssl
-
 RUN pnpm install --frozen-lockfile
 
 # Copy source files
@@ -23,13 +22,14 @@ COPY packages/types ./packages/types
 COPY packages/utils ./packages/utils
 COPY packages/database ./packages/database
 
+# Overwrite schema with build version (hardcoded dummy URL to allow generation without DB)
+RUN cp ./packages/database/prisma/schema.build.prisma ./packages/database/prisma/schema.prisma
 
-# Build
-# Note: We skip Prisma generation in Docker and inject the locally generated client
-# which contains the Linux binary (libquery_engine-debian-openssl-3.0.x.so.node)
+# Generate Prisma Client inside Docker (ensures correct binary target)
+RUN pnpm --filter @ask-the-stars/database exec prisma generate --schema=./packages/database/prisma/schema.prisma
 
-# SKIP api build (using local artifacts)
-# RUN pnpm --filter @ask-the-stars/api build
+# Build the API
+RUN pnpm --filter @ask-the-stars/api build
 
 # Prune dev dependencies for production
 RUN pnpm prune --prod
@@ -56,14 +56,13 @@ COPY packages/database/package.json ./packages/database/
 RUN echo "shamefully-hoist=true" > .npmrc
 RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
-# Copy built files (using local dist injected via builder matching)
+# Copy built files
 COPY --from=builder /app/apps/api/dist ./dist
+# Copy generated Prisma client from builder
+COPY --from=builder /app/node_modules/.pnpm/@prisma+client@6.3.1_prisma@6.3.1/node_modules/@prisma/client ./node_modules/@prisma/client
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Inject Locally Generated Prisma Client (Linux Binary included)
-# Overwriting the symlink with the actual directory
-COPY packages/database/generated/client ./node_modules/@prisma/client
-
-# Copy packages/database just in case runtime needs schema references
+# Copy packages/database for schema reference if needed
 COPY --from=builder /app/packages/database ./packages/database
 
 # Cloud Run uses port 8080 by default

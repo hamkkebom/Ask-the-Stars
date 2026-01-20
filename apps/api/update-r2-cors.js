@@ -39,8 +39,8 @@ async function updateCors() {
           AllowedOrigins: [
             'http://localhost:3000',
             'https://ask-the-stars-api-w3nn3v2ejq-du.a.run.app',
-            'https://hankaebom.com',
-            'https://www.hankaebom.com',
+            'https://hamkkebom.com',
+            'https://www.hamkkebom.com',
             'https://ask-the-stars-kappa.vercel.app'
           ],
           ExposeHeaders: ['ETag'],

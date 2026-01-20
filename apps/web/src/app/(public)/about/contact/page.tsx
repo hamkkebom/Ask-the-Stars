@@ -20,8 +20,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: "이메일",
-    content: "hello@hankaebom.com",
-    action: "mailto:hello@hankaebom.com"
+    content: "hello@hamkkebom.com",
+    action: "mailto:hello@hamkkebom.com"
   },
   {
     icon: Clock,

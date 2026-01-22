@@ -17,7 +17,7 @@ export class UploadsService {
     const accessKeyId = this.configService.get<string>('CLOUDFLARE_R2_ACCESS_KEY_ID', '');
     const secretAccessKey = this.configService.get<string>('CLOUDFLARE_R2_SECRET_ACCESS_KEY', '');
 
-    this.bucketName = this.configService.get<string>('CLOUDFLARE_R2_BUCKET_NAME', 'hankaebom-star-uploads');
+    this.bucketName = this.configService.get<string>('CLOUDFLARE_R2_BUCKET_NAME', 'hamkkebom-uploads');
 
     const endpoint = `https://${this.cloudflareAccountId}.r2.cloudflarestorage.com`;
 

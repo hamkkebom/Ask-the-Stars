@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatDate, formatCurrency, cn } from '@/lib/utils';
 import {
@@ -229,3 +229,4 @@ export default function StarsManagementPage() {
     </div>
   );
 }
+

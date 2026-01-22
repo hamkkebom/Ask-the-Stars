@@ -143,7 +143,7 @@ export function AwardHeader() {
                   className={cn(
                     "transition-colors relative",
                     isCompanySite
-                      ? (isActive ? "text-[#FF3366] font-bold" : "text-gray-500 hover:text-black")
+                      ? (isActive ? "text-primary font-bold" : "text-gray-400 hover:text-white")
                       : "text-white/70 hover:text-white hover:font-bold"
                   )}
                 >
@@ -151,7 +151,7 @@ export function AwardHeader() {
                   {isActive && (
                     <motion.div
                       layoutId="gnbActiveTab"
-                      className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-[#FF3366]"
+                      className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-primary"
                     />
                   )}
                 </Link>

@@ -313,3 +313,22 @@ enum CampaignStatus {
   COMPLETED   // 완료
   CANCELLED   // 취소
 }
+
+// ==========================================
+// 설명회 신청자 (Leads) 모델 (신규)
+// ==========================================
+
+model Lead {
+  id              String          @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  channel         String?         // 유입 경로 (인스타, 지인 등)
+  interest        String?         // 관심 분야 (기초반, 심화반 등)
+  isAttended      Boolean         @default(false) @map("is_attended")
+  notes           String?
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  @@map("leads")
+}

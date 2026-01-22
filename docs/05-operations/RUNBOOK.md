@@ -1,4 +1,4 @@
-# 🏃‍♂️ 운영 런북 (Runbook)
+# 📕 장애 대응 런북 (Incident Runbook - 함께봄)
 
 > **시스템**: Ask the Stars (함께봄: 별들에게 물어봐)
 > **최종 업데이트**: 2026-01-17
@@ -30,14 +30,14 @@ GitHub Actions를 통해 자동 배포되거나, 로컬에서 Docker 이미지�
 
 ```bash
 # 1. Docker 이미지 빌드 (로컬)
-docker build -f apps/api/Dockerfile -t gcr.io/hankaebom-star/api:latest .
+docker build -f apps/api/Dockerfile -t gcr.io/ask-the-stars-484712/api:latest .
 
 # 2. Container Registry 푸시
-docker push gcr.io/hankaebom-star/api:latest
+docker push gcr.io/ask-the-stars-484712/api:latest
 
 # 3. Cloud Run 배포
-gcloud run deploy api \
-  --image gcr.io/hankaebom-star/api:latest \
+gcloud run deploy ask-the-stars-api \
+  --image gcr.io/ask-the-stars-484712/api:latest \
   --platform managed \
   --region asia-northeast3 \
   --allow-unauthenticated

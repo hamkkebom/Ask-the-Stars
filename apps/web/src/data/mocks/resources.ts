@@ -28,7 +28,7 @@ export const mockResources: ResourceItem[] = [
   {
     id: '1',
     title: '2025년 영상 제작 표준 가이드라인_v1.0',
-    description: 'Hankaebom 플랫폼의 영상 제작 표준 규격 및 납품 가이드라인입니다. 모든 작업 전 필독해주세요.',
+    description: 'Hamkkebom 플랫폼의 영상 제작 표준 규격 및 납품 가이드라인입니다. 모든 작업 전 필독해주세요.',
     category: 'guide',
     fileType: 'PDF',
     fileSize: '2.5 MB',

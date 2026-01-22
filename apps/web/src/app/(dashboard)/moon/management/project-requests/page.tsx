@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { formatDate, formatCurrency } from '@/lib/utils';
+import { Copy } from 'lucide-react';
 
 interface ProjectRequest {
   id: string;
@@ -72,6 +73,20 @@ export default function ProjectRequestsPage() {
   const [requests, setRequests] = useState<ProjectRequest[]>(mockRequests);
   const [filter, setFilter] = useState({ status: 'all' });
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const handleClone = (request: ProjectRequest) => {
+    const newRequest = {
+      ...request,
+      id: Math.random().toString(36).substr(2, 9),
+      title: `${request.title} (복사됨)`,
+      createdAt: new Date().toISOString(),
+      currentAssignees: 0,
+      acceptedBy: [],
+      status: 'OPEN' as const,
+    };
+    setRequests([newRequest, ...requests]);
+    alert('제작 요청이 복제되었습니다.');
+  };
 
   const filteredRequests = requests.filter((req) => {
     if (filter.status !== 'all' && req.status !== filter.status) return false;
@@ -212,6 +227,13 @@ export default function ProjectRequestsPage() {
                       >
                         상세
                       </Link>
+                      <button
+                        onClick={() => handleClone(request)}
+                        className="p-1 text-gray-400 hover:text-blue-600 rounded hover:bg-blue-50"
+                        title="복제"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </button>
                       {request.status === 'OPEN' && (
                         <button className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200">
                           마감

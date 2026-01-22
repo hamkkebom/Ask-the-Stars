@@ -1,4 +1,4 @@
-# 한깨봄 (Hankaebom) - AI 영상 제작 인재 생태계 플랫폼
+# 함께봄 (Hamkkebom) - AI 영상 제작 인재 생태계 플랫폼
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/ci.yml/badge.svg)](https://github.com/hamkkebom/Ask-the-Stars/actions/workflows/ci.yml)
@@ -11,7 +11,7 @@
 
 > AI 영상 제작 교육부터 프리랜서 매칭, 공모전, 마케팅 대행까지 통합한 종합 영상 제작 생태계 플랫폼
 
-한깨봄은 AI 영상 제작 인재를 육성하고, 100명 이상의 프리랜서와 500명 이상의 상담사를 연결하며, 교육-제작-마케팅을 통합한 순환 구조의 비즈니스 플랫폼입니다. Next.js 15와 NestJS 11 기반의 모노레포 아키텍처로 구축되었습니다.
+함께봄은 AI 영상 제작 인재를 육성하고, 100명 이상의 프리랜서와 500명 이상의 상담사를 연결하며, 교육-제작-마케팅을 통합한 순환 구조의 비즈니스 플랫폼입니다. Next.js 15와 NestJS 11 기반의 모노레포 아키텍처로 구축되었습니다.
 
 ## Table of Contents
 
@@ -125,7 +125,7 @@ graph TD
     
     subgraph Data Layer
         CloudRun -->|Prisma ORM| DB[(Supabase PostgreSQL<br/>Seoul ap-northeast-2)]
-        CloudRun -->|Cache| Redis[(Upstash Redis<br/>Tokyo)]
+        CloudRun -->|Cache & Adapter| Redis[(Upstash Redis<br/>Tokyo)]
     end
     
     subgraph Services
@@ -225,7 +225,7 @@ graph LR
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | NestJS | 11.1.12 | Node.js 프레임워크 |
-| Node.js | 22.x | JavaScript 런타임 |
+| Node.js | 20.x (LTS) | JavaScript 런타임 |
 | Prisma | 6.1.0 | ORM (Object-Relational Mapping) |
 | PostgreSQL | 17 | 관계형 데이터베이스 |
 | BullMQ | 5.66.5 | 작업 큐 |
@@ -296,7 +296,7 @@ ask-the-stars/
 
 시스템 요구사항:
 
-- **Node.js**: 22.x 이상
+- **Node.js**: 20.x (LTS)
 - **pnpm**: 9.x 이상
 - **PostgreSQL**: 17 이상 (로컬 개발 시)
 - **Redis**: 최신 버전 (로컬 개발 시)
@@ -307,7 +307,7 @@ ask-the-stars/
 ### 1. 저장소 클론
 
 ```bash
-git clone https://github.com/hankaebom/ask-the-stars.git
+git clone https://github.com/hamkkebom/Ask-the-Stars.git
 cd ask-the-stars
 ```
 
@@ -329,7 +329,7 @@ cp .env.example .env
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/hankaebom"
+DATABASE_URL="postgresql://user:password@localhost:5432/hamkkebom"
 
 # JWT
 JWT_SECRET="your-secret-key"
@@ -569,8 +569,8 @@ POST /api/videos/:id/feedback
 
 ## License
 
-[MIT](LICENSE) © 한깨봄 (Hankaebom)
+[MIT](LICENSE) © 함께봄 (Hamkkebom)
 
 ---
 
-**Made with ❤️ by Hankaebom Team**
+**Made with ❤️ by Hamkkebom Team**

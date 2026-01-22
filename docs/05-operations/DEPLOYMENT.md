@@ -1,6 +1,6 @@
 # 🚀 배포 가이드
 
-> **최종 수정일**: 2026-01-17
+> **최종 수정일**: 2026-01-21
 
 ---
 
@@ -63,9 +63,9 @@
 ### CLI 도구 설치
 
 ```bash
-# Node.js 22 (nvm 사용)
-nvm install 22
-nvm use 22
+# Node.js 20 (nvm 사용)
+nvm install 20
+nvm use 20
 
 # pnpm
 npm install -g pnpm
@@ -102,11 +102,19 @@ SENTRY_DSN=xxx
 
 ### 1. 프론트엔드 배포 (Vercel)
 
-자동 배포 (GitHub Actions):
+#### [Vercel UI 설정 - 중요]
+모노레포 구조이므로 Vercel 대시보드에서 다음 설정을 수동으로 적용해야 합니다.
+- **Root Directory**: `apps/web`
+- **Output Directory**: `Default` (`.next`) - **절대 수정 금지**
+- **Build Command**: `cd ../.. && pnpm --filter @ask-the-stars/database db:generate && pnpm --filter @ask-the-stars/web build`
+- **Install Command**: `cd ../.. && pnpm install`
+- **Root Directory 옵션**: "Include files outside of the root directory..." **활성화**
+
+#### 자동 배포 (GitHub Actions):
 
 ```yaml
-# .github/workflows/cd-web.yml
-# main 브랜치에 apps/web/** 변경 시 자동 배포
+# .github/workflows/ci.yml
+# PR 생성/업데이트 시 빌드 및 테스트 자동 검증
 ```
 
 수동 배포:
@@ -147,6 +155,9 @@ gcloud run deploy ask-the-stars-api \
   --region asia-northeast3 \
   --platform managed \
   --allow-unauthenticated
+
+> [!IMPORTANT]
+> **Socket.io 확장(Scaling)**: 여러 인스턴스 환경에서 실시간 통신을 위해 `REDIS_URL` 환경 변수가 올바르게 설정되어 있는지 반드시 확인하십시오.
 ```
 
 ### 3. 데이터베이스 마이그레이션

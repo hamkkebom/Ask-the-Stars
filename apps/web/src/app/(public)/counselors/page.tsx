@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Search } from 'lucide-react';
 
 interface Counselor {
   id: string;
@@ -69,6 +71,8 @@ export default function CounselorsPage() {
   const [counselors] = useState<Counselor[]>(mockCounselors);
   const [filter, setFilter] = useState({ grade: 'all', specialty: 'all', sort: 'rating' });
 
+  const allSpecialties = Array.from(new Set(counselors.flatMap(c => c.specialty)));
+
   const filteredCounselors = counselors.filter((c) => {
     if (filter.grade !== 'all' && c.grade !== filter.grade) return false;
     if (filter.specialty !== 'all' && !c.specialty.includes(filter.specialty)) return false;
@@ -116,9 +120,9 @@ export default function CounselorsPage() {
               className="border rounded-lg px-3 py-2 text-sm"
             >
               <option value="all">전체 분야</option>
-              <option value="사주">📿 사주</option>
-              <option value="타로">🃏 타로</option>
-              <option value="신점">🔮 신점</option>
+              {allSpecialties.map(spec => (
+                <option key={spec} value={spec}>{spec}</option>
+              ))}
             </select>
 
             <select
@@ -189,9 +193,15 @@ export default function CounselorsPage() {
         </div>
 
         {sortedCounselors.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            조건에 맞는 상담사가 없습니다.
-          </div>
+          <EmptyState
+            title="조건에 맞는 상담사가 없습니다"
+            description="필터를 변경하거나 다른 검색 조건을 시도해보세요."
+            icon={Search}
+            action={{
+              label: "필터 초기화",
+              onClick: () => setFilter({ grade: 'all', specialty: 'all', sort: 'rating' })
+            }}
+          />
         )}
       </div>
     </div>

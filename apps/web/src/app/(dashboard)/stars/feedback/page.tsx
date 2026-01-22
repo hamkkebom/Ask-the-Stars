@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { formatDate, formatTimestamp } from '@/lib/utils';
 import { MessageSquare, CheckCircle, Clock, Play, ExternalLink, Filter } from 'lucide-react';
 
@@ -118,7 +118,7 @@ export default function StarsFeedbackPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-xl border border-white/10 bg-white/5 p-4 flex items-center gap-4"
@@ -130,9 +130,9 @@ export default function StarsFeedbackPage() {
             <p className="text-sm text-gray-400">전체</p>
             <p className="text-2xl font-bold text-white">{feedbacks.length}개</p>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -145,9 +145,9 @@ export default function StarsFeedbackPage() {
             <p className="text-sm text-red-400">긴급</p>
             <p className="text-2xl font-bold text-red-400">{urgentCount}개</p>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -160,9 +160,9 @@ export default function StarsFeedbackPage() {
             <p className="text-sm text-yellow-400">미처리</p>
             <p className="text-2xl font-bold text-yellow-400">{pendingCount}개</p>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -175,11 +175,11 @@ export default function StarsFeedbackPage() {
             <p className="text-sm text-green-400">해결됨</p>
             <p className="text-2xl font-bold text-green-400">{resolvedCount}개</p>
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Filter */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
@@ -209,12 +209,12 @@ export default function StarsFeedbackPage() {
             <option value="LOW" className="bg-gray-900">낮음</option>
           </select>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Feedback List */}
       <div className="space-y-4">
         {filteredFeedbacks.map((feedback, index) => (
-          <motion.div
+          <m.div
             key={feedback.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -290,19 +290,20 @@ export default function StarsFeedbackPage() {
                 </Link>
               </div>
             )}
-          </motion.div>
+          </m.div>
         ))}
 
         {filteredFeedbacks.length === 0 && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-500"
           >
             해당 조건의 피드백이 없습니다.
-          </motion.div>
+          </m.div>
         )}
       </div>
     </div>
   );
 }
+

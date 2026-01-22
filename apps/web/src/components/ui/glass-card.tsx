@@ -1,5 +1,5 @@
 import { cn } from "@ask-the-stars/ui";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { m, HTMLMotionProps } from "framer-motion";
 
 interface GlassCardProps extends HTMLMotionProps<"div"> {
   gradient?: boolean;
@@ -14,7 +14,7 @@ export const GlassCard = ({
   ...props
 }: GlassCardProps) => {
   return (
-    <motion.div
+    <m.div
       className={cn(
         "glass rounded-xl p-6 transition-colors duration-300",
         gradient && "bg-gradient-to-br from-white/5 to-transparent",
@@ -28,6 +28,6 @@ export const GlassCard = ({
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };

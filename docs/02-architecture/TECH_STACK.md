@@ -2,7 +2,7 @@
 
 > **최종 확정**: 2026-01-19
 > **예산**: 월 $30 (현재 Free Tier 적용 중)
-> **적용 현황 업데이트**: 2026-01-19
+> **적용 현황 업데이트**: 2026-01-21
 
 ---
 
@@ -15,6 +15,7 @@
 | 🎬 Video | Plyr + HLS.js | 3.7.8 / 1.5.15 | ✅ |
 | 📊 Monitoring | Sentry + BetterStack | 무료 | ✅ |
 | ☁️ Hosting | Vercel + Cloud Run | 서울 | ✅ |
+| 🛡️ Type | Zod (v3.24.1 통일) | - | ✅ |
 
 ---
 
@@ -33,6 +34,8 @@
 | [Fabric.js](http://fabricjs.com/) | 6.9.1 | Canvas 마킹 |
 | [Socket.io Client](https://socket.io/) | 4.8.3 | WebSocket |
 | [Lucide React](https://lucide.dev/) | 0.469.0 | 아이콘 |
+| **SEO** | JSON-LD | 구조화 데이터 (Schema.org) |
+| **Performance** | AVIF/WebP | 차세대 이미지 포맷 |
 
 ---
 
@@ -41,11 +44,12 @@
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | [NestJS](https://nestjs.com/) | 11.1.12 | Node.js 프레임워크 |
-| [Node.js](https://nodejs.org/) | 22.x | 런타임 |
+| [Node.js](https://nodejs.org/) | 20.x (LTS) | 런타임 |
 | [Prisma](https://www.prisma.io/) | 6.1.0 | ORM |
 | [PostgreSQL](https://www.postgresql.org/) | 17 | 데이터베이스 |
+| [Redis](https://redis.io/) | - | Socket.io Adapter (Horizontal Scaling) |
 | [BullMQ](https://docs.bullmq.io/) | 5.66.5 | 작업 큐 |
-| [Socket.io](https://socket.io/) | 4.8.3 | WebSocket 서버 |
+| [Socket.io](https://socket.io/) | 4.8.3 | WebSocket 서버 (+ Redis Adapter) |
 | [class-validator](https://github.com/typestack/class-validator) | 0.14.1 | 유효성 검증 |
 | [Passport](https://www.passportjs.org/) | 0.7.0 | 인증 |
 
@@ -81,7 +85,7 @@
 |------|------|------|
 | pnpm | 9.x | 패키지 매니저 |
 | Turborepo | 2.7.5 | 모노레포 빌드 |
-| ESLint | 9.17.0 | 린터 |
+| ESLint | 9.17.0 | `.eslintrc.cjs` (ESM 호환) |
 | Prettier | 3.8.0 | 포매터 |
 | Vitest | 2.1.8 | 프론트엔드 테스트 |
 | Jest | 29.7.0 | 백엔드 테스트 |
@@ -146,6 +150,7 @@ graph TD
 | `NEXT_PUBLIC_API_URL` | 백엔드 API 엔드포인트 | Web |
 | `JWT_SECRET` | 토큰 서명 키 | API |
 | `RESEND_API_KEY` | 이메일 서비스 키 | API |
+| `REDIS_URL` | Redis 연결 주소 (Socket.io Adapter 전용) | API |
 
 ---
 

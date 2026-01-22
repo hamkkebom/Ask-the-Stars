@@ -71,3 +71,6 @@ artifacts/recordings
 google-credentials.json
 
 .vercel
+
+# External Reference Resources (local only)
+agent-skills-main/

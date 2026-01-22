@@ -13,7 +13,7 @@
 ### 필수 변수
 ```env
 # Database (Prisma)
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/hankaebom?schema=public"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/hamkkebom?schema=public"
 
 # Frontend (Next.js)
 NEXT_PUBLIC_API_URL="http://localhost:4000"

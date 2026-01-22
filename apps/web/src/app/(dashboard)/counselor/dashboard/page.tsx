@@ -132,49 +132,96 @@ export default function CounselorDashboardPage() {
           </div>
 
           {/* Quick Actions & Stats */}
+          {/* Right Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-semibold mb-4">빠른 메뉴</h2>
-              <div className="space-y-2">
-                <Link
-                  href="/counselor/requests"
-                  className="block w-full py-3 px-4 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 text-center"
-                >
-                  🎬 새 영상 제작 요청
-                </Link>
-                <Link
-                  href="/counselor/profile"
-                  className="block w-full py-3 px-4 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 text-center"
-                >
-                  👤 프로필 수정
-                </Link>
+            {/* Today's Schedule - Highlighted */}
+            <div className="bg-white rounded-lg shadow p-4 border-l-4 border-purple-600 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-2 opacity-10">
+                <span className="text-6xl">📅</span>
+              </div>
+              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                오늘의 일정
+                <span className="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded-full">3건</span>
+              </h2>
+              <div className="space-y-3 relative z-10">
+                <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="font-medium text-purple-900">김철수님 상담</span>
+                    <span className="text-xs text-purple-600 font-bold">14:00</span>
+                  </div>
+                  <p className="text-xs text-purple-500">신년운세 종합 (30분)</p>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="font-medium text-gray-700">이영희님 상담</span>
+                    <span className="text-xs text-gray-500">16:30</span>
+                  </div>
+                  <p className="text-xs text-gray-400">타로 연애운 (15분)</p>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="font-medium text-gray-700">박지성님 상담</span>
+                    <span className="text-xs text-gray-500">19:00</span>
+                  </div>
+                  <p className="text-xs text-gray-400">사주 직업운 (60분)</p>
+                </div>
               </div>
             </div>
 
-            {/* Recent Activity */}
+            {/* Inquiries & Q&A - With Badge */}
             <div className="bg-white rounded-lg shadow p-4">
-              <h2 className="text-lg font-semibold mb-4">최근 알림</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">문의 관리</h2>
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                  </span>
+                  <span className="text-sm font-bold text-red-500">5건 미답변</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <Link href="/counselor/inquiries" className="block p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-medium text-sm">상품 문의</span>
+                    <span className="px-1.5 py-0.5 text-xs bg-red-100 text-red-600 rounded">New</span>
+                  </div>
+                  <p className="text-xs text-gray-500 truncate">혹시 전화 상담도 가능한가요?</p>
+                </Link>
+                <div className="h-px bg-gray-100 my-2" />
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/counselor/requests"
+                    className="py-2 px-3 bg-gray-100 text-gray-700 rounded text-sm font-medium hover:bg-gray-200 text-center"
+                  >
+                    새 영상 요청
+                  </Link>
+                  <Link
+                    href="/counselor/profile"
+                    className="py-2 px-3 bg-gray-100 text-gray-700 rounded text-sm font-medium hover:bg-gray-200 text-center"
+                  >
+                    프로필 수정
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Activity (Simplified) */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h2 className="text-lg font-semibold mb-3">최근 활동</h2>
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <span className="text-green-500">✓</span>
+                  <span className="text-green-500 mt-0.5">✓</span>
                   <div>
-                    <p>새 영상 &quot;신년운세&quot;가 승인되었습니다</p>
-                    <p className="text-gray-500 text-xs">2시간 전</p>
+                    <p className="text-gray-700">영상 &quot;신년운세&quot; 승인됨</p>
+                    <p className="text-gray-400 text-xs">2시간 전</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-blue-500">💬</span>
+                  <span className="text-yellow-500 mt-0.5">⭐</span>
                   <div>
-                    <p>새 상담 요청 3건</p>
-                    <p className="text-gray-500 text-xs">오늘</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-yellow-500">⭐</span>
-                  <div>
-                    <p>새 리뷰 5개</p>
-                    <p className="text-gray-500 text-xs">이번 주</p>
+                    <p className="text-gray-700">5점 리뷰 도착</p>
+                    <p className="text-gray-400 text-xs">어제</p>
                   </div>
                 </div>
               </div>

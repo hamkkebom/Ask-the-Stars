@@ -4,41 +4,43 @@
 @source "../../../../packages/ui";
 
 @theme {
-  /* Cosmic Midnight Palette */
-  --color-background: 0 0% 2%; /* Void Black #050505 */
-  --color-foreground: 0 0% 100%;
+  /* Corporate Trust Palette */
+  --color-background: #020617; /* Deep Slate #020617 */
+  --color-foreground: #f8fafc; /* Slate 50 */
 
-  /* Vibrant Block Palette */
-  --vibrant-cyan: 184 100% 50%; /* #00F0FF */
-  --vibrant-magenta: 346 100% 62%; /* #FF3D71 approx, adjusted for visibility */
-  --vibrant-green: 111 100% 54%; /* #39FF14 */
+  /* Professional Accents */
+  --vibrant-cyan: #0ea5e9;
+  --vibrant-magenta: #e11d48;
+  --vibrant-green: #22c55e;
 
-  --color-card: 0 0% 4%;
-  --color-card-foreground: 0 0% 100%;
+  --color-card: #0f172a;
+  --color-card-foreground: #f8fafc;
 
-  --color-popover: hsl(224 71% 4%);
-  --color-popover-foreground: hsl(210 40% 98%);
+  --color-popover: #020617;
+  --color-popover-foreground: #f8fafc;
 
-  --color-primary: hsl(263 70% 50%); /* Nebula Purple */
-  --color-primary-foreground: hsl(210 40% 98%);
+  --color-primary: #3b82f6; /* Trust Blue */
+  --color-primary-foreground: #020617;
 
-  --color-secondary: hsl(45 93% 58%); /* Star Gold */
-  --color-secondary-foreground: hsl(224 71% 4%);
+  --color-secondary: #f59e0b; /* Professional Gold */
+  --color-secondary-foreground: #020617;
 
-  --color-muted: hsl(217 33% 17%);
-  --color-muted-foreground: hsl(215 20% 65%);
+  --color-muted: #1e293b;
+  --color-muted-foreground: #cbd5e1; /* Increased contrast Slate 300 */
 
-  --color-accent: hsl(190 95% 39%); /* Cyan Glow */
-  --color-accent-foreground: hsl(224 71% 4%);
+  --color-accent: #3b82f6;
+  --color-accent-foreground: #020617;
 
-  --color-destructive: hsl(0 62% 30%);
-  --color-destructive-foreground: hsl(210 40% 98%);
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
 
-  --color-border: hsl(217 33% 17%);
-  --color-input: hsl(217 33% 17%);
-  --color-ring: hsl(263 70% 50%);
+  --color-border: #1e293b;
+  --color-input: #1e293b;
+  --color-ring: #3b82f6;
 
-  --radius: 0.75rem;
+  --radius: 0.5rem;
+
+  --focus-ring: 0 0 0 2px #020617, 0 0 0 4px #3b82f6; /* Sharper corners for business feel */
 
   /* Custom Animations */
   --animate-fade-in: fade-in 0.5s ease-out;
@@ -60,8 +62,8 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   background-image:
-    radial-gradient(circle at 50% 0%, hsl(263 70% 50% / 0.15), transparent 50%),
-    radial-gradient(circle at 0% 50%, hsl(190 95% 39% / 0.1), transparent 50%);
+    radial-gradient(circle at 50% 0%, hsl(217 91% 60% / 0.08), transparent 50%),
+    radial-gradient(circle at 100% 0%, hsl(217 91% 60% / 0.05), transparent 30%);
   background-attachment: fixed;
   font-feature-settings: "rlig" 1, "calt" 1;
 }
@@ -76,7 +78,7 @@ body {
 .glass-hover:hover {
   background: rgba(255, 255, 255, 0.07);
   border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 15px rgba(124, 58, 237, 0.1); /* Purple Glow */
+  box-shadow: 0 0 15px hsl(217 91% 60% / 0.1); /* Trust Blue Glow */
 }
 
 /* Scrollbar */
@@ -92,4 +94,32 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(215 20% 65%);
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Typography: Tabular Numbers for Numeric Data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Performance: Content Visibility for Long Lists */
+.list-item-optimized {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 80px;
+}
+
+/* Touch Optimization */
+button, a, input, select, textarea {
+  touch-action: manipulation;
 }

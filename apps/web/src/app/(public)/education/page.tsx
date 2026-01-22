@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { GraduationCap, ArrowRight, Play, BookOpen, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -44,16 +44,16 @@ export default function EducationPage() {
       {/* Hero Section */}
       <section className="relative z-10 pt-20 pb-32 px-6">
         <div className="max-w-7xl mx-auto text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-vibrant-green/10 border border-vibrant-green/20 text-vibrant-green mb-8"
           >
             <GraduationCap className="w-4 h-4" />
             <span className="text-sm font-bold tracking-wide">AI ACADEMY</span>
-          </motion.div>
+          </m.div>
 
-          <motion.h1
+          <m.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -63,9 +63,9 @@ export default function EducationPage() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-vibrant-green via-white to-vibrant-green animate-clip-text">
               AI 혁신 교육
             </span>
-          </motion.h1>
+          </m.h1>
 
-          <motion.p
+          <m.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -73,7 +73,7 @@ export default function EducationPage() {
           >
             전통적인 상담 기법에 인공지능 기술을 더해<br />
             더 정확하고, 더 깊이 있는 인사이트를 제공하는 전문가로 성장하세요.
-          </motion.p>
+          </m.p>
         </div>
       </section>
 
@@ -89,7 +89,7 @@ export default function EducationPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {courses.map((course, i) => (
-                    <motion.div
+                    <m.div
                         key={course.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -129,7 +129,7 @@ export default function EducationPage() {
                                 수강신청 <ArrowRight className="w-4 h-4" />
                             </button>
                         </div>
-                    </motion.div>
+                    </m.div>
                 ))}
             </div>
         </div>
@@ -138,3 +138,4 @@ export default function EducationPage() {
     </div>
   );
 }
+

@@ -1,164 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ChevronDown, Check, Clock, Sparkles, Globe, Grid, Video, Filter } from 'lucide-react';
+import { Search, ChevronDown, Clock, Sparkles, Globe, Grid, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import { CompactVideoCard, VideoProps } from '@/components/ui/compact-video-card';
-
-// --- Mock Data ---
-const FILTERS = {
-  categories: [
-    { label: "전체", count: 0 },
-    { label: "상담사 소개영상", count: 85 },
-    { label: "고민영상", count: 63 },
-    { label: "콕콕상담", count: 39 },
-    { label: "상담사 기도영상", count: 38 },
-    { label: "신년운세", count: 32 },
-    { label: "별님의 소개영상", count: 18 },
-    { label: "선물상담", count: 11 },
-    { label: "타로코너 영상", count: 9 },
-    { label: "퍼스널브랜딩", count: 9 },
-    { label: "별님의 모집영상", count: 8 },
-    { label: "별님의 과제제출", count: 7 },
-    { label: "별님의 추억영상", count: 7 },
-    { label: "기부상담", count: 5 },
-    { label: "기타(모르겠어요)", count: 5 },
-    { label: "별님의 꿈꿈영상", count: 5 },
-    { label: "효심말벗", count: 4 },
-    { label: "사주코너 영상", count: 1 },
-  ],
-  counselors: [
-    { label: "전체보기", count: 300 }, // Added View All
-    { label: "대상없음", count: 90 },
-    { label: "다연", count: 14 },
-    { label: "끌로에", count: 13 },
-    { label: "카르멘", count: 13 },
-    { label: "대상아님", count: 10 },
-    { label: "콕콕상담", count: 10 },
-    { label: "지니", count: 9 },
-    { label: "데이먼", count: 8 },
-    { label: "제석궁", count: 8 },
-    { label: "프라하", count: 8 },
-    { label: "타라", count: 7 },
-    { label: "행운", count: 7 },
-    { label: "리디아", count: 6 },
-    { label: "천명", count: 6 },
-    { label: "새해운세", count: 5 },
-    { label: "천량신궁", count: 5 },
-    { label: "골든벨", count: 4 },
-    { label: "샤넬", count: 3 },
-    { label: "세렌느", count: 3 },
-    { label: "신비당", count: 3 },
-    { label: "연정", count: 3 },
-    { label: "연화보살", count: 3 },
-    { label: "윤별", count: 3 },
-    { label: "하빛", count: 3 },
-    { label: "나미", count: 2 },
-    { label: "루시", count: 2 },
-    { label: "루시아", count: 2 },
-    { label: "멜린다", count: 2 },
-    { label: "백기당", count: 2 },
-    { label: "오꽃님", count: 2 },
-    { label: "운경", count: 2 },
-    { label: "청월", count: 2 },
-    { label: "달님", count: 1 },
-    { label: "도화", count: 1 },
-    { label: "성무", count: 1 },
-    { label: "소피아", count: 1 },
-    { label: "여니", count: 1 },
-    { label: "케니", count: 1 },
-    { label: "호산당", count: 1 },
-  ],
-  creators: [
-    { label: "전체보기", count: 542 }, // Added View All
-    { label: "박건우", count: 32 },
-    { label: "산다라(김지민)", count: 28 },
-    { label: "샛별(김지은)", count: 22 },
-    { label: "이파(박주연)", count: 20 },
-    { label: "아이(이혜원)", count: 19 },
-    { label: "여울(김남원)", count: 18 },
-    { label: "온세나래 (이경수)", count: 18 },
-    { label: "해솔(방지훈)", count: 18 },
-    { label: "꿈돌 (정태민)", count: 14 },
-    { label: "밤온(김예솔)", count: 14 },
-    { label: "김소영", count: 10 },
-    { label: "늘다온(김보라)", count: 10 },
-    { label: "최종일", count: 10 },
-    { label: "문상원", count: 9 },
-    { label: "새론(김윤석)", count: 9 },
-    { label: "새벽별 (김신성)", count: 9 },
-    { label: "누리봄(백한수)", count: 8 },
-    { label: "드림온(이두혁)", count: 8 },
-    { label: "미르길 (이용현)", count: 8 },
-    { label: "채윤(하윤나)", count: 8 },
-    { label: "김현우", count: 5 },
-    { label: "다솜마루(김지은)", count: 5 },
-    { label: "달달(박준용)", count: 5 },
-    { label: "루다(양현진)", count: 5 },
-    { label: "심현석", count: 5 },
-    { label: "이다혜", count: 5 },
-    { label: "초승달(이승태)", count: 4 },
-    { label: "빛담은(김애경)", count: 3 },
-    { label: "이음(박종찬)", count: 3 },
-    { label: "잇는길(김용수)", count: 3 },
-    { label: "사공(곽용희)", count: 2 },
-    { label: "이룸(윤종석)", count: 2 },
-    { label: "최석진", count: 2 },
-    { label: "가온(강희선)", count: 1 },
-    { label: "마루(엄용철)", count: 1 },
-    { label: "별빛나래(이인선)", count: 1 },
-    { label: "새로이(차은규)", count: 1 },
-    { label: "이름 미제출", count: 1 },
-  ],
-  sort: [
-    { label: "최신순", value: "latest" },
-    { label: "오래된순", value: "oldest" },
-    { label: "조회수순", value: "views" },
-    { label: "좋아요순", value: "likes" },
-  ],
-  time: [
-    { label: "전체", value: "all" },
-    { label: "1일 전", value: "1d" },
-    { label: "1주일 전", value: "1w" },
-    { label: "1개월 전", value: "1m" },
-    { label: "직접 설정", value: "custom" },
-  ]
-};
-
-// --- Helper for Mock Videos ---
-const GENERATE_MOCK_VIDEOS = (count: number): VideoProps[] => {
-  const counselorNames = ["다연", "끌로에", "지니", "타라", "제석궁", "천명"];
-  const creatorNames = ["심현석", "이다혜", "최석진", "김애경", "박종찬"];
-  const categories = ["신년운세", "타로", "궁합", "연애운", "재물운"];
-
-  return Array.from({ length: count }).map((_, i) => {
-    const counselorName = counselorNames[Math.floor(Math.random() * counselorNames.length)];
-    const creatorName = creatorNames[Math.floor(Math.random() * creatorNames.length)];
-    return {
-        id: `v-${Math.random().toString(36).substr(2, 9)}`,
-        title: i % 2 === 0 ? `2025년 호랑이띠 필독! 대박나는 월별 운세 총정리` : `${counselorName}의 타로상담: 그 사람은 나를 어떻게 생각할까?`,
-        thumbnailUrl: `https://picsum.photos/seed/${i + Math.random()}/640/360`,
-        currentYear: "2025년",
-        counselor: {
-            name: counselorName,
-            avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${counselorName}` // Mock avatar
-        },
-        creator: {
-            name: creatorName,
-            avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${creatorName}` // Mock avatar
-        },
-        category: categories[Math.floor(Math.random() * categories.length)],
-        tags: ["운세", "2025", "대박"],
-        views: Math.floor(Math.random() * 5000),
-        createdAt: `25/0${Math.floor(Math.random() * 9) + 1}/${Math.floor(Math.random() * 28) + 1}`,
-        description: "샘플 데이터입니다.",
-        duration: "10:05",
-        matchScore: 98
-    };
-  });
-};
+import { FILTERS, GENERATE_MOCK_VIDEOS } from '@/data/mocks/advanced-video-grid';
+import { FilterButton, FilterPill } from './advanced-video-grid-components';
 
 type CounselorType = 'ALL' | 'TAROT' | 'MECHANICS' | 'SHAMANISM';
 
@@ -241,7 +89,7 @@ export function AdvancedVideoGrid() {
     <div className="w-full bg-black min-h-screen relative">
 
       {/* --- Sticky Filter Bar --- */}
-      <div className="sticky top-[0px] z-40 bg-black/80 backdrop-blur-xl border-b border-white/10 px-6 py-3 transition-all">
+      <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10 px-6 py-3 transition-all">
         <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
             {/* Filter Groups (Trays) */}
@@ -392,7 +240,10 @@ export function AdvancedVideoGrid() {
                                     <div className="relative w-full md:w-64 ml-auto">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                                         <input
-                                            type="text"
+                                            type="search"
+                                            inputMode="search"
+                                            enterKeyHint="search"
+                                            autoComplete="off"
                                             placeholder="이름 검색..."
                                             value={traySearch}
                                             onChange={(e) => setTraySearch(e.target.value)}
@@ -504,12 +355,12 @@ export function AdvancedVideoGrid() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.3, delay: index * 0.02 }}
-                        className="relative"
+                        className="relative list-item-optimized"
                         style={{ zIndex: hoveredId === video.id ? 50 : 1 }}
                     >
                         <CompactVideoCard
                             {...video}
-                            onHoverChange={(isHovered) => setHoveredId(isHovered ? video.id : null)}
+                            onHoverChange={(isHovered: boolean) => setHoveredId(isHovered ? video.id : null)}
                         />
                     </motion.div>
                 ))}
@@ -535,49 +386,3 @@ export function AdvancedVideoGrid() {
     </div>
   );
 }
-
-// --- Sub-components for Cleaner Code ---
-
-const FilterButton = ({ label, activeValue, isActive, onClick, icon, colorClass = "text-white" }: any) => (
-    <button
-        onClick={onClick}
-        className={cn(
-            "flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 text-sm whitespace-nowrap",
-            isActive || activeValue
-                ? "bg-white/10 border-white/30 text-white"
-                : "bg-transparent border-transparent text-gray-400 hover:bg-white/5 hover:text-gray-200"
-        )}
-    >
-        <span className={cn("opacity-70", isActive ? colorClass : "")}>{icon}</span>
-        <span className="font-medium">{label}</span>
-        {activeValue && (
-            <>
-                <div className="w-px h-3 bg-white/20 mx-1" />
-                <span className={cn("font-bold", colorClass)}>{activeValue}</span>
-            </>
-        )}
-        <ChevronDown className={cn("w-3 h-3 opacity-50 transition-transform", isActive ? "rotate-180" : "")} />
-    </button>
-);
-
-const FilterPill = ({ label, count, isSelected, onClick }: any) => (
-    <button
-        onClick={onClick}
-        className={cn(
-            "flex items-center justify-between px-4 py-3 rounded-lg border text-left transition-all group",
-            isSelected
-                ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]"
-                : "bg-neutral-800/50 border-transparent text-gray-400 hover:bg-neutral-800 hover:text-white hover:border-white/20"
-        )}
-    >
-        <span className="text-sm font-medium truncate pr-2">{label}</span>
-        {count !== undefined && (
-            <span className={cn(
-                "text-xs font-mono px-1.5 py-0.5 rounded",
-                isSelected ? "bg-black/10 text-black/70" : "bg-black/30 text-gray-500 group-hover:text-gray-300"
-            )}>
-                {count}
-            </span>
-        )}
-    </button>
-);

@@ -9,11 +9,11 @@ const resend = new Resend('re_U7pYhgxa_6rzLNVwRuxPiiaaPofnKhzxi');
     const data = await resend.emails.send({
       from: 'noreply@send.hamkkebom.com', // 도메인 인증이 완료되었다고 가정
       to: 'rudtn466@gmail.com',
-      subject: '🚀 한깨봄 (Hankaebom) 이메일 테스트',
+      subject: '🚀 함께봄 (Hamkkebom) 이메일 테스트',
       html: `
         <div style="font-family: sans-serif; padding: 20px;">
           <h1>테스트 이메일 도착! 🎉</h1>
-          <p>한깨봄 시스템에서 보낸 테스트 이메일입니다.</p>
+          <p>함께봄 시스템에서 보낸 테스트 이메일입니다.</p>
           <p>Resend 연동이 정상적으로 완료되었습니다.</p>
           <hr/>
           <p style="font-size: 12px; color: #666;">Sent via Ask-The-Stars API</p>
@@ -30,7 +30,7 @@ const resend = new Resend('re_U7pYhgxa_6rzLNVwRuxPiiaaPofnKhzxi');
         const retryData = await resend.emails.send({
           from: 'onboarding@resend.dev',
           to: 'rudtn466@gmail.com',
-          subject: '[Fallback] 한깨봄 이메일 테스트',
+          subject: '[Fallback] 함께봄 이메일 테스트',
           html: '<p>도메인 인증 전 테스트 발송입니다 (Sandbox).</p>'
         });
 

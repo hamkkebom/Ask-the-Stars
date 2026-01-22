@@ -1,6 +1,6 @@
 # 🗄️ 데이터베이스 스키마 (Database Schema)
 
-> **Updated At**: 2026-01-19
+> **Updated At**: 2026-01-21
 > **Source**: `packages/database/prisma/schema.prisma`
 
 이 문서는 프로젝트의 **실제 배포된 데이터베이스 구조**를 정의합니다.

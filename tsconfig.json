@@ -8,6 +8,6 @@
       "@ask-the-stars/database": ["packages/database/src"]
     }
   },
-  "include": [],
+  "include": ["scripts"],
   "exclude": ["node_modules", "dist", ".turbo"]
 }

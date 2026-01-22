@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 export interface VideoProps {
     id: string;
@@ -31,7 +31,7 @@ export interface VideoProps {
     isNew?: boolean;
 }
 
-export function CompactVideoCard({
+function CompactVideoCardImpl({
     id, title, thumbnailUrl,
     counselor = { name: "상담사" },
     creator = { name: "제작자" },
@@ -58,7 +58,7 @@ export function CompactVideoCard({
         onMouseLeave={handleMouseLeave}
       >
         {/* --- Thumbnail Container --- */}
-        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-900 border border-white/5 shadow-lg group-hover:shadow-2xl transition-all duration-300 z-0 group-hover:z-10">
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-900 border border-white/5 shadow-lg group-hover:shadow-2xl transition-all duration-300 z-0 group-hover:z-10 text-decoration-slice">
 
           {/* Main Image */}
           <div className={cn("absolute inset-0 transition-transform duration-700 ease-out", isHovered ? "scale-[1.2]" : "scale-100")}>
@@ -69,6 +69,8 @@ export function CompactVideoCard({
                   className={cn("object-cover transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-90")}
                   unoptimized
               />
+              {/* Subtle Gradient Overlay for Depth */}
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60" />
           </div>
 
           {/* Auto-play Video on Hover */}
@@ -96,12 +98,12 @@ export function CompactVideoCard({
           {/* --- Overlays --- */}
           {/* Top Left: Counselor Name (Text Only) */}
           <div className="absolute top-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
-              <span className="text-[11px] text-white/90 font-medium tracking-tight">{counselor.name}</span>
+              <span className="text-[11px] text-white/90 font-medium tracking-tight">{counselor?.name}</span>
           </div>
 
           {/* Bottom Left: Creator Name (Text Only) */}
           <div className="absolute bottom-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
-              <span className="text-[11px] text-white/90 font-medium tracking-tight">{creator.name}</span>
+              <span className="text-[11px] text-white/90 font-medium tracking-tight">{creator?.name}</span>
           </div>
         </div>
 
@@ -126,3 +128,17 @@ export function CompactVideoCard({
   );
 }
 
+export const CompactVideoCard = memo(CompactVideoCardImpl, (prev, next) => {
+    // Custom comparison to ignore function props and deep compare nested objects if needed
+    // Assuming counselor and creator names are what matters for display
+    return (
+        prev.id === next.id &&
+        prev.title === next.title &&
+        prev.thumbnailUrl === next.thumbnailUrl &&
+        prev.views === next.views &&
+        prev.matchScore === next.matchScore &&
+        prev.isNew === next.isNew &&
+        prev.counselor?.name === next.counselor?.name &&
+        prev.creator?.name === next.creator?.name
+    );
+});

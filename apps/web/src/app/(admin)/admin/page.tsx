@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatCurrency } from '@/lib/utils';
 import {
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             {pendingTasks.map(task => (
               <Link key={task.id} href={task.href}>
-                <motion.div
+                <m.div
                   whileHover={{ x: 4 }}
                   className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
                 >
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                     </span>
                   </div>
                   <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-primary transition-colors" />
-                </motion.div>
+                </m.div>
               </Link>
             ))}
           </div>
@@ -211,3 +211,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

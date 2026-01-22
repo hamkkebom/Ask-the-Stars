@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -153,10 +153,11 @@ export default function ProjectBoardPage() {
   const [loading, setLoading] = useState(true);
 
   // Simulate loading
-  useState(() => {
+  // Simulate loading
+  useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timer);
-  });
+  }, []);
 
   // Stats calculation
   const totalOpen = requests.filter(r => r.status === 'OPEN').length;
@@ -234,7 +235,7 @@ export default function ProjectBoardPage() {
       {viewMode === 'board' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4">
           {Object.entries(columns).map(([status, items]) => (
-            <div key={status} className="flex flex-col gap-4 min-w-[300px]">
+            <div key={status} className="flex flex-col gap-4 min-w-[300px] md:min-w-0">
               <div className="flex items-center justify-between px-2">
                 <h3 className="font-semibold text-gray-300 flex items-center gap-2">
                   <span className={cn("w-2 h-2 rounded-full",

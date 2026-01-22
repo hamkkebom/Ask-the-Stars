@@ -50,7 +50,7 @@ const HeroCard = ({ id, title, subtitle, description, color, icon: Icon, image, 
             unoptimized
          />
          {/* Gradient Overlay */}
-         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90" />
+         <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent opacity-90" />
       </div>
 
       {/* Background Color Block (Reveals on Hover) */}

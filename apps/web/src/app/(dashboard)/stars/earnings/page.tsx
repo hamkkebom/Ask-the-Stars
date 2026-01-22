@@ -1,11 +1,12 @@
-'use client';
+﻿'use client';
 
 import { useState, Suspense, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { formatDate, formatCurrency } from '@/lib/utils';
-import { Wallet, TrendingUp, DollarSign, FileText, ChevronRight, BarChart3, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Wallet, TrendingUp, DollarSign, FileText, ChevronRight, BarChart3, ArrowUpRight, ArrowDownRight, Download, FileSpreadsheet } from 'lucide-react';
+import { EmptyState } from '@/components/common/EmptyState';
 
 interface EarningItem {
   id: string;
@@ -105,6 +106,32 @@ function EarningsContent() {
   const lastMonthEarnings = 1350000;
   const monthChange = ((currentMonthEarnings - lastMonthEarnings) / lastMonthEarnings) * 100;
 
+  const handleDownload = (type: 'excel' | 'pdf') => {
+    if (type === 'excel') {
+      const headers = ['구분', '프로젝트', '버전', '금액', '상태', '지급예정일', '지급완료일'];
+      const csvContent = [
+        headers.join(','),
+        ...filteredEarnings.map(e => [
+          e.type === 'PRIMARY' ? '1차' : '2차',
+          `"${e.projectTitle}"`,
+          `"${e.versionTitle}"`,
+          e.amount,
+          statusConfig[e.status].label,
+          e.scheduledDate,
+          e.processedDate || '-'
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `earnings_statement_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    } else {
+      alert('PDF 다운로드 기능은 준비 중입니다.');
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -117,7 +144,7 @@ function EarningsContent() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="rounded-xl border border-blue-500/30 bg-gradient-to-br from-blue-500/20 to-blue-600/10 p-6"
@@ -128,11 +155,11 @@ function EarningsContent() {
             </div>
             <span className="text-blue-300 font-medium">지급 예정</span>
           </div>
-          <p className="text-3xl font-bold text-white">{formatCurrency(totalPending)}</p>
+          <p className="text-3xl font-bold text-white tabular-nums">{formatCurrency(totalPending)}</p>
           <p className="text-sm text-blue-300/70 mt-2">다음 정산일: 2월 1일</p>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -144,7 +171,7 @@ function EarningsContent() {
             </div>
             <span className="text-green-300 font-medium">이번 달 수입</span>
           </div>
-          <p className="text-3xl font-bold text-white">{formatCurrency(monthlyTotal)}</p>
+          <p className="text-3xl font-bold text-white tabular-nums">{formatCurrency(monthlyTotal)}</p>
           <div className="flex items-center gap-1 mt-2">
             {monthChange >= 0 ? (
               <ArrowUpRight className="w-4 h-4 text-green-400" />
@@ -155,9 +182,9 @@ function EarningsContent() {
               {Math.abs(monthChange).toFixed(1)}% 전월 대비
             </span>
           </div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -169,13 +196,13 @@ function EarningsContent() {
             </div>
             <span className="text-purple-300 font-medium">총 누적 수입</span>
           </div>
-          <p className="text-3xl font-bold text-white">{formatCurrency(totalCompleted)}</p>
+          <p className="text-3xl font-bold text-white tabular-nums">{formatCurrency(totalCompleted)}</p>
           <p className="text-sm text-purple-300/70 mt-2">전체 기간</p>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* 📊 Earnings Chart Section */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -262,10 +289,10 @@ function EarningsContent() {
             </p>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Tabs & Earnings List */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -303,11 +330,27 @@ function EarningsContent() {
             2차 정산 (인센티브)
           </button>
         </div>
+        <div className="ml-auto flex items-center gap-2 pr-4">
+          <button
+            onClick={() => handleDownload('excel')}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          >
+            <FileSpreadsheet className="w-4 h-4" />
+            엑셀
+          </button>
+          <button
+            onClick={() => handleDownload('pdf')}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            PDF
+          </button>
+        </div>
 
         {/* Earnings List */}
         <div className="divide-y divide-white/5">
           {filteredEarnings.map((earning, index) => (
-            <motion.div
+            <m.div
               key={earning.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -338,16 +381,23 @@ function EarningsContent() {
                   {earning.processedDate && ` (${earning.processedDate})`}
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           ))}
 
           {filteredEarnings.length === 0 && (
-            <div className="p-8 text-center text-gray-500">
-              해당 조건의 정산 내역이 없습니다.
-            </div>
+            <EmptyState
+              icon={Wallet}
+              title="정산 내역이 없습니다"
+              description="해당 조건의 정산 내역이 존재하지 않습니다."
+              action={{
+                label: "전체 보기",
+                onClick: () => setFilter({ type: 'all' })
+              }}
+              className="py-12 text-gray-400"
+            />
           )}
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -393,3 +443,4 @@ export default function StarsEarningsPage() {
     </Suspense>
   );
 }
+

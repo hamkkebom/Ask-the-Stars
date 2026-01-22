@@ -51,7 +51,7 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
         tagInput: ''
       });
     }
-  }, [initialData, isOpen]);
+  }, [initialData?.id, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

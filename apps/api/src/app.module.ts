@@ -9,6 +9,8 @@ import { SettlementsModule } from './modules/settlements/settlements.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
 import { DatabaseModule } from './database/database.module';
 import { MailModule } from './modules/mail/mail.module';
+import { LeadsModule } from './modules/leads/leads.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { HealthController } from './common/health.controller';
 
 @Module({
@@ -29,9 +31,10 @@ import { HealthController } from './common/health.controller';
     SubmissionsModule,
     FeedbackModule,
     SettlementsModule,
-    SettlementsModule,
     UploadsModule,
     MailModule,
+    LeadsModule,
+    NotificationsModule,
   ],
   controllers: [HealthController],
 })

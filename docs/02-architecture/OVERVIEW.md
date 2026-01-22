@@ -1,6 +1,6 @@
 # 🏗️ 시스템 아키텍처 (System Architecture)
 
-> **Updated At**: 2026-01-19
+> **Updated At**: 2026-01-21
 > **Standard**: [C4 Model](https://c4model.com/)
 
 이 문서는 프로젝트의 소프트웨어 아키텍처를 **Context (배경)**, **Containers (컨테이너)**, **Components (컴포넌트)** 3단계로 시각화하여 정의합니다.
@@ -14,7 +14,7 @@ graph TD
     User(사용자/제작자)
     Admin(관리자)
     
-    subgraph "Hankaebom-Star System"
+    subgraph "Hamkkebom System"
         WebApp[Web Application]
     end
     
@@ -41,7 +41,7 @@ graph TD
     
     subgraph "Backend Services"
         Backend -->|Prisma| DB[(PostgreSQL\nSupabase)]
-        Backend -->|Redis| Cache[(Upstash Redis)]
+        Backend -->|Adapter & Cache| Cache[(Upstash Redis)]
         Backend -->|Queue| Worker[BullMQ Worker]
     end
     

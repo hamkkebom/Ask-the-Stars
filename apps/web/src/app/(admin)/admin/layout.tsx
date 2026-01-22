@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -111,6 +111,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
+  // 화면 크기에 따른 초기 사이드바 상태 설정 (Optional: useEffect로 처리 가능)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    // 초기 실행
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // 모바일에서 페이지 이동 시 사이드바 닫기
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+    }
+  }, [pathname]);
+
   // 접근 가능한 모듈
   const accessibleModules = isSystemAdmin
     ? Object.keys(moduleMenus) as AdminModule[]
@@ -128,10 +152,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen bg-[#0f0f1a]">
+      {/* Mobile Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside className={cn(
         "fixed left-0 top-0 z-40 h-screen border-r border-white/10 bg-[#0a0a14] transition-all duration-300",
-        sidebarOpen ? "w-64" : "w-20"
+        sidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:translate-x-0 lg:w-20"
       )}>
         <div className="flex h-full flex-col">
           {/* Logo */}
@@ -140,13 +172,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-purple-500 flex items-center justify-center">
                 <span className="text-white font-bold">H</span>
               </div>
-              {sidebarOpen && (
-                <span className="text-white font-bold">한깨봄 Admin</span>
-              )}
+              <span className={cn(
+                "text-white font-bold transition-opacity duration-300",
+                sidebarOpen ? "opacity-100" : "opacity-0 lg:hidden"
+              )}>
+                한깨봄 Admin
+              </span>
             </Link>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 rounded-lg hover:bg-white/5 text-gray-400"
+              aria-label={sidebarOpen ? "사이드바 닫기" : "메뉴 열기"}
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -164,12 +200,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             >
               <ListTodo className="w-5 h-5 shrink-0" />
-              {sidebarOpen && <span>내 할일</span>}
+              {(sidebarOpen || window.innerWidth < 1024) && <span>내 할일</span>}
             </Link>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-hide">
             {/* 대시보드 */}
             <Link
               href="/admin"
@@ -181,11 +217,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               )}
             >
               <LayoutDashboard className="w-5 h-5 shrink-0" />
-              {sidebarOpen && <span>대시보드</span>}
+              {(sidebarOpen || window.innerWidth < 1024) && <span>대시보드</span>}
             </Link>
 
             {/* 서비스 모듈 */}
-            {sidebarOpen && (
+            {(sidebarOpen || (typeof window !== 'undefined' && window.innerWidth < 1024)) && (
               <p className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
                 서비스 관리
               </p>
@@ -211,12 +247,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         )}
                       >
                         <menu.icon className="w-5 h-5 shrink-0" />
-                        {sidebarOpen && <span>{menu.label}</span>}
+                        {(sidebarOpen || window.innerWidth < 1024) && <span>{menu.label}</span>}
                       </Link>
-                      {sidebarOpen && hasSubItems && (
+                      {(sidebarOpen || window.innerWidth < 1024) && hasSubItems && (
                         <button
                           onClick={() => toggleMenu(module)}
                           className="p-2 text-gray-400 hover:text-white"
+                          aria-label={isExpanded ? "하위 메뉴 접기" : "하위 메뉴 펼치기"}
                         >
                           <ChevronDown className={cn(
                             "w-4 h-4 transition-transform",
@@ -226,7 +263,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       )}
                     </div>
 
-                    {sidebarOpen && hasSubItems && isExpanded && (
+                    {(sidebarOpen || window.innerWidth < 1024) && hasSubItems && isExpanded && (
                       <div className="ml-6 mt-1 space-y-1">
                         {menu.subItems!.map(sub => (
                           <Link
@@ -249,7 +286,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               })}
 
             {/* 통합 관리 */}
-            {sidebarOpen && (
+            {(sidebarOpen || (typeof window !== 'undefined' && window.innerWidth < 1024)) && (
               <p className="px-3 pt-4 pb-2 text-xs font-semibold text-gray-500 uppercase">
                 통합 관리
               </p>
@@ -259,8 +296,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               .filter(m => accessibleModules.includes(m))
               .map(module => {
                 const menu = moduleMenus[module];
-                const hasSubItems = menu.subItems && menu.subItems.length > 0;
-                const isExpanded = expandedMenus.includes(module);
+                // const hasSubItems = menu.subItems && menu.subItems.length > 0;
+                // const isExpanded = expandedMenus.includes(module);
 
                 return (
                   <div key={module}>
@@ -275,7 +312,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     >
                       <div className="flex items-center gap-3">
                         <menu.icon className="w-5 h-5 shrink-0" />
-                        {sidebarOpen && <span>{menu.label}</span>}
+                        {(sidebarOpen || window.innerWidth < 1024) && <span>{menu.label}</span>}
                       </div>
                     </Link>
                   </div>
@@ -290,11 +327,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-colors"
             >
               <Settings className="w-5 h-5 shrink-0" />
-              {sidebarOpen && <span>설정</span>}
+              {(sidebarOpen || window.innerWidth < 1024) && <span>설정</span>}
             </Link>
             <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
               <LogOut className="w-5 h-5 shrink-0" />
-              {sidebarOpen && <span>로그아웃</span>}
+              {(sidebarOpen || window.innerWidth < 1024) && <span>로그아웃</span>}
             </button>
           </div>
         </div>
@@ -302,35 +339,40 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content */}
       <main className={cn(
-        "flex-1 transition-all duration-300",
-        sidebarOpen ? "ml-64" : "ml-20"
+        "flex-1 transition-all duration-300 min-w-0",
+        sidebarOpen ? "lg:ml-64 bg-[#0f0f1a]" : "lg:ml-20 bg-[#0f0f1a]"
       )}>
         {/* Header */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-[#0f0f1a]/80 backdrop-blur-xl px-6">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-[#0f0f1a]/80 backdrop-blur-xl px-4 lg:px-6">
           <div className="flex items-center gap-4">
-            <h2 className="text-white font-medium">관리자 대시보드</h2>
+            {/* Mobile Menu Button */}
+            <button
+              className="lg:hidden p-2 -ml-2 text-gray-400 hover:text-white"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h2 className="text-white font-medium truncate">관리자 대시보드</h2>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 lg:gap-4">
             <button className="relative p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
             </button>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold">
+              <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-linear-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold text-sm lg:text-base">
                 A
               </div>
-              {sidebarOpen && (
-                <div className="text-sm">
-                  <p className="text-white font-medium">관리자</p>
-                  <p className="text-gray-500 text-xs">시스템 관리자</p>
-                </div>
-              )}
+              <div className="hidden lg:block text-sm">
+                <p className="text-white font-medium">관리자</p>
+                <p className="text-gray-500 text-xs">시스템 관리자</p>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <div className="p-6">
+        <div className="p-4 lg:p-6 overflow-x-hidden">
           {children}
         </div>
       </main>

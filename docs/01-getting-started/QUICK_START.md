@@ -7,7 +7,7 @@
 
 ## 1️⃣ 사전 준비물 (Prerequisites)
 
-*   **Node.js**: `v22.x` (LTS) - [다운로드](https://nodejs.org/)
+*   **Node.js**: `v20.x` (LTS) - [다운로드](https://nodejs.org/)
 *   **pnpm**: `v9.x` - `npm install -g pnpm`
 *   **Git**: [다운로드](https://git-scm.com/)
 *   **Docker** (선택): 로컬 DB/Redis 실행 시 필요
@@ -18,7 +18,7 @@
 
 ### 1단계: 저장소 가져오기
 ```bash
-git clone https://github.com/hankaebom/ask-the-stars.git
+git clone https://github.com/hamkkebom/Ask-the-Stars.git
 cd ask-the-stars
 ```
 
@@ -48,7 +48,7 @@ pnpm dev
 브라우저를 열고 다음 주소로 접속하세요.
 
 *   **Frontend**: [http://localhost:3000](http://localhost:3000)
-    *   화면에 **"Hankaebom"** 로고가 보이면 성공!
+    *   화면에 **"함께봄"** 로고가 보이면 성공!
 *   **Backend API**: [http://localhost:4000/api/health](http://localhost:4000/api/health)
     *   `{"status":"ok"}` 응답이 오면 성공!
 

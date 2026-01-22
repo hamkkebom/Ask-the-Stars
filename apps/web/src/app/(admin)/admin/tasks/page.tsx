@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatDate, cn } from '@/lib/utils';
 import {
@@ -177,7 +177,7 @@ export default function TasksPage() {
 
           return (
             <Link key={task.id} href={task.href}>
-              <motion.div whileHover={{ x: 4 }}>
+              <m.div whileHover={{ x: 4 }}>
                 <GlassCard className="p-5 hover:bg-white/10 transition-all cursor-pointer group">
                   <div className="flex items-start gap-4">
                     {/* Icon */}
@@ -227,7 +227,7 @@ export default function TasksPage() {
                     <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-primary transition-colors shrink-0" />
                   </div>
                 </GlassCard>
-              </motion.div>
+              </m.div>
             </Link>
           );
         })}
@@ -235,3 +235,4 @@ export default function TasksPage() {
     </div>
   );
 }
+

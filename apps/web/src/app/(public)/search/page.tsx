@@ -216,21 +216,63 @@ function SearchContent() {
 
         {/* No Results */}
         {!isLoading && query && filteredResults.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500 text-lg">
+          <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="text-6xl mb-4">🤔</div>
+            <p className="text-gray-900 text-xl font-bold mb-2">
               &quot;{query}&quot;에 대한 검색 결과가 없습니다.
             </p>
-            <p className="text-gray-400 mt-1">다른 검색어를 시도해보세요.</p>
+            <p className="text-gray-500 mb-8">
+              단어의 철자가 정확한지 확인하거나, 다른 검색어로 시도해보세요.
+            </p>
+
+            <div className="max-w-md mx-auto">
+              <p className="text-sm text-gray-400 mb-3 uppercase tracking-wider font-semibold">추천 검색어</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {['신년운세', '타로', '재물운', '연애운', '김태희', '이수진'].map((keyword) => (
+                  <button
+                    key={keyword}
+                    onClick={() => {
+                      setQuery(keyword);
+                      handleSearch(keyword);
+                    }}
+                    className="px-4 py-2 bg-gray-50 text-gray-600 rounded-full hover:bg-purple-50 hover:text-purple-600 transition-colors text-sm font-medium"
+                  >
+                    #{keyword}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
         {/* Initial State */}
         {!isLoading && !query && (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-4xl mb-4">🔮</p>
-            <p className="text-gray-500 text-lg">
-              영상이나 상담사를 검색해보세요
+          <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="text-6xl mb-4">🔮</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              무엇을 찾고 계신가요?
+            </h2>
+            <p className="text-gray-500 mb-8">
+              원하는 상담 주제나 상담사 이름을 검색해보세요.
             </p>
+
+            <div className="max-w-md mx-auto">
+              <p className="text-sm text-gray-400 mb-3 uppercase tracking-wider font-semibold">인기 검색어</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                 {['신년운세', '타로', '재물운', '연애운', '궁합', '직장운'].map((keyword) => (
+                  <button
+                    key={keyword}
+                    onClick={() => {
+                      setQuery(keyword);
+                      handleSearch(keyword);
+                    }}
+                    className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full hover:bg-purple-100 transition-colors text-sm font-medium"
+                  >
+                    #{keyword}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

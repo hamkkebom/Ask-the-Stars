@@ -51,7 +51,33 @@
 
 ---
 
-## 3️⃣ 기타 문의
+## 3️⃣ 배포 및 인프라 오류
 
-해결되지 않는 문제는 GitHub [Issues](https://github.com/hankaebom/ask-the-stars/issues)에 제보해주세요.
+### Vercel 배포 후 404 에러 (Routes Manifest)
+*   **증상**: 빌드는 성공했으나 접속 시 Vercel 404 발생
+*   **원인**: 
+    1.  Root Directory 설정과 `vercel.json`의 `outputDirectory` 경로가 중복됨 (예: `apps/web/apps/web/.next`)
+    2.  Vercel 프로젝트 설정에 도메인이 연결되지 않음
+*   **해결**: 
+    1.  루트의 `vercel.json` 삭제 (UI 설정 사용 권장)
+    2.  **Root Directory**를 `apps/web`으로 설정할 경우, **Output Directory**는 `Default`로 두어야 함
+    3.  "Include files outside of the root directory..." 옵션 활성화
+
+### `ERR_IMPORT_ATTRIBUTE_MISSING` (Node v22)
+*   **증상**: GitHub Actions에서 `.eslintrc.json` 임포트 시 에러 발생
+*   **원인**: Node.js v22부터 ESM 모델에서 JSON 임포트 시 명시적인 `type: "json"` 속성이 필수임
+*   **해결**: 
+    1.  Node.js 버전을 우리 프로젝트 권장 버전인 **v20 (LTS)**으로 하향 조정
+    2.  또는 `.eslintrc.json`을 `.eslintrc.cjs`로 변환하여 모듈 형식으로 사용
+
+### Vercel 'Root Directory' 공백 에러
+*   **증상**: `Directory not found` 에러 발생
+*   **원인**: Vercel UI에서 Root Directory 입력 시 앞뒤에 공백(Space)이 포함된 경우
+*   **해결**: 입력 칸에서 모든 공백을 제거하고 `apps/web`만 입력
+
+---
+
+## 4️⃣ 기타 문의
+
+해결되지 않는 문제는 GitHub [Issues](https://github.com/hamkkebom/Ask-the-Stars/issues)에 제보해주세요.
 제보 전 **검색**을 통해 유사한 이슈가 있는지 먼저 확인 부탁드립니다.

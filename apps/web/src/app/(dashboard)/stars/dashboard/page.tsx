@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import {
   TrendingUp, Clock, MessageSquare, Wallet, Bell,
   CheckCircle2, AlertTriangle, Calendar, ArrowRight,
@@ -99,7 +99,7 @@ export default function StarsDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0 }}
@@ -112,9 +112,9 @@ export default function StarsDashboardPage() {
             <span className="text-sm font-medium text-gray-400">진행 중 프로젝트</span>
           </div>
           <div className="mt-4 text-4xl font-bold text-white">3</div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -127,9 +127,9 @@ export default function StarsDashboardPage() {
             <span className="text-sm font-medium text-gray-400">새 제작요청</span>
           </div>
           <div className="mt-4 text-4xl font-bold text-white">7</div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -142,9 +142,9 @@ export default function StarsDashboardPage() {
             <span className="text-sm font-medium text-gray-400">대기 중 피드백</span>
           </div>
           <div className="mt-4 text-4xl font-bold text-white">5</div>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -157,13 +157,13 @@ export default function StarsDashboardPage() {
             <span className="text-sm font-medium text-gray-400">이번 달 예상 수입</span>
           </div>
           <div className="mt-4 text-4xl font-bold text-white">₩850K</div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Two Column Layout: Notifications + Today's Tasks */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* 🔔 Notifications Widget */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
@@ -183,7 +183,7 @@ export default function StarsDashboardPage() {
           </div>
           <div className="divide-y divide-white/5">
             {notifications.map((notification, i) => (
-              <motion.div
+              <m.div
                 key={notification.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -213,13 +213,13 @@ export default function StarsDashboardPage() {
                   </div>
                   <span className="text-xs text-gray-600 whitespace-nowrap">{notification.time}</span>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
 
         {/* 📋 Today's Tasks Widget */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
@@ -239,7 +239,7 @@ export default function StarsDashboardPage() {
           </div>
           <div className="divide-y divide-white/5">
             {todayTasks.map((task, i) => (
-              <motion.div
+              <m.div
                 key={task.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -269,14 +269,14 @@ export default function StarsDashboardPage() {
                     <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
                   </div>
                 </Link>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* My Projects */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
@@ -312,7 +312,8 @@ export default function StarsDashboardPage() {
             </div>
           ))}
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
+

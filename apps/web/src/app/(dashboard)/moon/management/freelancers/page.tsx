@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { formatDate, formatCurrency } from '@/lib/utils';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Users, Mail } from 'lucide-react';
 
 interface Freelancer {
   id: string;
   name: string;
   email: string;
   status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  level: 'Novice' | 'Pro' | 'Expert';
   joinedAt: string;
   projectsCompleted: number;
   approvalRate: number;
@@ -22,6 +25,7 @@ const mockFreelancers: Freelancer[] = [
     name: '박건우',
     email: 'park@example.com',
     status: 'ACTIVE',
+    level: 'Expert',
     joinedAt: '2025-06-15',
     projectsCompleted: 45,
     approvalRate: 92,
@@ -33,6 +37,7 @@ const mockFreelancers: Freelancer[] = [
     name: '이지현',
     email: 'lee@example.com',
     status: 'ACTIVE',
+    level: 'Pro',
     joinedAt: '2025-08-20',
     projectsCompleted: 32,
     approvalRate: 88,
@@ -44,6 +49,7 @@ const mockFreelancers: Freelancer[] = [
     name: '최민수',
     email: 'choi@example.com',
     status: 'INACTIVE',
+    level: 'Novice',
     joinedAt: '2025-04-10',
     projectsCompleted: 28,
     approvalRate: 85,
@@ -60,12 +66,13 @@ const statusConfig = {
 
 export default function FreelancersPage() {
   const [freelancers] = useState<Freelancer[]>(mockFreelancers);
-  const [filter, setFilter] = useState({ status: 'all', sort: 'ranking' });
+  const [filter, setFilter] = useState({ status: 'all', level: 'all', sort: 'ranking' });
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredFreelancers = freelancers
     .filter((f) => {
       if (filter.status !== 'all' && f.status !== filter.status) return false;
+      if (filter.level !== 'all' && f.level !== filter.level) return false;
       if (searchQuery && !f.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     })
@@ -135,6 +142,16 @@ export default function FreelancersPage() {
               <option value="PENDING">대기</option>
             </select>
             <select
+              value={filter.level}
+              onChange={(e) => setFilter({ ...filter, level: e.target.value })}
+              className="border rounded-lg px-3 py-2 text-sm"
+            >
+              <option value="all">전체 등급</option>
+              <option value="Novice">Novice</option>
+              <option value="Pro">Pro</option>
+              <option value="Expert">Expert</option>
+            </select>
+            <select
               value={filter.sort}
               onChange={(e) => setFilter({ ...filter, sort: e.target.value })}
               className="border rounded-lg px-3 py-2 text-sm"
@@ -153,6 +170,7 @@ export default function FreelancersPage() {
               <tr>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">순위</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">이름</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">등급</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">상태</th>
                 <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">완료</th>
                 <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">승인율</th>
@@ -176,6 +194,11 @@ export default function FreelancersPage() {
                       <p className="font-medium">{freelancer.name}</p>
                       <p className="text-sm text-gray-500">{freelancer.email}</p>
                     </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700">
+                      {freelancer.level}
+                    </span>
                   </td>
                   <td className="px-4 py-4">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${statusConfig[freelancer.status].color}`}>
@@ -210,9 +233,19 @@ export default function FreelancersPage() {
           </table>
 
           {filteredFreelancers.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              조건에 맞는 프리랜서가 없습니다.
-            </div>
+            <EmptyState
+              icon={Users}
+              title="조건에 맞는 프리랜서가 없습니다"
+              description="필터를 변경하거나 다른 검색 조건을 시도해보세요."
+              action={{
+                label: "필터 초기화",
+                onClick: () => {
+                  setFilter({ status: 'all', level: 'all', sort: 'ranking' });
+                  setSearchQuery('');
+                }
+              }}
+              className="py-12"
+            />
           )}
         </div>
       </div>

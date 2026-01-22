@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Coffee, Heart, Palette, Clock, Gift, Laptop, Users, Sparkles, MessageSquare, Zap, Sprout, ArrowRight, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -12,7 +12,7 @@ const cultureValues = [
     title: "수평적 소통",
     subtitle: "Flat Communication",
     description: "직급이 아닌 아이디어로 소통합니다. 모든 구성원이 자유롭게 의견을 나누고 토론하는 문화입니다.",
-    color: "from-blue-500 to-indigo-600"
+    color: "from-blue-600 to-indigo-700"
   },
   {
     icon: Zap,
@@ -81,14 +81,14 @@ export default function CulturePage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="py-20 px-6 md:px-20 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+      <section className="py-20 px-6 md:px-20 bg-slate-900 border-b border-white/5 text-white">
         <div className="max-w-[1000px] mx-auto text-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-sm font-bold tracking-widest text-[#FF3366] uppercase">
+            <span className="text-sm font-bold tracking-widest text-primary uppercase">
               Our Culture
             </span>
             <h1 className="text-4xl md:text-6xl font-bold mt-4 mb-6">
@@ -97,30 +97,30 @@ export default function CulturePage() {
             <p className="text-xl text-white/70">
               함께 성장하고, 함께 혁신합니다
             </p>
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* Culture Values - 3 Column with Icons */}
-      <section className="py-24 px-6 md:px-20 bg-white">
+      <section className="py-24 px-6 md:px-20 bg-background border-t border-white/5">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-sm font-bold tracking-widest text-[#FF3366] uppercase">
+            <span className="text-sm font-bold tracking-widest text-primary uppercase">
               Core Culture
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4">
+            <h2 className="text-4xl md:text-5xl font-bold mt-4 text-white">
               우리가 일하는 방식
             </h2>
-          </motion.div>
+          </m.div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {cultureValues.map((value, idx) => (
-              <motion.div
+              <m.div
                 key={value.title}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -134,44 +134,44 @@ export default function CulturePage() {
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-16 -translate-x-16" />
 
                 <div className="relative z-10">
-                  <motion.div
+                  <m.div
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 0.6 }}
                     className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6"
                   >
                     <value.icon className="w-8 h-8 text-white" />
-                  </motion.div>
+                  </m.div>
                   <h3 className="text-2xl font-bold mb-2">{value.title}</h3>
                   <p className="text-sm text-white/60 mb-4">{value.subtitle}</p>
                   <p className="text-white/90 leading-relaxed">{value.description}</p>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Benefits Grid - Flip Cards */}
-      <section className="py-24 px-6 md:px-20 bg-gray-50">
+      <section className="py-24 px-6 md:px-20 bg-background/50 border-t border-white/5">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-sm font-bold tracking-widest text-[#FF3366] uppercase">
+            <span className="text-sm font-bold tracking-widest text-primary uppercase">
               Benefits
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4">
+            <h2 className="text-4xl md:text-5xl font-bold mt-4 text-white">
               복리후생
             </h2>
-            <p className="text-gray-500 mt-4">카드를 호버하면 상세 내용을 확인할 수 있습니다</p>
-          </motion.div>
+            <p className="text-slate-400 mt-4">카드를 호버하면 상세 내용을 확인할 수 있습니다</p>
+          </m.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((benefit, idx) => (
-              <motion.div
+              <m.div
                 key={benefit.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -181,7 +181,7 @@ export default function CulturePage() {
                 onHoverEnd={() => setHoveredBenefit(null)}
                 className="relative h-[200px] perspective-1000"
               >
-                <motion.div
+                <m.div
                   animate={{
                     rotateY: hoveredBenefit === benefit.title ? 180 : 0
                   }}
@@ -191,53 +191,53 @@ export default function CulturePage() {
                 >
                   {/* Front */}
                   <div
-                    className="absolute inset-0 bg-white rounded-2xl p-8 shadow-lg flex flex-col items-center justify-center text-center backface-hidden"
+                    className="absolute inset-0 bg-slate-900 border border-white/5 rounded-2xl p-8 shadow-lg flex flex-col items-center justify-center text-center backface-hidden"
                     style={{ backfaceVisibility: 'hidden' }}
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-[#FF3366]/10 flex items-center justify-center mb-4">
-                      <benefit.icon className="w-7 h-7 text-[#FF3366]" />
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                      <benefit.icon className="w-7 h-7 text-primary" />
                     </div>
-                    <h3 className="text-xl font-bold mb-1">{benefit.title}</h3>
-                    <p className="text-gray-500">{benefit.shortDesc}</p>
+                    <h3 className="text-xl font-bold mb-1 text-white">{benefit.title}</h3>
+                    <p className="text-slate-400">{benefit.shortDesc}</p>
                   </div>
 
                   {/* Back */}
                   <div
-                    className="absolute inset-0 bg-gradient-to-br from-[#FF3366] to-pink-500 rounded-2xl p-8 flex flex-col justify-center text-white"
+                    className="absolute inset-0 bg-primary rounded-2xl p-8 flex flex-col justify-center text-primary-foreground"
                     style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                   >
                     <h3 className="text-xl font-bold mb-3">{benefit.title}</h3>
-                    <p className="text-white/90 text-sm leading-relaxed">{benefit.fullDesc}</p>
+                    <p className="text-primary-foreground/90 text-sm leading-relaxed font-medium">{benefit.fullDesc}</p>
                   </div>
-                </motion.div>
-              </motion.div>
+                </m.div>
+              </m.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Office Gallery */}
-      <section className="py-24 px-6 md:px-20 bg-white">
+      <section className="py-24 px-6 md:px-20 bg-background border-t border-white/5">
         <div className="max-w-[1400px] mx-auto">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-sm font-bold tracking-widest text-[#FF3366] uppercase">
+            <span className="text-sm font-bold tracking-widest text-primary uppercase">
               Office Life
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4">
+            <h2 className="text-4xl md:text-5xl font-bold mt-4 text-white">
               오피스 라이프
             </h2>
-          </motion.div>
+          </m.div>
 
           {/* Gallery with Navigation */}
           <div className="relative">
             <div className="grid md:grid-cols-2 gap-8">
               {galleryImages.map((image, idx) => (
-                <motion.div
+                <m.div
                   key={idx}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -259,7 +259,7 @@ export default function CulturePage() {
                       <p className="text-white/80">{image.desc}</p>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           </div>
@@ -267,40 +267,38 @@ export default function CulturePage() {
       </section>
 
       {/* Join Us CTA */}
-      <section className="relative py-24 px-6 md:px-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FF3366] to-[#FF6B9D]" />
-
+      <section className="relative py-24 px-6 md:px-20 overflow-hidden bg-primary text-primary-foreground font-bold">
         {/* Animated Background */}
-        <motion.div
+        <m.div
           animate={{
             x: [0, 100, 0],
             y: [0, -50, 0],
           }}
           transition={{ duration: 20, repeat: Infinity }}
-          className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+          className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl opacity-20"
         />
-        <motion.div
+        <m.div
           animate={{
             x: [0, -100, 0],
             y: [0, 50, 0],
           }}
           transition={{ duration: 25, repeat: Infinity }}
-          className="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+          className="absolute bottom-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl opacity-20"
         />
 
         <div className="relative z-10 max-w-[800px] mx-auto text-center text-white">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <motion.div
+            <m.div
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="inline-block"
             >
               <Heart className="w-16 h-16 mx-auto mb-6" />
-            </motion.div>
+            </m.div>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               함께할 동료를 찾습니다
             </h2>
@@ -311,7 +309,7 @@ export default function CulturePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="mailto:careers@hamkkebom.com"
-                className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-[#FF3366] font-bold rounded-full hover:bg-gray-100 transition-colors text-lg"
+                className="inline-flex items-center justify-center gap-2 px-10 py-5 bg-white text-primary font-black rounded-full hover:bg-slate-100 transition-colors text-lg"
               >
                 <FileText className="w-5 h-5" />
                 채용 공고 보기
@@ -324,7 +322,7 @@ export default function CulturePage() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </>

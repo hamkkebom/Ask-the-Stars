@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatDate, formatCurrency, cn } from '@/lib/utils';
 import {
@@ -140,8 +140,8 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
           2026년 1월
         </h2>
         <div className="flex gap-2">
-          <button className="p-1 hover:bg-white/10 rounded-full transition-colors"><ChevronLeft className="w-5 h-5 text-gray-400" /></button>
-          <button className="p-1 hover:bg-white/10 rounded-full transition-colors"><ChevronRightIcon className="w-5 h-5 text-gray-400" /></button>
+          <button className="p-1 hover:bg-white/10 rounded-full transition-colors" aria-label="이전 달"><ChevronLeft className="w-5 h-5 text-gray-400" /></button>
+          <button className="p-1 hover:bg-white/10 rounded-full transition-colors" aria-label="다음 달"><ChevronRightIcon className="w-5 h-5 text-gray-400" /></button>
         </div>
       </div>
 
@@ -305,7 +305,7 @@ function MyProjectsContent() {
                 const daysLeft = getDaysLeft(project.deadline);
 
                 return (
-                  <motion.div
+                  <m.div
                     key={project.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -373,7 +373,7 @@ function MyProjectsContent() {
                         </div>
                       </GlassCard>
                     </Link>
-                  </motion.div>
+                  </m.div>
                 );
               })
             )}
@@ -391,3 +391,4 @@ export default function MyProjectsPage() {
     </Suspense>
   );
 }
+

@@ -1,31 +1,31 @@
 # 🏗️ C4 모델 다이어그램 (C4 Diagrams)
 
-> **문서 버전**: 2026-01-19
+> **문서 버전**: 2026-01-21
 > **기반**: `docs/02-architecture/OVERVIEW.md`
 
-이 문서는 한깨봄 시스템의 구조를 **C4 모델(Context, Container, Component, Code)** 수준에 맞춰 시각화합니다.
+이 문서는 함께봄 시스템의 구조를 **C4 모델(Context, Container, Component, Code)** 수준에 맞춰 시각화합니다.
 
 ---
 
 ## 1️⃣ Level 1: System Context Diagram (시스템 컨텍스트)
 
-한깨봄 시스템이 외부 세계(사용자, 외부 서비스)와 어떻게 상호작용하는지 보여줍니다.
+함께봄 시스템이 외부 세계(사용자, 외부 서비스)와 어떻게 상호작용하는지 보여줍니다.
 
 ```mermaid
 graph TD
-    User([모든 사용자\n방문자/프리랜서/수강생]) --- Hankaebom[<b>한깨봄 플랫폼</b>\nNext.js + NestJS]
-    Admin([관리자\n운영팀]) --- Hankaebom
+    User([모든 사용자\n방문자/프리랜서/수강생]) --- Hamkkebom[<b>함께봄 플랫폼</b>\nNext.js + NestJS]
+    Admin([관리자\n운영팀]) --- Hamkkebom
     
-    Hankaebom --- Email[Resend\n이메일 발송]
-    Hankaebom --- Storage[Cloudflare\n영상 스토리지/전송]
-    Hankaebom --- Auth[Supabase Auth\n인증]
+    Hamkkebom --- Email[Resend\n이메일 발송]
+    Hamkkebom --- Storage[Cloudflare\n영상 스토리지/전송]
+    Hamkkebom --- Auth[Supabase Auth\n인증]
 ```
 
 ---
 
 ## 2️⃣ Level 2: Container Diagram (컨테이너)
 
-한깨봄 프로젝트의 물리적 구성 요소(애플리케이션, 데이터베이스)와 기술 스택을 보여줍니다.
+함께봄 프로젝트의 물리적 구성 요소(애플리케이션, 데이터베이스)와 기술 스택을 보여줍니다.
 
 ```mermaid
 graph TB
@@ -39,7 +39,7 @@ graph TB
 
     subgraph Database [Data Layer]
         PSQL[(<b>PostgreSQL</b>\nSupabase Hosting)]
-        Redis[(<b>Redis Cache</b>\nUpstash)]
+        Redis[(<b>Redis Adapter & Cache</b>\nUpstash)]
     end
 
     subgraph External [External Services]
@@ -50,7 +50,7 @@ graph TB
     User([User]) --> Web
     Web -->|JSON/HTTPS| API
     API -->|Prisma ORM| PSQL
-    API -->|Key-Value| Redis
+    API -->|Adapter & Cache| Redis
     API -->|SMTP| Email
     API -->|S3/HLS| R2
 ```

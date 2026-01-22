@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 export const PageTransition = ({ children }: { children: React.ReactNode }) => {
@@ -8,7 +8,7 @@ export const PageTransition = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      <m.div
         key={pathname}
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -17,7 +17,7 @@ export const PageTransition = ({ children }: { children: React.ReactNode }) => {
         className="w-full h-full"
       >
         {children}
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 };

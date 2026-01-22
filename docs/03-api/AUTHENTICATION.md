@@ -1,9 +1,9 @@
-# 🔐 인증 가이드 (Authentication Guide)
+# 🔐 인증 (Authentication) 및 보안 정책 (함께봄)
 
 > **문서 버전**: 2026-01-19
 > **기반**: `docs/06-security/SECURITY_POLICY.md`
 
-이 문서는 한깨봄 API의 인증 및 인가 메커니즘을 상세히 설명합니다.
+이 문서는 함께봄 API의 인증 및 인가 메커니즘을 상세히 설명합니다.
 
 ---
 

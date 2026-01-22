@@ -81,6 +81,7 @@ export default function StarSignupPage() {
               <label className="text-sm font-medium">이름</label>
               <input
                 type="text"
+                autoComplete="name"
                 placeholder="홍길동"
                 className={`${inputClass} ${errors.name ? 'border-red-500' : ''}`}
                 {...register('name')}
@@ -92,6 +93,8 @@ export default function StarSignupPage() {
               <label className="text-sm font-medium">이메일</label>
               <input
                 type="email"
+                autoComplete="email"
+                inputMode="email"
                 placeholder="name@example.com"
                 className={`${inputClass} ${errors.email ? 'border-red-500' : ''}`}
                 {...register('email')}
@@ -103,6 +106,8 @@ export default function StarSignupPage() {
               <label className="text-sm font-medium">전화번호</label>
               <input
                 type="text"
+                autoComplete="tel"
+                inputMode="tel"
                 placeholder="010-0000-0000"
                 className={`${inputClass} ${errors.phone ? 'border-red-500' : ''}`}
                 {...register('phone')}
@@ -114,6 +119,7 @@ export default function StarSignupPage() {
               <label className="text-sm font-medium">비밀번호</label>
               <input
                 type="password"
+                autoComplete="new-password"
                 className={`${inputClass} ${errors.password ? 'border-red-500' : ''}`}
                 {...register('password')}
               />
@@ -144,6 +150,7 @@ export default function StarSignupPage() {
                  <label className="text-sm font-medium">경력 (년)</label>
                  <input
                   type="number"
+                  inputMode="numeric"
                   min="0"
                   className={`${inputClass} ${errors.careerYears ? 'border-red-500' : ''}`}
                   {...register('careerYears', { valueAsNumber: true })}
@@ -155,6 +162,8 @@ export default function StarSignupPage() {
                  <label className="text-sm font-medium">포트폴리오 URL (선택)</label>
                  <input
                   type="url"
+                  inputMode="url"
+                  autoComplete="url"
                   placeholder="https://..."
                   className={`${inputClass} ${errors.portfolioUrl ? 'border-red-500' : ''}`}
                   {...register('portfolioUrl')}

@@ -1,9 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Search, Download, FileText, FileCode, Link as LinkIcon, File } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
+import { EmptyState } from '@/components/common/EmptyState';
 import { mockResourceCategories, mockResources, ResourceItem } from '@/data/mocks/resources';
 import { cn } from '@/lib/utils';
 
@@ -71,7 +72,7 @@ export default function ResourcesPage() {
       {/* List */}
       <div className="grid gap-4">
         {filteredResources.map((item, index) => (
-          <motion.div
+          <m.div
             key={item.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -121,15 +122,24 @@ export default function ResourcesPage() {
                  </button>
                </div>
             </GlassCard>
-          </motion.div>
+          </m.div>
         ))}
 
         {filteredResources.length === 0 && (
-          <div className="text-center py-20 text-gray-500">
-            검색 결과가 없습니다.
-          </div>
+          <EmptyState
+            title="검색 결과가 없습니다"
+            description={`"${searchQuery}"에 대한 자료를 찾을 수 없습니다.`}
+            action={{
+              label: "전체 보기",
+              onClick: () => {
+                setSearchQuery('');
+                setSelectedCategory('all');
+              }
+            }}
+          />
         )}
       </div>
     </div>
   );
 }
+

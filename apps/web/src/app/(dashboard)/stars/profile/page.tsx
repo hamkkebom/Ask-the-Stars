@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Mail, MapPin, Globe, Github, Camera, Briefcase, GraduationCap, PenTool } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
 import { mockUserProfile } from '@/data/mocks/profile';
@@ -14,7 +14,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8 p-6">
       {/* Header Section */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative"
@@ -67,7 +67,7 @@ export default function ProfilePage() {
              </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -162,3 +162,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+

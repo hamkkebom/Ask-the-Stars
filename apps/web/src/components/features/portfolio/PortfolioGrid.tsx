@@ -1,14 +1,26 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { PortfolioItem, mockPortfolioItems, portfolioCategories } from '@/data/mocks/portfolio';
 import { PortfolioCard } from './PortfolioCard';
-import { PortfolioEditorModal } from './PortfolioEditorModal';
-import { PortfolioDetailModal } from './PortfolioDetailModal';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus } from 'lucide-react';
-import { GlassCard } from '@/components/ui/glass-card';
+import { EmptyState } from '@/components/common/EmptyState';
+
+// Dynamically import heavy modals
+const PortfolioEditorModal = dynamic(() =>
+  import('./PortfolioEditorModal').then(mod => mod.PortfolioEditorModal), {
+  ssr: false,
+  loading: () => null
+});
+
+const PortfolioDetailModal = dynamic(() =>
+  import('./PortfolioDetailModal').then(mod => mod.PortfolioDetailModal), {
+  ssr: false,
+  loading: () => null
+});
 
 export function PortfolioGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -104,15 +116,29 @@ export function PortfolioGrid() {
             {filteredItems.map(item => (
               <PortfolioCard
                 key={item.id}
-                item={item}
-                onClick={handleItemClick}
+                id={item.id}
+                title={item.title}
+                description={item.description}
+                thumbnailUrl={item.thumbnailUrl}
+                category={item.category}
+                tags={item.tags}
+                stats={item.stats}
+                onClick={() => handleItemClick(item)}
               />
             ))}
           </AnimatePresence>
         </motion.div>
       ) : (
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-12 text-center text-gray-400">
-          <p>검색 결과가 없습니다.</p>
+        <div className="col-span-full">
+           <EmptyState
+             title="검색 결과가 없습니다"
+             description={`"${searchQuery}"에 대한 프로젝트를 찾을 수 없습니다.`}
+             icon={Search}
+             action={{
+               label: "초기화",
+               onClick: () => setSearchQuery('')
+             }}
+           />
         </div>
       )}
 

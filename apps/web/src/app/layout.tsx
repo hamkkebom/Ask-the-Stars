@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Providers from './providers';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ask-the-stars.vercel.app'),
@@ -94,6 +95,7 @@ export default function RootLayout({
             {children}
           <Toaster />
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   );

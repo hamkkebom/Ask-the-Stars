@@ -30,9 +30,11 @@ RUN pnpm --filter @ask-the-stars/api build
 ENV NODE_ENV=production
 ENV PORT=8080
 
+WORKDIR /app/apps/api
+
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
 
-CMD ["node", "apps/api/dist/main.js"]
+CMD ["node", "dist/apps/api/src/main.js"]

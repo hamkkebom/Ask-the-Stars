@@ -3,6 +3,11 @@ import 'reflect-metadata';
 import { initializeSentry } from './common/sentry';
 initializeSentry();
 
+// BigInt serialization fix for NestJS/Express
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';

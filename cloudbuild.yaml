@@ -1,0 +1,38 @@
+steps:
+  # 1. Image 빌드 (Dockerfile 경로 명시)
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t',
+        'gcr.io/$PROJECT_ID/api',
+        '-f',
+        'apps/api/Dockerfile',
+        '.',
+      ]
+
+  # 2. Image 푸시
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/api']
+
+  # 3. Cloud Run 배포
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'api'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/api'
+      - '--region'
+      - 'asia-northeast3'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/api'
+
+timeout: '1200s'
+options:
+  logging: CLOUD_LOGGING_ONLY

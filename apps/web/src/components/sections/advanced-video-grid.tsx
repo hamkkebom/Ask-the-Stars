@@ -5,44 +5,47 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, Clock, Sparkles, Globe, Grid, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CompactVideoCard, VideoProps } from '@/components/ui/compact-video-card';
-import { FILTERS, GENERATE_MOCK_VIDEOS } from '@/data/mocks/advanced-video-grid';
+import { FILTERS } from '@/data/mocks/advanced-video-grid';
 import { FilterButton, FilterPill } from './advanced-video-grid-components';
+import { useQuery } from '@tanstack/react-query';
+import { videosApi } from '@/lib/api/videos';
 
 type CounselorType = 'ALL' | 'TAROT' | 'MECHANICS' | 'SHAMANISM';
-
-const INITIAL_BATCH = GENERATE_MOCK_VIDEOS(30);
 
 export function AdvancedVideoGrid() {
   const [activeTray, setActiveTray] = useState<string | null>(null);
 
   // Active Filters State
   const [selectedCategory, setSelectedCategory] = useState("전체");
-  const [selectedCounselor, setSelectedCounselor] = useState("전체보기"); // Default to View All
-  const [selectedCreator, setSelectedCreator] = useState("전체보기"); // Default to View All
+  const [selectedCounselor, setSelectedCounselor] = useState("전체보기");
+  const [selectedCreator, setSelectedCreator] = useState("전체보기");
   const [selectedSort, setSelectedSort] = useState("최신순");
   const [selectedTime, setSelectedTime] = useState("전체");
 
-  // Counselor Sub-filter State
   const [counselorType, setCounselorType] = useState<CounselorType>('ALL');
-
   // Custom Date Range State
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const [videos, setVideos] = useState<VideoProps[]>(INITIAL_BATCH);
-  const [isLoading, setIsLoading] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  // Search Search for Trays
   const [traySearch, setTraySearch] = useState("");
 
-  const handleLoadMore = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-        setVideos(prev => [...prev, ...GENERATE_MOCK_VIDEOS(30)]);
-        setIsLoading(false);
-    }, 1000);
-  };
+  const { data: rawVideos, isLoading } = useQuery({
+    queryKey: ['final-videos'],
+    queryFn: videosApi.listAllFinalVideos,
+  });
+
+  const videos: VideoProps[] = (rawVideos || []).map((v: any) => ({
+    id: v.id,
+    title: v.project?.title || v.versionLabel,
+    thumbnailUrl: v.technicalSpec?.thumbnailUrl || "/placeholder.jpg",
+    description: v.feedback,
+    category: v.project?.category?.name || "기타",
+    tags: [v.project?.counselor?.name || "일반"],
+    counselor: { name: v.project?.counselor?.name || "상담사" },
+    creator: { name: v.maker?.name || "제작자" },
+    createdAt: new Date(v.createdAt).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '/').replace('.', ''),
+  }));
 
   const toggleTray = (trayName: string) => {
     if (activeTray === trayName) {
@@ -367,18 +370,16 @@ export function AdvancedVideoGrid() {
             </AnimatePresence>
         </motion.div>
 
-        {/* Load More Trigger */}
+        {/* Load More Trigger (Disabled - All videos loaded) */}
         <div className="w-full flex justify-center py-20">
             <button
-                onClick={handleLoadMore}
-                disabled={isLoading}
-                className="group relative px-8 py-3 bg-neutral-900 border border-white/10 rounded-full text-sm font-medium text-gray-400 hover:text-white hover:border-white/30 transition-all overflow-hidden"
+                disabled={true}
+                className="group relative px-8 py-3 bg-neutral-900 border border-white/10 rounded-full text-sm font-medium text-gray-500 cursor-not-allowed transition-all overflow-hidden"
             >
                 <span className="relative z-10 flex items-center gap-2">
-                    {isLoading ? "Loading..." : "Load More Videos"}
-                    {!isLoading && <ChevronDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />}
+                    {isLoading ? "Loading..." : "All Videos Loaded"}
+                    {!isLoading && <ChevronDown className="w-4 h-4" />}
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             </button>
         </div>
 

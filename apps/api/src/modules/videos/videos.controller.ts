@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { VideosService } from './videos.service';
 
 @Controller('videos')
@@ -28,5 +28,10 @@ export class VideosController {
   @Get('database/keys')
   async getAllVideoKeys(): Promise<string[]> {
       return this.videosService.getAllRegisteredKeys();
+  }
+
+  @Post('sync')
+  async syncVideos(): Promise<any> {
+    return this.videosService.syncWithStorage();
   }
 }

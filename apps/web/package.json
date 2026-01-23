@@ -14,7 +14,7 @@
     "@ask-the-stars/types": "workspace:*",
     "@ask-the-stars/ui": "workspace:*",
     "@ask-the-stars/utils": "workspace:*",
-    "@hookform/resolvers": "^5.2.2",
+    "@hookform/resolvers": "3.9.1",
     "@sentry/nextjs": "^9.4.0",
     "@supabase/supabase-js": "^2.47.10",
     "@tanstack/react-query": "^5.62.7",

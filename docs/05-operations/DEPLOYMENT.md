@@ -1,6 +1,6 @@
 # 🚀 배포 가이드
 
-> **최종 수정일**: 2026-01-21
+> **최종 수정일**: 2026-01-23
 
 ---
 
@@ -63,9 +63,9 @@
 ### CLI 도구 설치
 
 ```bash
-# Node.js 20 (nvm 사용)
-nvm install 20
-nvm use 20
+# Node.js 22 (Fat Image 전략 호환)
+nvm install 22
+nvm use 22
 
 # pnpm
 npm install -g pnpm
@@ -131,6 +131,12 @@ vercel
 
 ### 2. 백엔드 배포 (Cloud Run)
 
+**빌드 전략 (Build Strategy):**
+현재 pnpm 모노레포 구조와 네이티브 모듈(Canvas, Prisma 등)의 호환성을 위해 **Single-Stage Build (Fat Image)** 전략을 사용합니다.
+- Base Image: `node:22` (Full)
+- 설치 방식: `pnpm install` (스크립트 포함, API 필터링)
+- 배포: `cloudbuild.yaml` 또는 `gcloud builds submit`
+
 자동 배포 (GitHub Actions):
 
 ```yaml
@@ -138,27 +144,21 @@ vercel
 # main 브랜치에 apps/api/** 변경 시 자동 배포
 ```
 
-수동 배포:
+수동 배포 (Recommended):
 
 ```bash
 cd apps/api
 
-# Docker 이미지 빌드
-docker build -t asia-northeast3-docker.pkg.dev/[PROJECT_ID]/ask-the-stars/api:latest -f Dockerfile ../..
+# Cloud Build를 통한 원격 빌드 및 배포
+# (로컬 Docker 데몬 없이도 빠르고 안정적으로 배포 가능)
+gcloud builds submit --config=../../cloudbuild.yaml ../..
 
-# 이미지 푸시
-docker push asia-northeast3-docker.pkg.dev/[PROJECT_ID]/ask-the-stars/api:latest
-
-# Cloud Run 배포
-gcloud run deploy ask-the-stars-api \
-  --image asia-northeast3-docker.pkg.dev/[PROJECT_ID]/ask-the-stars/api:latest \
-  --region asia-northeast3 \
-  --platform managed \
-  --allow-unauthenticated
+# 또는 수동 명령 (Dockerfile 경로 확인 필요)
+# gcloud builds submit --tag gcr.io/[PROJECT_ID]/api .
+```
 
 > [!IMPORTANT]
 > **Socket.io 확장(Scaling)**: 여러 인스턴스 환경에서 실시간 통신을 위해 `REDIS_URL` 환경 변수가 올바르게 설정되어 있는지 반드시 확인하십시오.
-```
 
 ### 3. 데이터베이스 마이그레이션
 

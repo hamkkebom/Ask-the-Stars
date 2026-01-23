@@ -11,6 +11,7 @@ export { settlementsApi } from './settlements';
 export { submissionsApi } from './submissions';
 export { uploadsApi } from './uploads';
 export { usersApi } from './users';
+export { videosApi } from './videos';
 
 // Re-export types
 export type { Feedback, CreateFeedbackDto } from './feedback';

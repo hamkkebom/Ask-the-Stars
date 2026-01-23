@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import axios from 'axios';
 import FormData from 'form-data';
 
@@ -94,5 +94,32 @@ export class UploadsService {
     // 유료 콘텐츠를 위한 서명된 URL 생성 로직 (현재는 기본 시청 URL 반환)
     // 실제 구현 시 Cloudflare Signing Key를 사용하여 JWT 토큰을 발행해야 함
     return `https://customer-${this.cloudflareAccountId}.cloudflarestream.com/${streamId}/manifest/video.m3u8`;
+  }
+
+  async listFiles(prefix?: string): Promise<any[]> {
+    try {
+      const command = new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: prefix,
+      });
+
+      const response = await this.s3Client.send(command);
+
+      const publicUrl = this.configService.get<string>('CLOUDFLARE_PUBLIC_Url');
+      const r2Url = `https://${this.bucketName}.r2.cloudflarestorage.com`;
+      const baseUrl = publicUrl || r2Url;
+
+      return (response.Contents || []).map((file) => ({
+        key: file.Key,
+        size: file.Size,
+        lastModified: file.LastModified,
+        url: `${baseUrl}/${file.Key}`,
+        // Attempt to guess folder structure
+        folder: file.Key?.split('/')[0] || 'root',
+      }));
+    } catch (error) {
+      console.error('List Files Error:', error);
+      throw new InternalServerErrorException('파일 목록을 불러오는데 실패했습니다.');
+    }
   }
 }

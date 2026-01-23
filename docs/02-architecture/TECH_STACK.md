@@ -2,7 +2,7 @@
 
 > **최종 확정**: 2026-01-19
 > **예산**: 월 $30 (현재 Free Tier 적용 중)
-> **적용 현황 업데이트**: 2026-01-21
+> **적용 현황 업데이트**: 2026-01-23
 
 ---
 
@@ -44,7 +44,7 @@
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | [NestJS](https://nestjs.com/) | 11.1.12 | Node.js 프레임워크 |
-| [Node.js](https://nodejs.org/) | 20.x (LTS) | 런타임 |
+| [Node.js](https://nodejs.org/) | 22.x (Current) | 런타임 (Fat Image Build) |
 | [Prisma](https://www.prisma.io/) | 6.1.0 | ORM |
 | [PostgreSQL](https://www.postgresql.org/) | 17 | 데이터베이스 |
 | [Redis](https://redis.io/) | - | Socket.io Adapter (Horizontal Scaling) |

@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, UploadedFile, UseGuards, ParseFilePipe, MaxFileSizeValidator } from '@nestjs/common';
+import { Controller, Post, Get, UseInterceptors, UploadedFile, UseGuards, ParseFilePipe, MaxFileSizeValidator, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadsService } from './uploads.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -29,6 +29,16 @@ export class UploadsController {
     return {
       success: true,
       ...result,
+    };
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async listFiles(@Query('prefix') prefix?: string) {
+    const files = await this.uploadsService.listFiles(prefix);
+    return {
+      success: true,
+      files,
     };
   }
 }

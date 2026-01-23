@@ -57,7 +57,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-import { PageTransition } from '@/components/layout/page-transition';
+
 import { Toaster } from '@/components/ui/toast';
 
 export default function RootLayout({
@@ -91,9 +91,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-background font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground" suppressHydrationWarning>
         <Providers>
-            <PageTransition>
-              {children}
-            </PageTransition>
+            {children}
           <Toaster />
         </Providers>
       </body>

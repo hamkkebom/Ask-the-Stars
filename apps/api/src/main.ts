@@ -41,10 +41,19 @@ async function bootstrap() {
       : ['http://localhost:3000'];
 
     app.enableCors({
-      origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+      origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        if (!origin) return callback(null, true);
+
+        const isAllowed = allowedOrigins.some(allowed => {
+          if (allowed === '*') return true;
+          // Exact match or subdomain match if needed
+          return allowed === origin;
+        });
+
+        if (isAllowed) {
           callback(null, true);
         } else {
+          console.warn(`[CORS] Rejected origin: ${origin}`);
           callback(new Error('Not allowed by CORS'));
         }
       },

@@ -10,12 +10,12 @@
 
 | 분류 | 핵심 기술 | 버전 | 적용 |
 |------|----------|------|:----:|
-| 🎨 Frontend | Next.js + React | 15.1.3 / 19.0.0 | ✅ |
-| 🔧 Backend | NestJS + Prisma | 11.0.1 / 6.1.0 | ✅ |
-| 🎬 Video | Plyr + HLS.js | 3.7.8 / 1.5.15 | ✅ |
-| 📊 Monitoring | Sentry + BetterStack | 무료 | ✅ |
+| 🎨 Frontend | Next.js + React | 15.5.9 / 19.0.0 | ✅ |
+| 🔧 Backend | NestJS + Prisma | 11.1.12 / 6.3.1 | ✅ |
+| 🎬 Video | Plyr + HLS.js | 3.8.4 / 1.6.15 | ✅ |
+| 📊 Monitoring | Sentry | 무료 | ✅ |
 | ☁️ Hosting | Vercel + Cloud Run | 서울 | ✅ |
-| 🛡️ Type | Zod (v3.24.1 통일) | - | ✅ |
+| 🛡️ Type | Zod (v3.24.1 표준화) | - | ✅ |
 
 ---
 
@@ -45,7 +45,7 @@
 |------|------|------|
 | [NestJS](https://nestjs.com/) | 11.1.12 | Node.js 프레임워크 |
 | [Node.js](https://nodejs.org/) | 22.x (Current) | 런타임 (Fat Image Build) |
-| [Prisma](https://www.prisma.io/) | 6.1.0 | ORM |
+| [Prisma](https://www.prisma.io/) | 6.3.1 | ORM |
 | [PostgreSQL](https://www.postgresql.org/) | 17 | 데이터베이스 |
 | [Redis](https://redis.io/) | - | Socket.io Adapter (Horizontal Scaling) |
 | [BullMQ](https://docs.bullmq.io/) | 5.66.5 | 작업 큐 |
@@ -118,8 +118,7 @@ graph TD
     CDN -->|Next.js App| Vercel[Vercel Frontend\n(Seoul PoP)]
     CDN -->|Images/Videos| R2[Cloudflare R2 & Stream]
     
-    Vercel -->|API Calls| Firebase[Firebase Hosting Proxy\n(Global CDN)]
-    Firebase -->|Proxy Request| CloudRun[Google Cloud Run\n(Backend API)]
+    Vercel -->|API Calls| CloudRun[Google Cloud Run\n(Backend API)]
     
     subgraph Data Layer
         CloudRun -->|ORM| DB[(Supabase PostgreSQL)]
@@ -129,6 +128,7 @@ graph TD
     subgraph Services
         CloudRun -->|Auth| Passport[Passport.js]
         CloudRun -->|Email| Resend[Resend API]
+        CloudRun -->|Video| Uploads[UploadsService\n(R2/Stream)]
     end
 ```
 

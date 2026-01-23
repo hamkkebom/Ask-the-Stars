@@ -107,7 +107,7 @@ SENTRY_DSN=xxx
 - **Root Directory**: `apps/web`
 - **Output Directory**: `Default` (`.next`) - **절대 수정 금지**
 - **Build Command**: `cd ../.. && pnpm --filter @ask-the-stars/database db:generate && pnpm --filter @ask-the-stars/web build`
-- **Install Command**: `cd ../.. && pnpm install`
+- **Install Command**: `cd ../.. && pnpm install --no-frozen-lockfile`
 - **Root Directory 옵션**: "Include files outside of the root directory..." **활성화**
 
 #### 자동 배포 (GitHub Actions):
@@ -158,7 +158,7 @@ gcloud builds submit --config=../../cloudbuild.yaml ../..
 ```
 
 > [!IMPORTANT]
-> **Socket.io 확장(Scaling)**: 여러 인스턴스 환경에서 실시간 통신을 위해 `REDIS_URL` 환경 변수가 올바르게 설정되어 있는지 반드시 확인하십시오.
+> **Cloudflare Stream**: 실시간 영상 스트리밍을 위해 `CLOUDFLARE_STREAM_TOKEN`과 `CLOUDFLARE_ACCOUNT_ID`가 서버 환경 변수에 정확히 설정되어야 합니다.
 
 ### 3. 데이터베이스 마이그레이션
 

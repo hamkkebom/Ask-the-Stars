@@ -7,7 +7,8 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black)](https://nextjs.org/)
 [![NestJS](https://img.shields.io/badge/NestJS-11.1.12-red)](https://nestjs.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)](https://www.typescriptlang.org/)
-[![Vercel](https://img.shields.io/badge/Deployed-Vercel-black)](https://vercel.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-6.3.1-black)](https://www.prisma.io/)
+[![Zod](https://img.shields.io/badge/Zod-3.24.1-blue)](https://zod.dev/)
 
 > AI 영상 제작 교육부터 프리랜서 매칭, 공모전, 마케팅 대행까지 통합한 종합 영상 제작 생태계 플랫폼
 
@@ -226,12 +227,13 @@ graph LR
 |------|------|------|
 | NestJS | 11.1.12 | Node.js 프레임워크 |
 | Node.js | 20.x (LTS) | JavaScript 런타임 |
-| Prisma | 6.1.0 | ORM (Object-Relational Mapping) |
+| Prisma | 6.3.1 | ORM (Object-Relational Mapping) |
 | PostgreSQL | 17 | 관계형 데이터베이스 |
 | BullMQ | 5.66.5 | 작업 큐 |
 | Socket.io | 4.8.3 | WebSocket 서버 |
 | class-validator | 0.14.1 | DTO 유효성 검증 |
 | Passport | 0.7.0 | 인증 미들웨어 |
+| Zod | 3.24.1 | 스키마 검증 (표준화) |
 
 ### Infrastructure
 
@@ -351,8 +353,8 @@ CLOUDFLARE_R2_SECRET_KEY="your-secret-key"
 
 ```bash
 cd apps/api
+pnpm run db:generate
 pnpm prisma migrate dev
-pnpm prisma generate
 ```
 
 ### 5. 로컬 개발 환경 (Docker 사용 시)

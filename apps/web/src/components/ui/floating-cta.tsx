@@ -50,7 +50,7 @@ export function FloatingCTA() {
                 </div>
               </a>
               <a
-                href="https://pf.kakao.com/_hamkaebom"
+                href="https://pf.kakao.com/_hamkkebom"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 rounded-xl bg-[#FEE500] hover:bg-[#FDD835] transition-colors"

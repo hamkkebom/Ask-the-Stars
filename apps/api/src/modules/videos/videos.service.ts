@@ -142,33 +142,81 @@ export class VideosService {
     }
 
     let createdCount = 0;
+
     for (const orphan of orphans) {
       try {
-        const fileName = orphan.key.split('/').pop() || orphan.key;
-        const projectTitle = fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+        const decodedKey = decodeURIComponent(orphan.key);
+        const fileName = decodedKey.split('/').pop() || '';
+
+        // Pattern parsing: [{Category}] {Date}_[{Counselor}] {Title}_{Version}.mp4
+        const regex = /^\[(.+?)\]\s*(.+?)_\[(.+?)\]\s*(.+)$/;
+        const match = fileName.match(regex);
+
+        let categoryName = '기타';
+        let startedAt: Date | null = null;
+        let counselorName = '대상없음';
+        let refinedTitle = fileName.replace(/\.[^/.]+$/, "");
+        let versionLabel = 'v1.0';
+
+        if (match) {
+          categoryName = match[1];
+          const dateStr = match[2];
+          counselorName = match[3];
+          const rawTitle = match[4].replace(/\.[^/.]+$/, "");
+
+          const versionMatch = rawTitle.match(/(.+)_([vV]\d+\.\d+)$/);
+          if (versionMatch) {
+            refinedTitle = versionMatch[1];
+            versionLabel = versionMatch[2];
+          } else {
+            refinedTitle = rawTitle;
+          }
+
+          if (dateStr && !isNaN(Date.parse(dateStr))) {
+            startedAt = new Date(dateStr);
+          }
+        }
+
+        const category = await this.prisma.category.upsert({
+          where: { name: categoryName },
+          update: {},
+          create: { name: categoryName },
+        });
+
+        const counselor = await this.prisma.counselor.upsert({
+          where: { name: counselorName },
+          update: {},
+          create: { name: counselorName },
+        });
 
         await this.prisma.project.create({
           data: {
-            title: projectTitle,
+            title: refinedTitle || '제목 없음',
             status: 'COMPLETED',
+            startedAt,
             ownerId: systemUser!.id,
+            categoryId: category.id,
+            counselorId: counselor.id,
             videos: {
               create: {
-                versionLabel: 'v1.0 (Auto-Sync)',
+                versionLabel,
                 status: 'FINAL',
+                completedAt: startedAt,
                 technicalSpec: {
                   create: {
+                    filename: fileName,
                     r2Key: orphan.key,
                     fileSize: orphan.size ? BigInt(orphan.size) : null,
-                  }
+                    format: fileName.split('.').pop()?.toLowerCase() || 'unknown',
+                  } as any
                 }
               }
             }
           }
         });
         createdCount++;
-      } catch (err) {
-        console.error(`❌ Failed to import ${orphan.key}:`, err);
+      } catch (err: any) {
+        console.error(`❌ Failed metadata refinement for ${orphan.key}:`, err.message);
       }
     }
 
@@ -176,7 +224,7 @@ export class VideosService {
       totalInStorage: r2Files.length,
       videoFilesCount: videoFiles.length,
       newSyncedCount: createdCount,
-      orphans: orphans.map(o => ({ key: o.key, lastModified: o.lastModified }))
+      orphans: orphans.slice(0, 10).map(o => ({ key: o.key, lastModified: o.lastModified }))
     };
   }
 }

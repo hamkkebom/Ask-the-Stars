@@ -350,23 +350,29 @@ model Lead {
 // ==========================================
 
 model Video {
-  id           String      @id @default(uuid())
-  projectId    String      @map("project_id")
-  versionLabel String      @map("version_label") // e.g. "v1.0"
-  status       VideoStatus @default(DRAFT)
-  feedback     String?     @db.Text
-  completedAt  DateTime?   @map("completed_at")
+  id                 String      @id @default(uuid())
+  airtableId         String?     @unique @map("airtable_id")
+  projectId          String      @map("project_id")
+  makerId            String?     @map("maker_id")
 
-  makerId      String?     @map("maker_id")
+  versionLabel       String      @map("version_label") // e.g. "v1.0"
+  versionNumber      String?     @map("version_number")
+  status             VideoStatus @default(DRAFT)
+  isRevised          Boolean     @default(false) @map("is_revised")
+  isAdminConfirmed   Boolean     @default(false) @map("is_admin_confirmed")
 
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
+  feedback           String?     @db.Text
+  internalComment    String?     @db.Text @map("internal_comment")
+  completedAt        DateTime?   @map("completed_at")
+
+  createdAt          DateTime    @default(now()) @map("created_at")
+  updatedAt          DateTime    @updatedAt @map("updated_at")
 
   // Relations
-  project      Project     @relation(fields: [projectId], references: [id])
-  maker        Maker?      @relation(fields: [makerId], references: [id])
-  technicalSpec VideoTechnicalSpec?
-  eventLogs    VideoEventLog[]
+  project            Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  maker              Maker?      @relation(fields: [makerId], references: [id])
+  technicalSpec      VideoTechnicalSpec?
+  eventLogs          VideoEventLog[]
 
   @@map("videos")
 }
@@ -379,18 +385,41 @@ enum VideoStatus {
 }
 
 model VideoTechnicalSpec {
-  id           String   @id @default(cuid())
-  videoId      String   @unique @map("video_id")
-  r2Key        String   @map("r2_key")
-  streamUid    String?  @map("stream_uid")
-  metadata     Json?    // FFprobe data
-  resolution   String?
-  fileSize     BigInt?  @map("file_size")
-  duration     Float?
-  thumbnailUrl String?  @map("thumbnail_url")
+  video_id          String   @id @map("video_id")
+
+  filename          String   @map("filename")
+  format            String?
+  fileSize          BigInt?  @map("file_size")
+  duration          Float?
+  overallBitrate    Int?     @map("overall_bitrate")
+
+  videoCodec        String?  @map("video_codec")
+  width             Int?
+  height            Int?
+  fps               Float?
+  aspectRatio       String?  @map("aspect_ratio")
+  pixelFormat       String?  @map("pixel_format")
+
+  audioCodec        String?  @map("audio_codec")
+  audioChannels     Int?     @map("audio_channels")
+  sampleRate        Int?     @map("sample_rate")
+
+  originalUrl       String?  @db.Text @map("original_url")
+  thumbnailUrl      String?  @map("thumbnail_url")
+  thumbnailAlt      String?  @map("thumbnail_alt")
+  thumbnailWidth    Int?     @map("thumbnail_width")
+  thumbnailHeight   Int?     @map("thumbnail_height")
+
+  r2Key             String   @map("r2_key")
+  r2KeyThumbAvif    String?  @map("r2_key_thumb_avif")
+  r2KeyThumbWebp    String?  @map("r2_key_thumb_webp")
+  r2KeyThumbOg      String?  @map("r2_key_thumb_og")
+  streamUid         String?  @map("stream_uid")
+
+  createdAt         DateTime @default(now()) @map("created_at")
 
   // Relations
-  video        Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  video             Video    @relation(fields: [video_id], references: [id], onDelete: Cascade)
 
   @@map("video_technical_specs")
 }
@@ -413,33 +442,43 @@ model VideoEventLog {
 // ==========================================
 
 model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  projects Project[]
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  projects    Project[]
+  createdAt   DateTime  @default(now()) @map("created_at")
 
   @@map("categories")
 }
 
 model Counselor {
-  id       String    @id @default(cuid())
-  name     String
-  projects Project[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  email     String?
+  projects  Project[]
+  createdAt DateTime  @default(now()) @map("created_at")
 
   @@map("counselors")
 }
 
 model Channel {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  projects Project[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  platform  String?   @default("youtube")
+  url       String?
+  projects  Project[]
+  createdAt DateTime  @default(now()) @map("created_at")
 
   @@map("channels")
 }
 
 model Maker {
-  id       String    @id @default(cuid())
-  name     String
-  videos   Video[]
+  id          String    @id @default(cuid())
+  name        String    @unique
+  role        String?
+  authUserId  String?   @map("auth_user_id")
+  videos      Video[]
+  createdAt   DateTime  @default(now()) @map("created_at")
 
   @@map("makers")
 }

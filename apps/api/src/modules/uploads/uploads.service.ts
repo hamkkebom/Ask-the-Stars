@@ -28,6 +28,7 @@ export class UploadsService {
         accessKeyId,
         secretAccessKey,
       },
+      forcePathStyle: true,
     });
   }
 
@@ -98,28 +99,37 @@ export class UploadsService {
 
   async listFiles(prefix?: string): Promise<any[]> {
     try {
-      const command = new ListObjectsV2Command({
-        Bucket: this.bucketName,
-        Prefix: prefix,
-      });
-
-      const response = await this.s3Client.send(command);
+      let allFiles: any[] = [];
+      let continuationToken: string | undefined;
 
       const publicUrl = this.configService.get<string>('CLOUDFLARE_PUBLIC_Url');
       const r2Url = `https://${this.bucketName}.r2.cloudflarestorage.com`;
       const baseUrl = publicUrl || r2Url;
 
-      return (response.Contents || []).map((file) => ({
-        key: file.Key,
-        size: file.Size,
-        lastModified: file.LastModified,
-        url: `${baseUrl}/${file.Key}`,
-        // Attempt to guess folder structure
-        folder: file.Key?.split('/')[0] || 'root',
-      }));
+      do {
+        const command = new ListObjectsV2Command({
+          Bucket: this.bucketName,
+          Prefix: prefix,
+          ContinuationToken: continuationToken,
+        });
+
+        const response = await this.s3Client.send(command);
+        const contents = (response.Contents || []).map((file) => ({
+          key: file.Key,
+          size: file.Size,
+          lastModified: file.LastModified,
+          url: `${baseUrl}/${file.Key}`,
+          folder: file.Key?.split('/')[0] || 'root',
+        }));
+
+        allFiles = allFiles.concat(contents);
+        continuationToken = response.NextContinuationToken;
+      } while (continuationToken);
+
+      return allFiles;
     } catch (error) {
-      console.error('List Files Error:', error);
-      throw new InternalServerErrorException('파일 목록을 불러오는데 실패했습니다.');
+      console.error('List Files Error details:', error);
+      throw error;
     }
   }
 }

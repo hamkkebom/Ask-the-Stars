@@ -112,10 +112,6 @@ export class VideosService {
     });
   }
 
-  /**
-   * Syncs database with Cloudflare R2 storage.
-   * Finds files in R2 that aren't in the DB and creates stub records.
-   */
   async syncWithStorage() {
     console.log('🔄 Starting R2 to Supabase sync...');
 
@@ -136,40 +132,50 @@ export class VideosService {
 
     console.log(`📊 Sync Summary: R2 Total: ${r2Files.length}, Videos: ${videoFiles.length}, New: ${orphans.length}`);
 
-    const createdCount = 0;
-    // Note: In a real scenario, we might want to auto-create projects.
-    // For now, let's just identify them.
-    // If we were to auto-create, we would uncomment following logic:
-    /*
+    // 4. Get a system user (Admin or any existing user) for ownership
+    const systemUser = await this.prisma.user.findFirst({
+      where: { role: 'ADMIN' },
+    }) || await this.prisma.user.findFirst();
+
+    if (!systemUser && orphans.length > 0) {
+      throw new Error('Cannot sync: No users found in database to assign projects to.');
+    }
+
+    let createdCount = 0;
     for (const orphan of orphans) {
-      await this.prisma.project.create({
-        data: {
-          title: `R2 Imported: ${orphan.key.split('/').pop()}`,
-          status: 'COMPLETED',
-          ownerId: 'SYSTEM', // Need a valid system user ID
-          videos: {
-            create: {
-              versionLabel: 'v1.0 (Auto-Sync)',
-              status: 'FINAL',
-              technicalSpec: {
-                create: {
-                  r2Key: orphan.key,
-                  fileSize: BigInt(orphan.size || 0),
+      try {
+        const fileName = orphan.key.split('/').pop() || orphan.key;
+        const projectTitle = fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+
+        await this.prisma.project.create({
+          data: {
+            title: projectTitle,
+            status: 'COMPLETED',
+            ownerId: systemUser!.id,
+            videos: {
+              create: {
+                versionLabel: 'v1.0 (Auto-Sync)',
+                status: 'FINAL',
+                technicalSpec: {
+                  create: {
+                    r2Key: orphan.key,
+                    fileSize: orphan.size ? BigInt(orphan.size) : null,
+                  }
                 }
               }
             }
           }
-        }
-      });
-      createdCount++;
+        });
+        createdCount++;
+      } catch (err) {
+        console.error(`❌ Failed to import ${orphan.key}:`, err);
+      }
     }
-    */
 
     return {
       totalInStorage: r2Files.length,
       videoFilesCount: videoFiles.length,
-      newDiscoveredCount: orphans.length,
-      createdCount,
+      newSyncedCount: createdCount,
       orphans: orphans.map(o => ({ key: o.key, lastModified: o.lastModified }))
     };
   }

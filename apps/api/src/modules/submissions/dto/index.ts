@@ -2,13 +2,21 @@ import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum } from 'class-valida
 import { SubmissionStatus } from '@ask-the-stars/database';
 
 export class CreateSubmissionDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  projectId!: string;
+  projectId?: string;
 
+  @IsOptional()
   @IsString()
+  assignmentId?: string;
+
   @IsNotEmpty()
+  @IsString()
   videoUrl!: string;
+
+  @IsOptional()
+  @IsString()
+  streamUid?: string;
 
   @IsOptional()
   @IsNumber()

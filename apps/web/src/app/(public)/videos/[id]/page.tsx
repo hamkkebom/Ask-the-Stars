@@ -1,6 +1,7 @@
 import { after } from 'next/server';
 import VideoDetailClient from './VideoDetailClient';
 import { VideoProps } from '@/components/ui/compact-video-card';
+import { videosApi } from '@/lib/api/videos';
 
 // --- Mock Data (Usually fetched from a DB/API) ---
 const mockVideo = {
@@ -51,15 +52,63 @@ const comments = [
 export default async function VideoDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  // Simulated data fetching
-  const video = mockVideo;
+  // Fetch data
+  let video;
+  try {
+    const data = await videosApi.getVideoById(id);
+
+    // Use Signed URL from backend if available, otherwise construct (fallback)
+    const r2Url = (data.technicalSpec as any)?.videoUrl || (data.technicalSpec?.r2Key
+        ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-270030d34237d6ec.r2.dev'}/${data.technicalSpec.r2Key}`
+        : null);
+
+    video = {
+      id: data.id,
+      title: data.project?.title || '제목 없음',
+      // Prefer Stream UID for client handling, fallback to R2 URL
+      streamUid: data.technicalSpec?.streamUid,
+      videoUrl: r2Url,
+      thumbnailUrl: data.technicalSpec?.thumbnailUrl,
+      views: 0, // Not in API response yet
+      likes: 0, // Not in API response yet
+      createdAt: new Date(data.createdAt).toLocaleDateString(),
+      description: data.feedback || data.project?.description || '설명이 없습니다.',
+      categories: data.project?.category ? [data.project.category.name] : ['기타'],
+      tags: [], // Not in API response yet
+      counselor: {
+        id: data.project?.counselor?.id || 'unknown',
+        name: data.project?.counselor?.name || '상담사',
+        role: '전문가',
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.project?.counselor?.name || 'Counselor'}`,
+        stats: { rating: 5.0, reviews: 0, consultations: 0 }
+      },
+      creator: {
+        id: data.maker?.id || 'unknown',
+        name: data.maker?.name || '제작자',
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.maker?.name || 'Creator'}`
+      },
+      // Pass raw technical spec if needed
+      technicalSpec: data.technicalSpec
+    };
+  } catch (e) {
+      console.error("Failed to fetch video:", e);
+      // Fallback or Redirect (for now, let's render a fallback UI or throw)
+      // throw new Error('Video not found');
+      // For smoother UX during dev, maybe fallback to mock if fetch fails?
+      // No, let's show Error.
+      return (
+          <div className="min-h-screen flex items-center justify-center text-white">
+              <div className="text-center">
+                  <h1 className="text-2xl font-bold mb-2">영상을 찾을 수 없습니다</h1>
+                  <p className="text-neutral-400">삭제되었거나 존재하지 않는 영상입니다.</p>
+              </div>
+          </div>
+      );
+  }
 
   // Non-blocking side effect: Log view count
-  // This runs after the response has been sent to the user.
   after(() => {
-    console.log(`[Next.js After] Video ${id} viewed at ${new Date().toISOString()}`);
-    // Here you would normally call an analytics service or update a DB
-    // await updateViewCount(id);
+     // ...
   });
 
   return (

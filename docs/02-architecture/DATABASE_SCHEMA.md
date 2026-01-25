@@ -1,165 +1,197 @@
-# 🗄️ 데이터베이스 스키마 (Database Schema)
+# Database Schema Design
 
-> **Updated At**: 2026-01-21
-> **Source**: `packages/database/prisma/schema.prisma`
+## Overview
+This schema is designed to support the 6 key business areas defined in the Sitemap.
+It extends the existing Supabase (PostgreSQL) schema with new modules for **Education (LMS)** and **Content Management (News)**.
 
-이 문서는 프로젝트의 **실제 배포된 데이터베이스 구조**를 정의합니다.
-PostgreSQL 기반이며, Prisma ORM을 통해 관리됩니다.
+## 🏗️ Schema Modules
 
-## 📐 ER Diagram (Entity-Relationship)
+### 1. User & Auth (Base)
+*Existing `User` model with Roles.*
+- **Extensions**:
+    - Profile extensions for `Stars` (Portfolio, Skills).
+    - `Instructor` profile for Education? (Can use `Counselor` or `Admin`).
+
+### 2. Education (LMS) 🆕
+*Supporting `/education/` and `/lms/`*
 
 ```mermaid
 erDiagram
-    User ||--o{ Project : ownedProjects
-    User ||--o{ Project : assignedProjects
-    User ||--o{ Submission : submissions
-    User ||--o{ Feedback : feedbacks
-    User ||--o{ Settlement : settlements
-    User ||--o{ ProjectRequest : createdRequests
-    User ||--o{ ProjectAssignment : assignments
+    Course ||--o{ Module : contains
+    Module ||--o{ Lesson : contains
+    Course ||--o{ Enrollment : has
+    User ||--o{ Enrollment : takes
+    Lesson ||--o{ Progress : tracks
 
-    ProjectRequest ||--|{ ProjectAssignment : assignments
-    ProjectRequest }|--|| User : createdBy
-
-    ProjectAssignment }|--|| ProjectRequest : request
-    ProjectAssignment }|--|| User : freelancer
-    ProjectAssignment ||--o{ Submission : submissions
-
-    Project ||--o{ Submission : submissions
-    Project }|--|| User : owner
-
-    Submission }|--|| User : user
-    Submission }|--|| Project : project
-    Submission }|--|| ProjectAssignment : assignment
-    Submission ||--o{ Feedback : feedbacks
-
-    Feedback }|--|| Submission : submission
-    Feedback }|--|| User : user
-
-    Settlement }|--|| User : user
+    Course {
+        string id PK
+        string title
+        string slug
+        string level "BASIC, ADVANCED"
+        decimal price
+        string thumbnail_url
+        boolean is_published
+    }
+    Module {
+        string id PK
+        string title
+        int order_index
+        string course_id FK
+    }
+    Lesson {
+        string id PK
+        string title
+        string type "VIDEO, QUIZ, ASSIGNMENT"
+        string video_r2_key "R2 Path"
+        int order_index
+        string module_id FK
+    }
+    Enrollment {
+        string id PK
+        string user_id FK
+        string course_id FK
+        enum status "ACTIVE, COMPLETED"
+        datetime enrolled_at
+    }
 ```
 
----
+### 3. Studio & Stars (Project Flow)
+*Supporting `/stars/` and `/studio/`*
+*Existing `Project` architecture is robust.*
+- **Refinements**:
+    - `Contest`: Can use `ProjectRequest` with `type=CONTEST`.
+    - `Portfolio`: Filter `Project` where `status=COMPLETED` and `public_display=true`.
 
-## 📚 Data Dictionary
+### 4. Content (News & Notice) 🆕
+*Supporting `/news/` and `/help/`*
 
-### 1. User (사용자)
-모든 시스템 사용자를 관리하는 핵심 테이블입니다.
+```mermaid
+erDiagram
+    Post ||--o{ Tag : has
+    Post {
+        string id PK
+        string title
+        string content "Markdown/HTML"
+        string slug "SEO Friendly"
+        enum type "NEWS, NOTICE, EVENT"
+        string thumbnail_url
+        datetime published_at
+    }
+```
 
-`@@map("users")`
+## 📝 Proposed Prisma Schema Addition
 
-| Column | Type | Attributes | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | String | **PK**, CUID | 고유 식별자 |
-| `email` | String | Unique | 이메일 (로그인 ID) |
-| `name` | String | | 사용자 이름 |
-| `password` | String | | 암호화된 비밀번호 |
-| `phone` | String? | | 전화번호 |
-| `role` | Enum | Default: `STAR` | [UserRole](#enum-userrole) 참조 |
-| `profileImage` | String? | | 프로필 이미지 URL (R2) |
-| `isActive` | Boolean | Default: `true` | 계정 활성화 여부 |
+```prisma
+// --- Education (LMS) ---
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  level       String   // BASIC, ADVANCED
+  price       Decimal  @default(0)
+  isPublished Boolean  @default(false)
+  
+  modules     Module[]
+  enrollments Enrollment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
-### 2. ProjectRequest (제작 요청)
-스타에게 영상 제작을 요청하는 "공고" 개념입니다.
+model Module {
+  id        String   @id @default(cuid())
+  title     String
+  order     Int
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  lessons   Lesson[]
+}
 
-`@@map("project_requests")`
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // VIDEO, TEXT, QUIZ
+  content     String?  // Text content or JSON
+  videoR2Key  String?  // R2 Key for video
+  duration    Int?     // Seconds
+  order       Int
+  movieId     String
+  module      Module   @relation(fields: [movieId], references: [id])
+}
 
-| Column | Type | Attributes | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | String | **PK**, CUID | 고유 식별자 |
-| `title` | String | | 요청 제목 |
-| `categories` | String[] | | 카테고리 태그 (브랜드, 코너 등) |
-| `deadline` | DateTime | | 마감 기한 |
-| `assignmentType` | Enum | Default: `MULTIPLE` | [AssignmentType](#enum-assignmenttype) 참조 |
-| `maxAssignees` | Int | Default: `3` | 최대 배정 인원 |
-| `status` | Enum | Default: `OPEN` | [RequestStatus](#enum-requeststatus) 참조 |
-| `estimatedBudget`| Decimal | 12,2 | 예상 예산 |
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  status    String   // ACTIVE, COMPLETED
+  progress  Int      @default(0) // %
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, courseId])
+}
 
-### 3. ProjectAssignment (배정 내역)
-특정 요청(`ProjectRequest`)에 프리랜서(`User`)가 배정된 관계 테이블입니다.
+// --- Content ---
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  type        String   // NEWS, NOTICE
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+}
 
-`@@map("project_assignments")`
-
-| Column | Type | Attributes | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | String | **PK**, CUID | 고유 식별자 |
-| `requestId` | String | **FK** | 요청 ID |
-| `freelancerId` | String | **FK** | 프리랜서 ID |
-| `status` | Enum | Default: `ACCEPTED` | [AssignmentStatus](#enum-assignmentstatus) 참조 |
-
-### 4. Submission (제출물)
-프리랜서가 업로드한 영상 및 메타데이터입니다. 다중 버전 관리를 지원합니다.
-
-`@@map("submissions")`
-
-| Column | Type | Attributes | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | String | **PK**, CUID | 고유 식별자 |
-| `assignmentId` | String? | **FK** | 배정 ID |
-| `userId` | String | **FK** | 제출자 ID |
-| `versionSlot` | Int | Default: `1` | 버전 슬롯 (1~5) |
-| `videoUrl` | String | | 스트리밍 URL (m3u8) |
-| `fileKey` | String? | | R2 원본 파일 키 |
-| `status` | Enum | Default: `PENDING` | [SubmissionStatus](#enum-submissionstatus) 참조 |
-
-### 5. Feedback (피드백)
-영상의 특정 구간(`startTime` ~ `endTime`)에 대한 피드백입니다.
-
-`@@map("feedbacks")`
-
-| Column | Type | Attributes | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | String | **PK**, CUID | 고유 식별자 |
-| `submissionId` | String | **FK** | 제출물 ID |
-| `startTime` | Float? | | 시작 시간 (초) |
-| `endTime` | Float? | | 종료 시간 (초) |
-| `content` | String | | 피드백 내용 |
-| `annotations` | Json? | | 화면 드로잉 좌표 데이터 |
-
-### 6. Settlement (정산)
-사용자에게 지급되거나 공제된 금액 내역입니다.
-
-`@@map("settlements")`
-
-| Column | Type | Attributes | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | String | **PK**, CUID | 고유 식별자 |
-| `userId` | String | **FK** | 대상 사용자 |
-| `amount` | Decimal | 12,2 | 금액 |
-| `type` | Enum | | [SettlementType](#enum-settlementtype) 참조 |
-| `settlementRound`| Enum? | | 1차/2차 구분 |
-
----
-
-## 🔢 Enums (열거형)
-
-### Enum: UserRole
-*   `ADMIN`: 슈퍼 관리자
-*   `MOON_MANAGER`: 달 관리자 (통합)
-*   `MOON_ADVERTISING`: 광고 관리자
-*   `MOON_FEEDBACK`: 피드백 관리자
-*   `MOON_SETTLEMENT`: 정산 관리자
-*   `STAR`: 스타 (영상 제작자)
-*   `COUNSELOR`: 상담사
-
-### Enum: AssignmentType
-*   `SINGLE`: 독점 (1명만 배정)
-*   `MULTIPLE`: 중복 (여러 명 배정)
-
-### Enum: RequestStatus
-*   `OPEN`: 모집 중
-*   `FULL`: 정원 마감
-*   `CLOSED`: 마감
-*   `CANCELLED`: 취소됨
-
-### Enum: SubmissionStatus
-*   `PENDING`: 대기중
-*   `IN_REVIEW`: 검토중
-*   `APPROVED`: 승인됨
-*   `REJECTED`: 반려됨
-*   `REVISED`: 수정요청
-
-### Enum: SettlementType
-*   `PAYOUT`: 지급
-*   `DEDUCTION`: 공제
-*   `BONUS`: 보너스
+// --- Counselors (Offline 500) ---
+model Counselor {
+  id          String   @id @default(cuid())
+  
+  // 1. Basic Identity
+  name        String
+  displayName String?  // 호명
+  shortId     String?  @unique // 상담사ID
+  phone       String?
+  email       String?
+  
+  // 2. Profile & Content
+  profileImageUrl String? // 이미지 주소/사진
+  introduction    String? @db.Text // 소개글
+  career          String? @db.Text // 경력사항
+  notice          String? @db.Text // 공지사항
+  
+  // 3. Classification
+  majorCategories String[] // 주요상담분야
+  tags            String[] // 해시태그
+  category        String?  // 분류
+  region          String?
+  
+  // 4. Flags
+  isKokkok        Boolean  @default(false) // 콕콕상담
+  isDonation      Boolean  @default(false) // 기부상담
+  isGift          Boolean  @default(false) // 선물상담
+  hasRateIncrease Boolean  @default(false) // 인상참여
+  attendedSession Boolean  @default(false) // 설명회참석
+  isAdApplied     Boolean  @default(false) // 광고신청
+  
+  // 5. Metrics
+  prevFee             Decimal? // 이전 이용료
+  increasedFee        Decimal? // 인상 이용료
+  targetTimeCurrent   Int?     // 현재 목표시간
+  targetTimePrev      Int?     // 이전 목표시간
+  targetTimeChallenge Int?     // 도전 목표시간
+  waitingTime         Int?     // 대기시간
+  
+  status      String   @default("ACTIVE")
+  
+  // Management
+  agencyId    String?
+  manager     User?    @relation(fields: [agencyId], references: [id])
+  
+  projects    Project[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+```

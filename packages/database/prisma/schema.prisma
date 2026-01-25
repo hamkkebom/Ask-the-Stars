@@ -37,6 +37,10 @@ model User {
   createdRequests    ProjectRequest[]    @relation("RequestCreator")
   assignments        ProjectAssignment[]
 
+  enrollments        Enrollment[]
+  posts              Post[]
+  managedCounselors  Counselor[] // Counselors managed by this Agency User
+
   @@map("users")
 }
 
@@ -187,6 +191,7 @@ model Submission {
   fileKey       String?          @map("file_key")  // R2 key
   duration      Int?             // 영상 길이 (초)
   thumbnailUrl  String?          @map("thumbnail_url")
+  streamUid     String?          @map("stream_uid")
   status        SubmissionStatus @default(PENDING)
   notes         String?
   createdAt     DateTime         @default(now()) @map("created_at")
@@ -451,12 +456,57 @@ model Category {
   @@map("categories")
 }
 
+// --- Counselors (Offline 500) ---
 model Counselor {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  email     String?
-  projects  Project[]
-  createdAt DateTime  @default(now()) @map("created_at")
+  id          String   @id @default(cuid())
+
+  // 1. Basic Identity
+  name        String
+  displayName String?  @map("display_name") // 호명
+  shortId     String?  @unique @map("short_id") // 상담사ID (Legacy/Airtable)
+  phone       String?
+  email       String?
+
+  // 2. Profile & Content
+  profileImageUrl String? @map("profile_image_url") // 이미지 주소/사진
+  introduction    String? @db.Text // 소개글
+  career          String? @db.Text // 경력사항
+  notice          String? @db.Text // 공지사항
+
+  // 3. Classification
+  majorCategories String[] @map("major_categories") // 주요상담분야
+  tags            String[] // 해시태그
+  category        String?  // 분류
+  region          String?
+  specialty       String?  // Removed or kept as alias? legacy logic. Keeping for safety if used elsewhere.
+
+  // 4. Flags (Boolean)
+  isKokkok        Boolean  @default(false) @map("is_kokkok") // 콕콕상담
+  isDonation      Boolean  @default(false) @map("is_donation") // 기부상담
+  isGift          Boolean  @default(false) @map("is_gift") // 선물상담
+  hasRateIncrease Boolean  @default(false) @map("has_rate_increase") // 인상참여
+  attendedSession Boolean  @default(false) @map("attended_session") // 설명회참석
+  isAdApplied     Boolean  @default(false) @map("is_ad_applied") // 광고신청
+
+  // 5. Metrics (Fees & Times)
+  prevFee             Decimal? @map("prev_fee") @db.Decimal(12, 2) // 이전 이용료
+  increasedFee        Decimal? @map("increased_fee") @db.Decimal(12, 2) // 인상 이용료
+
+  targetTimeCurrent   Int?     @map("target_time_current") // 현재 목표시간
+  targetTimePrev      Int?     @map("target_time_prev") // 이전 목표시간
+  targetTimeChallenge Int?     @map("target_time_challenge") // 도전 목표시간
+  waitingTime         Int?     @map("waiting_time") // 대기시간 (관리팀 추가)
+
+  status      String   @default("ACTIVE") // 상태
+
+  // Management
+  agencyId    String?  @map("agency_id")
+  agency      User?    @relation(fields: [agencyId], references: [id])
+
+  projects    Project[]
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("counselors")
 }
@@ -481,4 +531,103 @@ model Maker {
   createdAt   DateTime  @default(now()) @map("created_at")
 
   @@map("makers")
+}
+
+// ==========================================
+// LMS (Learning Management System) Models 🆕
+// ==========================================
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?  @db.Text
+  level       String   // BASIC, ADVANCED
+  price       Decimal  @default(0) @db.Decimal(12, 2)
+  isPublished Boolean  @default(false) @map("is_published")
+  thumbnailUrl String? @map("thumbnail_url")
+
+  modules     Module[]
+  enrollments Enrollment[]
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("courses")
+}
+
+model Module {
+  id        String   @id @default(cuid())
+  title     String
+  order     Int
+  courseId  String   @map("course_id")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+
+  @@map("modules")
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // VIDEO, TEXT, QUIZ
+  content     String?  // Text content or JSON
+  videoR2Key  String?  @map("video_r2_key") // R2 Key for video
+  duration    Int?     // Seconds
+  order       Int
+  moduleId    String   @map("module_id")
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("lessons")
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  courseId  String   @map("course_id")
+  status    String   // ACTIVE, COMPLETED, CANCELLED
+  progress  Int      @default(0) // %
+
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  enrolledAt DateTime @default(now()) @map("enrolled_at")
+  completedAt DateTime? @map("completed_at")
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+// ==========================================
+// Content Management (News/Notice) 🆕
+// ==========================================
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?
+  type        PostType @default(NEWS)
+  thumbnailUrl String? @map("thumbnail_url")
+  isPublished Boolean  @default(true) @map("is_published")
+  publishedAt DateTime @default(now()) @map("published_at")
+
+  authorId    String?  @map("author_id")
+  author      User?    @relation(fields: [authorId], references: [id])
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("posts")
+}
+
+enum PostType {
+  NEWS
+  NOTICE
+  EVENT
+  CASE_STUDY
 }

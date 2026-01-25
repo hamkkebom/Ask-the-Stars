@@ -1,0 +1,300 @@
+﻿  inflating: /workspace/node_modules/typescript/lib/lib.es2019.intl.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2019.object.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2019.string.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2019.symbol.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.bigint.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.date.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.full.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.intl.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.number.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.promise.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.sharedmemory.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.string.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2021.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2021.full.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2021.intl.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2021.promise.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2021.string.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2021.weakref.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.array.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.error.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.full.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.intl.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.object.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.regexp.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2022.string.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2023.array.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2023.collection.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2023.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2023.full.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2023.intl.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.arraybuffer.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.collection.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.full.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.object.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.promise.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.regexp.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.sharedmemory.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es2024.string.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es5.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.es6.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.array.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.collection.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.decorators.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.disposable.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.error.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.float16.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.full.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.intl.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.iterator.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.promise.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.esnext.sharedmemory.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.scripthost.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.webworker.asynciterable.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.webworker.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.webworker.importscripts.d.ts
+  inflating: /workspace/node_modules/typescript/lib/lib.webworker.iterable.d.ts
+  inflating: /workspace/node_modules/typescript/lib/tsc.js
+  inflating: /workspace/node_modules/typescript/lib/tsserver.js
+  inflating: /workspace/node_modules/typescript/lib/tsserverlibrary.d.ts
+  inflating: /workspace/node_modules/typescript/lib/tsserverlibrary.js
+  inflating: /workspace/node_modules/typescript/lib/typescript.d.ts
+  inflating: /workspace/node_modules/typescript/lib/typescript.js
+  inflating: /workspace/node_modules/typescript/lib/typesMap.json
+  inflating: /workspace/node_modules/typescript/lib/typingsInstaller.js
+  inflating: /workspace/node_modules/typescript/lib/watchGuard.js
+  inflating: /workspace/node_modules/typescript/lib/_tsc.js
+  inflating: /workspace/node_modules/typescript/lib/_tsserver.js
+  inflating: /workspace/node_modules/typescript/lib/_typingsInstaller.js
+  inflating: /workspace/node_modules/typescript/lib/cs/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/de/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/es/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/fr/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/it/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/ja/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/ko/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/pl/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/pt-br/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/ru/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/tr/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/zh-cn/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/typescript/lib/zh-tw/diagnosticMessages.generated.json
+  inflating: /workspace/node_modules/zod/index.d.ts
+  inflating: /workspace/node_modules/zod/LICENSE
+  inflating: /workspace/node_modules/zod/package.json
+  inflating: /workspace/node_modules/zod/README.md
+  inflating: /workspace/node_modules/zod/lib/errors.d.ts
+  inflating: /workspace/node_modules/zod/lib/errors.js
+  inflating: /workspace/node_modules/zod/lib/external.d.ts
+  inflating: /workspace/node_modules/zod/lib/external.js
+  inflating: /workspace/node_modules/zod/lib/index.d.ts
+  inflating: /workspace/node_modules/zod/lib/index.js
+  inflating: /workspace/node_modules/zod/lib/index.mjs
+  inflating: /workspace/node_modules/zod/lib/index.umd.js
+  inflating: /workspace/node_modules/zod/lib/standard-schema.d.ts
+  inflating: /workspace/node_modules/zod/lib/standard-schema.js
+  inflating: /workspace/node_modules/zod/lib/types.d.ts
+  inflating: /workspace/node_modules/zod/lib/types.js
+  inflating: /workspace/node_modules/zod/lib/ZodError.d.ts
+  inflating: /workspace/node_modules/zod/lib/ZodError.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/datetime.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/datetime.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/discriminatedUnion.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/discriminatedUnion.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/index.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/index.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/ipv4.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/ipv4.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/object.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/object.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/primitives.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/primitives.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/realworld.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/realworld.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/string.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/string.js
+  inflating: /workspace/node_modules/zod/lib/benchmarks/union.d.ts
+  inflating: /workspace/node_modules/zod/lib/benchmarks/union.js
+  inflating: /workspace/node_modules/zod/lib/helpers/enumUtil.d.ts
+  inflating: /workspace/node_modules/zod/lib/helpers/enumUtil.js
+  inflating: /workspace/node_modules/zod/lib/helpers/errorUtil.d.ts
+  inflating: /workspace/node_modules/zod/lib/helpers/errorUtil.js
+  inflating: /workspace/node_modules/zod/lib/helpers/parseUtil.d.ts
+  inflating: /workspace/node_modules/zod/lib/helpers/parseUtil.js
+  inflating: /workspace/node_modules/zod/lib/helpers/partialUtil.d.ts
+  inflating: /workspace/node_modules/zod/lib/helpers/partialUtil.js
+  inflating: /workspace/node_modules/zod/lib/helpers/typeAliases.d.ts
+  inflating: /workspace/node_modules/zod/lib/helpers/typeAliases.js
+  inflating: /workspace/node_modules/zod/lib/helpers/util.d.ts
+  inflating: /workspace/node_modules/zod/lib/helpers/util.js
+  inflating: /workspace/node_modules/zod/lib/locales/en.d.ts
+  inflating: /workspace/node_modules/zod/lib/locales/en.js
+  inflating: /workspace/node_modules/zod/lib/__tests__/Mocker.d.ts
+  inflating: /workspace/node_modules/zod/lib/__tests__/Mocker.js
+  inflating: /workspace/src/app.module.ts
+  inflating: /workspace/src/main.ts
+  inflating: /workspace/src/test-prisma.ts
+  inflating: /workspace/src/common/betterstack-logger.ts
+  inflating: /workspace/src/common/health.controller.ts
+  inflating: /workspace/src/common/sentry.ts
+  inflating: /workspace/src/common/adapters/redis-io.adapter.ts
+  inflating: /workspace/src/common/decorators/current-user.decorator.ts
+  inflating: /workspace/src/common/guards/jwt-auth.guard.ts
+  inflating: /workspace/src/database/database.module.ts
+  inflating: /workspace/src/database/prisma.service.ts
+  inflating: /workspace/src/modules/auth/auth.controller.ts
+  inflating: /workspace/src/modules/auth/auth.module.ts
+  inflating: /workspace/src/modules/auth/auth.service.ts
+  inflating: /workspace/src/modules/auth/dto/index.ts
+  inflating: /workspace/src/modules/auth/strategies/jwt.strategy.ts
+  inflating: /workspace/src/modules/feedback/feedback.controller.ts
+  inflating: /workspace/src/modules/feedback/feedback.module.ts
+  inflating: /workspace/src/modules/feedback/feedback.service.ts
+  inflating: /workspace/src/modules/feedback/dto/index.ts
+  inflating: /workspace/src/modules/leads/leads.controller.ts
+  inflating: /workspace/src/modules/leads/leads.module.ts
+  inflating: /workspace/src/modules/leads/leads.service.ts
+  inflating: /workspace/src/modules/leads/dto/create-lead.dto.ts
+  inflating: /workspace/src/modules/mail/mail.module.ts
+  inflating: /workspace/src/modules/mail/mail.service.ts
+  inflating: /workspace/src/modules/notifications/notifications.gateway.ts
+  inflating: /workspace/src/modules/notifications/notifications.module.ts
+  inflating: /workspace/src/modules/projects/projects.controller.ts
+  inflating: /workspace/src/modules/projects/projects.module.ts
+  inflating: /workspace/src/modules/projects/projects.service.ts
+  inflating: /workspace/src/modules/projects/dto/index.ts
+  inflating: /workspace/src/modules/settlements/settlements.controller.ts
+  inflating: /workspace/src/modules/settlements/settlements.module.ts
+  inflating: /workspace/src/modules/settlements/settlements.service.ts
+  inflating: /workspace/src/modules/settlements/dto/index.ts
+  inflating: /workspace/src/modules/submissions/submissions.controller.ts
+  inflating: /workspace/src/modules/submissions/submissions.module.ts
+  inflating: /workspace/src/modules/submissions/submissions.service.ts
+  inflating: /workspace/src/modules/submissions/dto/index.ts
+  inflating: /workspace/src/modules/uploads/uploads.controller.ts
+  inflating: /workspace/src/modules/uploads/uploads.module.ts
+  inflating: /workspace/src/modules/uploads/uploads.service.ts
+  inflating: /workspace/src/modules/users/users.controller.ts
+  inflating: /workspace/src/modules/users/users.module.ts
+  inflating: /workspace/src/modules/users/users.service.ts
+  inflating: /workspace/src/modules/users/dto/index.ts
+  inflating: /workspace/src/modules/videos/videos.controller.ts
+  inflating: /workspace/src/modules/videos/videos.module.ts
+  inflating: /workspace/src/modules/videos/videos.service.ts
+BUILD
+Already have image (with digest): gcr.io/cloud-builders/docker
+Sending build context to Docker daemon  401.1MB
+Step 1/16 : FROM node:22 AS builder
+22: Pulling from library/node
+c1be109a62df: Already exists
+64538a062a61: Already exists
+fd1872fa12cc: Already exists
+4925cf9d8be8: Already exists
+357cb6974fa0: Pulling fs layer
+a6174c95fe74: Pulling fs layer
+737aff54b157: Pulling fs layer
+5e9e90c62a56: Pulling fs layer
+5e9e90c62a56: Verifying Checksum
+5e9e90c62a56: Download complete
+357cb6974fa0: Verifying Checksum
+357cb6974fa0: Download complete
+357cb6974fa0: Pull complete
+737aff54b157: Verifying Checksum
+737aff54b157: Download complete
+a6174c95fe74: Verifying Checksum
+a6174c95fe74: Download complete
+a6174c95fe74: Pull complete
+737aff54b157: Pull complete
+5e9e90c62a56: Pull complete
+Digest: sha256:cd7bcd2e7a1e6f72052feb023c7f6b722205d3fcab7bbcbd2d1bfdab10b1e935
+Status: Downloaded newer image for node:22
+ ---> a08c488a9779
+Step 2/16 : RUN npm install -g pnpm@9.15.2
+ ---> Running in 8543ba71d34f
+added 1 package in 1s
+1 package is looking for funding
+  run `npm fund` for details
+[91mnpm notice
+npm notice New major version of npm available! 10.9.4 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+[0mRemoving intermediate container 8543ba71d34f
+ ---> 530912b7881b
+Step 3/16 : RUN apt-get update -y && apt-get install -y openssl build-essential python3
+ ---> Running in 5c96b0368242
+Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [48.0 kB]
+Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8792 kB]
+Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [292 kB]
+Fetched 9346 kB in 1s (9347 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+openssl is already the newest version (3.0.18-1~deb12u1).
+openssl set to manually installed.
+python3 is already the newest version (3.11.2-1+b1).
+python3 set to manually installed.
+The following NEW packages will be installed:
+  build-essential
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 7704 B of archives.
+After this operation, 20.5 kB of additional disk space will be used.
+Get:1 http://deb.debian.org/debian bookworm/main amd64 build-essential amd64 12.9 [7704 B]
+[91mdebconf: delaying package configuration, since apt-utils is not installed
+[0mFetched 7704 B in 0s (429 kB/s)
+Selecting previously unselected package build-essential.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 23258 files and directories currently installed.)
+Preparing to unpack .../build-essential_12.9_amd64.deb ...
+Unpacking build-essential (12.9) ...
+Setting up build-essential (12.9) ...
+Removing intermediate container 5c96b0368242
+ ---> c638bfe543f4
+Step 4/16 : WORKDIR /app
+ ---> Running in 110c6910141a
+Removing intermediate container 110c6910141a
+ ---> 5f0e65f2ec85
+Step 5/16 : COPY . .
+ ---> 48f1ffc202d0
+Step 6/16 : ENV DATABASE_URL="postgresql://dummy:5432/db"
+ ---> Running in 054904e0928a
+Removing intermediate container 054904e0928a
+ ---> 0f6f2628abb8
+Step 7/16 : RUN pnpm install --frozen-lockfile --filter @ask-the-stars/api...
+ ---> Running in c90a112b486b
+undefined
+ ERR_PNPM_NO_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is absent
+Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+The command '/bin/sh -c pnpm install --frozen-lockfile --filter @ask-the-stars/api...' returned a non-zero code: 1
+ERROR
+ERROR: build step 0 "gcr.io/cloud-builders/docker" failed: step exited with non-zero status: 1
+------------------------------------------------

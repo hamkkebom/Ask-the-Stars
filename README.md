@@ -243,8 +243,8 @@ graph LR
 | Google Cloud Run | 백엔드 호스팅 | 서울 (asia-northeast3) | $0 (3개월 무료) | ✅ |
 | Supabase | PostgreSQL + Auth | 서울 (ap-northeast-2) | $25 | ✅ |
 | Upstash | Redis 캐시 | 도쿄 | $0 (Free Tier) | ✅ |
-| Cloudflare R2 | 영상 스토리지 | CDN | $0 | ✅ |
-| Cloudflare Stream | 영상 스트리밍 | CDN | $5 | ✅ |
+| Cloudflare Stream | 영상 스트리밍 (Primary) | CDN | $5 | ✅ |
+| Cloudflare R2 | 영상 스토리지 (Fallback/Origin) | CDN | $0 | ✅ |
 | Resend | 이메일 발송 | - | $0 (Free Tier) | ✅ |
 | Sentry | 에러 추적 | - | $0 (5,000 errors/월) | ✅ |
 

@@ -77,4 +77,82 @@ export class ProjectsService {
       where: { id },
     });
   }
+
+  // --- Project Requests (Board) ---
+
+  async findAllRequests(): Promise<any> {
+      return this.prisma.projectRequest.findMany({
+          where: { status: 'OPEN' },
+          orderBy: { createdAt: 'desc' },
+          // Include necessary relations if needed
+      });
+  }
+
+  async getMyAssignments(userId: string): Promise<any> {
+      return this.prisma.projectAssignment.findMany({
+          where: { freelancerId: userId },
+          include: { request: true }
+      });
+  }
+
+  async getRequest(id: string): Promise<any> {
+      const request = await this.prisma.projectRequest.findUnique({
+          where: { id },
+          include: {
+              assignments: true // Check current assignees
+          }
+      });
+      if (!request) throw new NotFoundException('요청을 찾을 수 없습니다.');
+      return request;
+  }
+
+  async acceptRequest(requestId: string, userId: string): Promise<any> {
+      const request = await this.getRequest(requestId);
+
+      if (request.status !== 'OPEN') {
+          throw new ForbiddenException('마감된 요청입니다.');
+      }
+
+      // Check duplications
+      const existing = await this.prisma.projectAssignment.findUnique({
+          where: {
+              requestId_freelancerId: {
+                  requestId,
+                  freelancerId: userId
+              }
+          }
+      });
+
+      if (existing) {
+          throw new ForbiddenException('이미 지원/수락한 요청입니다.');
+      }
+
+      // Check Capacity
+      if (request.currentAssignees >= request.maxAssignees) {
+          throw new ForbiddenException('정원이 초과되었습니다.');
+      }
+
+      // Create Assignment (Transaction to update count)
+      return this.prisma.$transaction(async (tx) => {
+          const assignment = await tx.projectAssignment.create({
+              data: {
+                  requestId,
+                  freelancerId: userId,
+                  status: 'ACCEPTED'
+              }
+          });
+
+          // Update count
+          await tx.projectRequest.update({
+              where: { id: requestId },
+              data: {
+                  currentAssignees: { increment: 1 },
+                  // Close if full
+                  status: (request.currentAssignees + 1) >= request.maxAssignees ? 'FULL' : 'OPEN'
+              }
+          });
+
+          return assignment;
+      });
+  }
 }

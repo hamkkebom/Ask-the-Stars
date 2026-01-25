@@ -12,6 +12,7 @@ import { MailModule } from './modules/mail/mail.module';
 import { LeadsModule } from './modules/leads/leads.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { VideosModule } from './modules/videos/videos.module';
+import { CloudflareModule } from './modules/cloudflare/cloudflare.module';
 import { HealthController } from './common/health.controller';
 
 @Module({
@@ -36,7 +37,9 @@ import { HealthController } from './common/health.controller';
     MailModule,
     LeadsModule,
     NotificationsModule,
+
     VideosModule,
+    CloudflareModule,
   ],
   controllers: [HealthController],
 })

@@ -37,4 +37,22 @@ export class ProjectsController {
   async remove(@Request() req: any, @Param('id') id: string): Promise<any> {
     return this.projectsService.remove(id, req.user.id);
   }
+
+  // --- Project Board Endpoints ---
+
+  @Get('requests/board')
+  async getProjectRequests(): Promise<any> {
+      // Publicly available to authenticated Starts?
+      return this.projectsService.findAllRequests();
+  }
+
+  @Get('my-assignments')
+  async getMyAssignments(@Request() req: any): Promise<any> {
+      return this.projectsService.getMyAssignments(req.user.id);
+  }
+
+  @Post('requests/:id/accept')
+  async acceptRequest(@Param('id') id: string, @Request() req: any): Promise<any> {
+      return this.projectsService.acceptRequest(id, req.user.id);
+  }
 }

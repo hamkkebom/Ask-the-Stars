@@ -3,7 +3,8 @@
 import { useState, useCallback, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Upload, ChevronLeft } from 'lucide-react';
+import { Upload, ChevronLeft, Loader2 } from 'lucide-react';
+import { axiosInstance } from '@/lib/api/axios';
 
 function UploadContent() {
   const router = useRouter();
@@ -92,17 +93,36 @@ function UploadContent() {
     setUploadProgress(0);
 
     try {
-      // Simulate upload progress
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        setUploadProgress(i);
-      }
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+      uploadData.append('projectId', formData.projectId.toString());
+      uploadData.append('versionSlot', formData.versionSlot.toString());
+      uploadData.append('versionTitle', formData.versionTitle);
+      uploadData.append('versionNumber', formData.versionNumber || 'v1.0');
+      uploadData.append('notes', formData.notes);
+
+      await axiosInstance.post('/uploads', uploadData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || file.size)
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
 
       alert('영상이 성공적으로 업로드되었습니다!');
-      router.push(`/stars/my-projects/detail/${formData.projectId}`);
-    } catch (error) {
+      if (formData.projectId) {
+         router.push(`/stars/my-projects/detail/${formData.projectId}`);
+      } else {
+         router.push('/stars/my-projects');
+      }
+    } catch (error: any) {
       console.error('Upload failed:', error);
-      alert('업로드에 실패했습니다. 다시 시도해주세요.');
+      const msg = error.response?.data?.message || '업로드에 실패했습니다. 다시 시도해주세요.';
+      alert(msg);
     } finally {
       setIsUploading(false);
     }

@@ -9,7 +9,7 @@ dotenv.config({ path: path.join(__dirname, '../apps/api/.env') });
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
 const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
 const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
-const bucketName = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'hankaebom-star-uploads';
+const bucketName = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'hamkkebom-star-uploads';
 
 if (!accountId || !accessKeyId || !secretAccessKey) {
   console.error('❌ Missing Cloudflare R2 credentials in environment variables.');

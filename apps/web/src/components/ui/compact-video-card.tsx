@@ -26,19 +26,24 @@ export interface VideoProps {
     views?: number;
     createdAt?: string; // "25/01/17"
     duration?: string;
+    videoUrl?: string; // Add videoUrl property
     onHoverChange?: (isHovered: boolean) => void;
     matchScore?: number;
     isNew?: boolean;
+    streamUid?: string; // Add streamUid property
 }
 
 function CompactVideoCardImpl({
-    id, title, thumbnailUrl,
+    id, title, thumbnailUrl, videoUrl, streamUid,
     counselor = { name: "상담사" },
     creator = { name: "제작자" },
     category, tags, createdAt = "25/01/17",
     onHoverChange
 }: VideoProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const showVideoThumbnail = (!thumbnailUrl || thumbnailUrl === "/placeholder.jpg" || imgError) && videoUrl;
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -62,27 +67,52 @@ function CompactVideoCardImpl({
 
           {/* Main Image */}
           <div className={cn("absolute inset-0 transition-transform duration-700 ease-out", isHovered ? "scale-[1.2]" : "scale-100")}>
-              <Image
-                  src={thumbnailUrl || "/placeholder.jpg"}
-                  alt={title}
-                  fill
-                  className={cn("object-cover transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-90")}
-                  unoptimized
-              />
+              {showVideoThumbnail ? (
+                  <video
+                      src={videoUrl}
+                      className={cn("object-cover w-full h-full transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-90")}
+                      muted
+                      playsInline
+                      loop
+                      // metadata loaded -> show first frame
+                      onLoadedMetadata={(e) => (e.target as HTMLVideoElement).currentTime = 0.1}
+                  />
+              ) : (
+                  <Image
+                      src={thumbnailUrl || "/placeholder.jpg"}
+                      alt={title}
+                      fill
+                      className={cn("object-cover transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-90")}
+                      unoptimized
+                      onError={() => setImgError(true)}
+                  />
+              )}
               {/* Subtle Gradient Overlay for Depth */}
               <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60" />
           </div>
 
-          {/* Auto-play Video on Hover */}
+           {/* Auto-play Video on Hover */}
+           {/* Auto-play Video on Hover */}
           {isHovered && (
-               <video
-                  src="https://cdn.pixabay.com/video/2024/02/09/199958-911694865_large.mp4" // Placeholder video for demo
-                  className="absolute inset-0 w-full h-full object-cover scale-[1.2]"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-               />
+            streamUid ? (
+              <iframe
+                src={`https://customer-${process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE || '200140d34237d6ec'}.cloudflarestream.com/${streamUid}/iframe?muted=true&autoplay=true&loop=true&controls=false`}
+                className="absolute inset-0 w-full h-full object-cover scale-[1.2]"
+                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                allowFullScreen
+              />
+            ) : (
+              videoUrl && (
+                <video
+                    src={videoUrl}
+                    className="absolute inset-0 w-full h-full object-cover scale-[1.2]"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                />
+              )
+            )
           )}
 
           {/* Play Button on Hover */}

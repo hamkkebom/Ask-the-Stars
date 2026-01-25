@@ -1,11 +1,15 @@
-import { Controller, Post, Get, UseInterceptors, UploadedFile, UseGuards, ParseFilePipe, MaxFileSizeValidator, Query } from '@nestjs/common';
+import { Controller, Post, Get, UseInterceptors, UploadedFile, UseGuards, ParseFilePipe, MaxFileSizeValidator, Query, Body, Request } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadsService } from './uploads.service';
+import { VideosService, CreateVideoDto } from '../videos/videos.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
 @Controller('uploads')
 export class UploadsController {
-  constructor(private readonly uploadsService: UploadsService) {}
+  constructor(
+    private readonly uploadsService: UploadsService,
+    private readonly videosService: VideosService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -23,22 +27,66 @@ export class UploadsController {
       }),
     )
     file: any,
+    @Body() body: any,
+    @Request() req: any,
   ) {
-    const folder = file.mimetype.startsWith('image') ? 'images' : 'videos';
+    const isVideo = file.mimetype.startsWith('video');
+    const folder = isVideo ? 'videos' : 'images';
+
+    // 1. Upload to R2 (and Stream)
     const result = await this.uploadsService.uploadFile(file, folder);
+
+    // 2. If it is a video and metadata is provided, create DB record immediately
+    let videoRecord = null;
+    if (isVideo && body.versionTitle) {
+      // Parse Body to DTO
+      const dto: CreateVideoDto = {
+        title: body.title || body.versionTitle, // Fallback to version title if project title missing
+        versionLabel: body.versionNumber || 'v1.0',
+        versionTitle: body.versionTitle,
+        description: body.notes,
+        // Optional fields could be passed safely if needed
+      };
+
+      videoRecord = await this.videosService.createVideoRecord(
+        {
+          key: result.key,
+          url: result.url,
+          streamId: result.streamId,
+          size: file.size,
+          filename: file.originalname,
+          mimetype: file.mimetype
+        },
+        dto,
+        req.user.userId, // From JwtAuthGuard
+      );
+    }
+
     return {
       success: true,
       ...result,
+      video: videoRecord,
     };
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async listFiles(@Query('prefix') prefix?: string) {
     const files = await this.uploadsService.listFiles(prefix);
     return {
       success: true,
       files,
     };
+  }
+
+  @Post('presigned')
+  @UseGuards(JwtAuthGuard)
+  async getPresignedUrl(@Body() body: { key: string }) {
+      const url = await this.uploadsService.getPresignedUrl(body.key);
+      return {
+          success: !!url,
+          url,
+          key: body.key
+      };
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+// import { getSignedUrl } from '@aws-sdk/s3-request-presigner'; // Removed unused
 import axios from 'axios';
 import FormData from 'form-data';
 
@@ -91,10 +92,56 @@ export class UploadsService {
     throw new Error('Cloudflare Stream upload failed');
   }
 
+  async copyFromUrl(url: string, meta?: any): Promise<string> {
+    console.log(`☁️ requesting copy to stream: ${url}`);
+    try {
+        const response = await axios.post(
+        `https://api.cloudflare.com/client/v4/accounts/${this.cloudflareAccountId}/stream/copy`,
+        {
+            url: url,
+            meta: meta || {},
+            requireSignedURLs: false
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${this.cloudflareStreamToken}`,
+                'Content-Type': 'application/json'
+            },
+        }
+        );
+
+        if (response.data.success) {
+            return response.data.result.uid;
+        }
+        throw new Error('Cloudflare Stream copy failed: ' + JSON.stringify(response.data.errors));
+    } catch (e: any) {
+        console.error('Stream Copy API Error:', e.response?.data || e.message);
+        throw e;
+    }
+  }
+
   async getSignedStreamUrl(streamId: string): Promise<string> {
     // 유료 콘텐츠를 위한 서명된 URL 생성 로직 (현재는 기본 시청 URL 반환)
-    // 실제 구현 시 Cloudflare Signing Key를 사용하여 JWT 토큰을 발행해야 함
     return `https://customer-${this.cloudflareAccountId}.cloudflarestream.com/${streamId}/manifest/video.m3u8`;
+  }
+
+  async getPresignedUrl(key: string): Promise<string> {
+      try {
+          // Import GetObjectCommand here to avoid circular dependencies or import issues if not top-level
+          const { GetObjectCommand } = await import('@aws-sdk/client-s3');
+          const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+
+          const command = new GetObjectCommand({
+              Bucket: this.bucketName,
+              Key: key,
+          });
+
+          // Sign for 1 hour
+          return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+      } catch (e) {
+          console.error('Failed to sign URL for key:', key, e);
+          return '';
+      }
   }
 
   async listFiles(prefix?: string): Promise<any[]> {

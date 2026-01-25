@@ -14,6 +14,7 @@
     "@ask-the-stars/types": "workspace:*",
     "@ask-the-stars/ui": "workspace:*",
     "@ask-the-stars/utils": "workspace:*",
+    "@cloudflare/stream-react": "^1.9.3",
     "@hookform/resolvers": "3.9.1",
     "@sentry/nextjs": "^9.4.0",
     "@supabase/supabase-js": "^2.47.10",
@@ -34,6 +35,7 @@
     "react-hook-form": "^7.71.1",
     "socket.io-client": "^4.8.3",
     "tailwind-merge": "^2.6.0",
+    "tus-js-client": "^4.3.1",
     "zod": "3.24.1",
     "zustand": "^5.0.10"
   },

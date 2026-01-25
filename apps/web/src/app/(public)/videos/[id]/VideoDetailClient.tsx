@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { m } from 'framer-motion';
 import { Heart, Share2, MessageCircle, ThumbsUp, Calendar, Eye, Hash, ChevronRight } from 'lucide-react';
 import { CompactVideoCard, VideoProps } from '@/components/ui/compact-video-card';
+import { StreamPlayer } from '@/components/ui/stream-player';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -33,26 +34,35 @@ export default function VideoDetailClient({ video, categoryVideos, creatorVideos
       <div className="relative w-full bg-black z-10 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
             <div className="relative aspect-video w-full bg-neutral-900 overflow-hidden group">
-                 <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center space-y-4 opacity-50 group-hover:opacity-100 transition-opacity">
-                        <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto backdrop-blur-sm border border-white/20">
-                            <span className="text-4xl ml-1">▶</span>
+                 {/* Player Logic */}
+                 {/* Player Logic */}
+                 {video.streamUid ? (
+                    <StreamPlayer
+                        uid={video.streamUid}
+                        token={video.technicalSpec?.streamToken}
+                        poster={video.thumbnailUrl}
+                        autoplay={false}
+                    />
+                 ) : video.videoUrl ? (
+                    <video
+                        src={video.videoUrl}
+                        className="absolute inset-0 w-full h-full object-contain"
+                        controls
+                        autoPlay={false}
+                        muted={false}
+                        playsInline
+                        poster={video.thumbnailUrl}
+                    />
+                 ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center space-y-4 opacity-50">
+                            <p className="text-sm font-medium tracking-widest uppercase">Video Not Available</p>
                         </div>
-                        <p className="text-sm font-medium tracking-widest uppercase">Cinema Mode</p>
                     </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 bg-gradient-to-t from-black via-black/60 to-transparent">
-                    <m.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="max-w-4xl"
-                    >
-                        <h1 className="text-2xl md:text-4xl font-bold leading-tight mb-4 text-white drop-shadow-lg">
-                            {video.title}
-                        </h1>
-                    </m.div>
-                </div>
+                 )}
+
+                {/* Title Overlay (Only show if not playing? Or keeping it below?) */}
+                {/* Removed overlay to not block controls. Title is usually below. */}
             </div>
         </div>
       </div>

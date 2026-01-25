@@ -11,22 +11,12 @@ initializeSentry();
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
-import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
+
   try {
     const app = await NestFactory.create(AppModule);
-    const configService = app.get(ConfigService);
 
-    const redisIoAdapter = new RedisIoAdapter(app, configService);
-    try {
-      await redisIoAdapter.connectToRedis();
-      app.useWebSocketAdapter(redisIoAdapter);
-      console.log('✅ Redis Adapter initialized');
-    } catch (error) {
-      console.warn('⚠️ Redis connection failed, falling back to default IoAdapter:', (error as any).message);
-    }
 
     // Global validation pipe
     app.useGlobalPipes(
@@ -86,5 +76,6 @@ async function bootstrap() {
     process.exit(1);
   }
 }
+
 
 bootstrap();

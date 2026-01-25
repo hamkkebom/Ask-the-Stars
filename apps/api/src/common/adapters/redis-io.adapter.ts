@@ -15,13 +15,34 @@ export class RedisIoAdapter extends IoAdapter {
   }
 
   async connectToRedis(): Promise<void> {
-    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+    try {
+      const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
 
-    const pubClient = new Redis(redisUrl);
-    const subClient = pubClient.duplicate();
+      const pubClient = new Redis(redisUrl);
 
-    this.adapterConstructor = createAdapter(pubClient, subClient);
-    console.log('✅ Redis Adapter connected');
+      // Persistent error handler to prevent process crash
+      pubClient.on('error', (err) => {
+        console.warn('⚠️ Redis PubClient Error:', err.message);
+      });
+
+      // Verification for initial connection
+      await new Promise((resolve, reject) => {
+          pubClient.once('connect', resolve);
+          pubClient.once('error', reject);
+          setTimeout(() => reject(new Error('Redis connection timeout')), 5000);
+      });
+
+      const subClient = pubClient.duplicate();
+      subClient.on('error', (err) => {
+        console.warn('⚠️ Redis SubClient Error:', err.message);
+      });
+
+      this.adapterConstructor = createAdapter(pubClient, subClient);
+      console.log('✅ Redis Adapter connected');
+    } catch (error) {
+      console.error('❌ Redis Adapter connection failed:', (error as any).message);
+      throw error; // Re-throw to be caught in main.ts
+    }
   }
 
   createIOServer(port: number, options?: ServerOptions): any {

@@ -10,6 +10,9 @@ import { FilterButton, FilterPill } from './advanced-video-grid-components';
 import { useQuery } from '@tanstack/react-query';
 import { videosApi } from '@/lib/api/videos';
 
+
+const R2_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "https://pub-722ebb0880314050a41c19d4580214a1.r2.dev";
+
 type CounselorType = 'ALL' | 'TAROT' | 'MECHANICS' | 'SHAMANISM';
 
 export function AdvancedVideoGrid() {
@@ -39,11 +42,12 @@ export function AdvancedVideoGrid() {
     id: v.id,
     title: v.project?.title || v.versionLabel,
     thumbnailUrl: v.technicalSpec?.thumbnailUrl || "/placeholder.jpg",
+    videoUrl: v.technicalSpec?.r2Key ? `${R2_BASE_URL}/${v.technicalSpec.r2Key}` : undefined,
     description: v.feedback,
     category: v.project?.category?.name || "기타",
     tags: [v.project?.counselor?.name || "일반"],
     counselor: { name: v.project?.counselor?.name || "상담사" },
-    creator: { name: v.maker?.name || "제작자" },
+    creator: { name: v.maker?.name || v.project?.owner?.name || "함께봄" },
     createdAt: new Date(v.createdAt).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '/').replace('.', ''),
   }));
 

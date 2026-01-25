@@ -1,46 +1,54 @@
+
 import { axiosInstance } from './axios';
 
-export interface Project {
+export interface ProjectRequest {
   id: string;
   title: string;
-  description?: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELED';
-  deadline?: string;
-  budget?: number;
-  createdAt: string;
-  updatedAt: string;
-  ownerId: string;
-}
-
-export interface CreateProjectDto {
-  title: string;
-  description?: string;
-  deadline?: string;
-  budget?: number;
+  description: string;
+  categories: string[];
+  deadline: string;
+  estimatedBudget: number | null;
+  currentAssignees: number;
+  maxAssignees: number;
+  status: 'OPEN' | 'FULL' | 'CLOSED';
 }
 
 export const projectsApi = {
-  create: async (data: CreateProjectDto): Promise<Project> => {
-    const response = await axiosInstance.post<Project>('/projects', data);
+  // --- Public Board ---
+  getProjectRequests: async () => {
+    const response = await axiosInstance.get<ProjectRequest[]>('/projects/requests/board');
     return response.data;
   },
 
-  findAll: async (): Promise<Project[]> => {
-    const response = await axiosInstance.get<Project[]>('/projects');
+  findAll: async () => {
+    const response = await axiosInstance.get<ProjectRequest[]>('/projects/requests/board');
     return response.data;
   },
 
-  findOne: async (id: string): Promise<Project> => {
-    const response = await axiosInstance.get<Project>(`/projects/${id}`);
+  acceptRequest: async (requestId: string) => {
+    const response = await axiosInstance.post(`/projects/requests/${requestId}/accept`);
     return response.data;
   },
 
-  update: async (id: string, data: Partial<CreateProjectDto>): Promise<Project> => {
-    const response = await axiosInstance.patch<Project>(`/projects/${id}`, data);
+  getRequest: async (requestId: string) => {
+      const response = await axiosInstance.get<ProjectRequest>(`/projects/requests/${requestId}`);
+      return response.data;
+  },
+
+  create: async (data: any) => {
+    const response = await axiosInstance.post('/projects/requests', data);
     return response.data;
   },
 
-  delete: async (id: string): Promise<void> => {
-    await axiosInstance.delete(`/projects/${id}`);
+  // --- My Dashboard ---
+  getMyAssignments: async () => {
+    const response = await axiosInstance.get<any[]>('/projects/my-assignments');
+    return response.data;
   },
+
+  // --- Submissions ---
+  createSubmission: async (data: { assignmentId: string; streamUid: string; notes?: string }) => {
+      const response = await axiosInstance.post('/submissions', data);
+      return response.data;
+  }
 };

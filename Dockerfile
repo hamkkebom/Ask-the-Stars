@@ -1,44 +1,40 @@
-# Build stage
-FROM node:22-alpine AS builder
+# Build stage - Full node image for reliability
+FROM node:22 AS builder
 
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-
-WORKDIR /app
-
-# Install pnpm
 RUN npm install -g pnpm@9.15.2
-
-# Copy root workspace files
-COPY package.json pnpm-lock.yaml ./
-COPY turbo.json ./
-COPY tsconfig.json ./
-
-# Copy apps/api and packages
-COPY apps/api ./apps/api
-COPY packages ./packages
-
-# Install dependencies using pnpm
-RUN pnpm install --frozen-lockfile
-
-# Build the api project
-RUN npx turbo run build --filter=@ask-the-stars/api
-
-# Production stage
-FROM node:22-alpine AS runner
+# Install build tools just in case
+RUN apt-get update -y && apt-get install -y openssl build-essential python3
 
 WORKDIR /app
+
+# Copy ALL files
+COPY . .
+
+# CRITICAL: Use the REAL schema.prisma
+ENV DATABASE_URL="postgresql://dummy:5432/db"
+
+# 1. Install dependencies FILTERED for API, but WITH scripts
+RUN pnpm install --frozen-lockfile --filter @ask-the-stars/api...
+
+# 2. Generate Prisma client (for build)
+RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
+
+# 3. Build the NestJS application
+RUN pnpm --filter @ask-the-stars/api build
+
+# ---------------------------------------------------------
+# SKIP PRODUCTION STAGE FOR NOW
+# We use the builder image directly to guarantee it works
+# ---------------------------------------------------------
 
 ENV NODE_ENV=production
+ENV PORT=8080
 
-# Copy built files and production node_modules
-# We copy from the built app and the root node_modules
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages ./packages
+WORKDIR /app/apps/api
 
-# EXPOSE is documented for Cloud Run, but it uses $PORT
 EXPOSE 8080
 
-CMD ["node", "apps/api/dist/main"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+
+CMD ["node", "dist/apps/api/src/main.js"]

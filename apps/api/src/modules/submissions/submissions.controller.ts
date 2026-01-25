@@ -29,11 +29,11 @@ export class SubmissionsController {
     @Param('id') id: string,
     @Body() updateSubmissionDto: UpdateSubmissionDto,
   ): Promise<any> {
-    return this.submissionsService.update(id, req.user.id, updateSubmissionDto);
+    return this.submissionsService.update(id, req.user, updateSubmissionDto);
   }
 
   @Delete(':id')
   async remove(@Request() req: any, @Param('id') id: string): Promise<any> {
-    return this.submissionsService.remove(id, req.user.id);
+    return this.submissionsService.remove(id, req.user);
   }
 }

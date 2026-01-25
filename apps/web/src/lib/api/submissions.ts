@@ -1,49 +1,60 @@
+
 import { axiosInstance } from './axios';
 
 export interface Submission {
   id: string;
-  contestId: string;
+  projectId?: string;
+  assignmentId?: string;
   userId: string;
   videoUrl: string;
-  title: string;
-  description: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  score?: number;
+  streamUid?: string;
+  thumbnailUrl?: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REVISION';
+  notes?: string;
   createdAt: string;
-  updatedAt: string;
+  version: number;
+  signedToken?: string;
+  user?: {
+      id: string;
+      name: string;
+      profileImage?: string;
+      email?: string;
+  };
+  assignment?: {
+      request: {
+          title: string;
+      };
+  };
+  project?: {
+      title: string;
+  };
 }
 
 export interface CreateSubmissionDto {
-  contestId: string;
-  videoUrl: string;
-  title: string;
-  description: string;
+  assignmentId: string;
+  streamUid: string;
+  notes?: string;
 }
 
 export const submissionsApi = {
-  getMy: async (): Promise<Submission[]> => {
-    const response = await axiosInstance.get<Submission[]>('/submissions/my');
+  getAll: async (projectId?: string) => {
+    const response = await axiosInstance.get<Submission[]>('/submissions', {
+      params: { projectId }
+    });
     return response.data;
   },
 
-  getByContest: async (contestId: string): Promise<Submission[]> => {
-    const response = await axiosInstance.get<Submission[]>(`/submissions/contest/${contestId}`);
-    return response.data;
-  },
-
-  create: async (data: CreateSubmissionDto): Promise<Submission> => {
-    const response = await axiosInstance.post<Submission>('/submissions', data);
-    return response.data;
-  },
-
-  getById: async (id: string): Promise<Submission> => {
+  getById: async (id: string) => {
     const response = await axiosInstance.get<Submission>(`/submissions/${id}`);
     return response.data;
   },
 
-  // Admin only
-  updateStatus: async (id: string, status: Submission['status'], score?: number): Promise<Submission> => {
-    const response = await axiosInstance.patch<Submission>(`/submissions/${id}`, { status, score });
+  updateStatus: async (id: string, status: Submission['status'], notes?: string) => {
+    const response = await axiosInstance.patch(`/submissions/${id}`, { status, notes });
     return response.data;
   },
+
+  delete: async (id: string) => {
+    await axiosInstance.delete(`/submissions/${id}`);
+  }
 };

@@ -5,7 +5,7 @@ steps:
       [
         'build',
         '-t',
-        'gcr.io/$PROJECT_ID/api',
+        'asia-northeast3-docker.pkg.dev/$PROJECT_ID/hamkkebom-repo/api',
         '-f',
         'apps/api/Dockerfile',
         '.',
@@ -13,7 +13,8 @@ steps:
 
   # 2. Image 푸시
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/api']
+    args:
+      ['push', 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/hamkkebom-repo/api']
 
   # 3. Cloud Run 배포
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -23,7 +24,7 @@ steps:
       - 'deploy'
       - 'api'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/api'
+      - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/hamkkebom-repo/api'
       - '--region'
       - 'asia-northeast3'
       - '--platform'
@@ -31,7 +32,7 @@ steps:
       - '--allow-unauthenticated'
 
 images:
-  - 'gcr.io/$PROJECT_ID/api'
+  - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/hamkkebom-repo/api'
 
 timeout: '1200s'
 options:

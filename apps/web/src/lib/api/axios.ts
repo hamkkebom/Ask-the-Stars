@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const getBaseUrl = () => {
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
   // Ensure we don't double-slash or miss the /api suffix if the env var doesn't have it
   if (!url.endsWith('/api') && !url.endsWith('/api/')) {
     return `${url.replace(/\/$/, '')}/api`;

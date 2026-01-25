@@ -1,40 +1,42 @@
-# Build stage - Full node image for reliability
+# Build stage
 FROM node:22 AS builder
 
 RUN npm install -g pnpm@9.15.2
-# Install build tools just in case
-RUN apt-get update -y && apt-get install -y openssl build-essential python3
+RUN apt-get update -y && apt-get install -y openssl
 
 WORKDIR /app
 
-# Copy ALL files
+# Copy the entire monorepo
 COPY . .
 
-# CRITICAL: Use the REAL schema.prisma
-ENV DATABASE_URL="postgresql://dummy:5432/db"
+# Install ALL dependencies (monorepo root)
+RUN pnpm install --frozen-lockfile
 
-# 1. Install dependencies FILTERED for API, but WITH scripts
-RUN pnpm install --frozen-lockfile --filter @ask-the-stars/api...
-
-# 2. Generate Prisma client (for build)
+# Generate Prisma client for the specific package
 RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
 
-# 3. Build the NestJS application
+# Build the API
 RUN pnpm --filter @ask-the-stars/api build
 
 # ---------------------------------------------------------
-# SKIP PRODUCTION STAGE FOR NOW
-# We use the builder image directly to guarantee it works
-# ---------------------------------------------------------
+# Production stage
+FROM node:22-slim AS runner
+
+RUN apt-get update -y && apt-get install -y openssl
+
+WORKDIR /app
+
+# Copy EVERYTHING correctly at root level
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /app/packages ./packages
 
 ENV NODE_ENV=production
-ENV PORT=8080
-
-WORKDIR /app/apps/api
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
-
-CMD ["node", "dist/apps/api/src/main.js"]
+# Now move to the app dir for execution
+WORKDIR /app/apps/api
+CMD ["node", "dist/main.js"]

@@ -39,4 +39,4 @@ EXPOSE 8080
 
 # Now move to the app dir for execution
 WORKDIR /app/apps/api
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/apps/api/src/main.js"]

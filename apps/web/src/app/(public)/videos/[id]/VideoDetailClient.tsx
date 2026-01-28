@@ -8,6 +8,8 @@ import { CompactVideoCard, VideoProps } from '@/components/ui/compact-video-card
 import { StreamPlayer } from '@/components/ui/stream-player';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { videosApi } from '@/lib/api/videos';
+import { useEffect } from 'react';
 
 interface VideoDetailClientProps {
   video: any;
@@ -19,6 +21,28 @@ interface VideoDetailClientProps {
 export default function VideoDetailClient({ video, categoryVideos, creatorVideos, comments }: VideoDetailClientProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(video.likes);
+  const [recommendations, setRecommendations] = useState<VideoProps[]>([]);
+
+  useEffect(() => {
+    async function fetchRecommendations() {
+      if (video.id) {
+        const data = await videosApi.getRecommendations(video.id);
+        const mapped = data.map((v: any) => ({
+            id: v.id,
+            title: v.title,
+            thumbnailUrl: v.technicalSpec?.thumbnailUrl || v.thumbnailUrl || '/placeholder.jpg',
+            counselor: { name: v.project?.counselor?.name || '상담사' },
+            category: v.project?.category?.name || '영상',
+            tags: [],
+            views: v.views || 0,
+            createdAt: new Date(v.createdAt).toLocaleDateString(),
+            matchScore: Math.round((1 - (v.distance || 0)) * 100) // Convert distance to score
+        }));
+        setRecommendations(mapped);
+      }
+    }
+    fetchRecommendations();
+  }, [video.id]);
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
@@ -125,7 +149,24 @@ export default function VideoDetailClient({ video, categoryVideos, creatorVideos
                 </div>
 
                 <div>
-                     {/* 댓글 섹션 */}
+                     {/* AI 추천 영상 섹션 */}
+                {recommendations.length > 0 && (
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 mb-6">
+                            <span className="text-xl">🤖</span>
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                                AI 추천 영상
+                            </h2>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {recommendations.map((video) => (
+                                <CompactVideoCard key={video.id} {...video} isNew={video.matchScore ? video.matchScore > 85 : false} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* 댓글 섹션 */}
                      <div className="flex items-center gap-3 mb-6">
                         <h2 className="text-2xl font-bold flex items-center gap-2">
                             <MessageCircle className="w-6 h-6 text-vibrant-cyan" />

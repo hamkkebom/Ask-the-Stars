@@ -1,17 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, Clock, Sparkles, Globe, Grid, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { CompactVideoCard, VideoProps } from '@/components/ui/compact-video-card';
+import CompactVideoCard, { VideoProps } from '@/components/ui/compact-video-card';
 import { FILTERS } from '@/data/mocks/advanced-video-grid';
 import { FilterButton, FilterPill } from './advanced-video-grid-components';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { videosApi } from '@/lib/api/videos';
 
 
-const R2_BASE_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "https://pub-722ebb0880314050a41c19d4580214a1.r2.dev";
+import { getVideoSrc, getThumbnailSrc } from '@/lib/utils/video-url';
+
+// Removed hardcoded R2_BASE_URL (handled by utility)
 
 type CounselorType = 'ALL' | 'TAROT' | 'MECHANICS' | 'SHAMANISM';
 
@@ -33,16 +35,39 @@ export function AdvancedVideoGrid() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [traySearch, setTraySearch] = useState("");
 
-  const { data: rawVideos, isLoading } = useQuery({
-    queryKey: ['final-videos'],
-    queryFn: videosApi.listAllFinalVideos,
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ['final-videos', selectedCategory, selectedCounselor, selectedCreator, selectedSort],
+    queryFn: ({ pageParam = 1 }) => videosApi.listAllFinalVideos({
+      page: pageParam as number,
+      limit: 25,
+      category: selectedCategory,
+      counselor: selectedCounselor,
+      creator: selectedCreator,
+      sort: selectedSort === '최신순' ? 'latest' : 'popular',
+    }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      // Backend returns { data: [], meta: { page: 1, last_page: ..., has_more: ... } }
+      if (lastPage.meta?.has_more) {
+        return lastPage.meta.page + 1;
+      }
+      return undefined;
+    },
   });
 
-  const videos: VideoProps[] = (rawVideos || []).map((v: any) => ({
+  const allVideos = data?.pages.flatMap((page) => page.data) || [];
+
+  const videos: VideoProps[] = allVideos.map((v: any) => ({
     id: v.id,
     title: v.project?.title || v.versionLabel,
-    thumbnailUrl: v.technicalSpec?.thumbnailUrl || "/placeholder.jpg",
-    videoUrl: v.technicalSpec?.r2Key ? `${R2_BASE_URL}/${v.technicalSpec.r2Key}` : undefined,
+    thumbnailUrl: getThumbnailSrc(v.technicalSpec) || v.thumbnailUrl || "/placeholder.jpg",
+    videoUrl: v.videoUrl || null,
     description: v.feedback,
     category: v.project?.category?.name || "기타",
     tags: [v.project?.counselor?.name || "일반"],
@@ -50,6 +75,27 @@ export function AdvancedVideoGrid() {
     creator: { name: v.maker?.name || v.project?.owner?.name || "함께봄" },
     createdAt: new Date(v.createdAt).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '/').replace('.', ''),
   }));
+
+  // Intersection Observer
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [sentinelRef, setSentinelRef] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+      if (!hasNextPage) return;
+
+      const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+          }
+      }, { rootMargin: "400px" }); // Preload well in advance
+
+      if (sentinelRef) observer.observe(sentinelRef);
+      observerRef.current = observer;
+
+      return () => {
+          if (observerRef.current) observerRef.current.disconnect();
+      };
+  }, [sentinelRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const toggleTray = (trayName: string) => {
     if (activeTray === trayName) {
@@ -348,46 +394,46 @@ export function AdvancedVideoGrid() {
             )}
         </AnimatePresence>
 
-      {/* --- Main Content Grid --- */}
-      <div className="px-6 py-8 md:px-12 max-w-[1920px] mx-auto min-h-[80vh]">
-        <motion.div
-            layout
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-12"
-        >
-            <AnimatePresence mode='popLayout'>
-                {videos.map((video, index) => (
-                    <motion.div
-                        key={video.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ duration: 0.3, delay: index * 0.02 }}
-                        className="relative list-item-optimized"
-                        style={{ zIndex: hoveredId === video.id ? 50 : 1 }}
-                    >
-                        <CompactVideoCard
-                            {...video}
-                            onHoverChange={(isHovered: boolean) => setHoveredId(isHovered ? video.id : null)}
-                        />
-                    </motion.div>
-                ))}
-            </AnimatePresence>
-        </motion.div>
-
-        {/* Load More Trigger (Disabled - All videos loaded) */}
-        <div className="w-full flex justify-center py-20">
-            <button
-                disabled={true}
-                className="group relative px-8 py-3 bg-neutral-900 border border-white/10 rounded-full text-sm font-medium text-gray-500 cursor-not-allowed transition-all overflow-hidden"
+      {/* --- Main Grid Content --- */}
+      <main className="container mx-auto px-4 pt-8 min-h-[50vh]">
+        {status === 'pending' ? (
+           <div className="flex justify-center py-20">
+               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+           </div>
+        ) : status === 'error' ? (
+           <div className="text-center py-20 text-red-400">
+               영상을 불러오는 중 오류가 발생했습니다.
+           </div>
+        ) : (
+          <>
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"
             >
-                <span className="relative z-10 flex items-center gap-2">
-                    {isLoading ? "Loading..." : "All Videos Loaded"}
-                    {!isLoading && <ChevronDown className="w-4 h-4" />}
-                </span>
-            </button>
-        </div>
+              <AnimatePresence mode="popLayout">
+                {videos.map((video, index) => (
+                  <motion.div
+                    key={video.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2, delay: index * 0.05 }}
+                  >
+                    <CompactVideoCard {...video} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
 
-      </div>
+            {/* Loading Sentinel */}
+            <div ref={setSentinelRef} className="h-20 w-full flex justify-center items-center mt-10">
+                {isFetchingNextPage && <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white/50"></div>}
+            </div>
+          </>
+        )}
+      </main>
+
     </div>
   );
 }

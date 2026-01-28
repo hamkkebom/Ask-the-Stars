@@ -144,6 +144,26 @@ export class UploadsService {
       }
   }
 
+  async getPresignedPutUrl(key: string, contentType: string): Promise<string> {
+      try {
+          const { PutObjectCommand } = await import('@aws-sdk/client-s3');
+          const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+
+          const command = new PutObjectCommand({
+              Bucket: this.bucketName,
+              Key: key,
+              ContentType: contentType,
+              // ACL: 'public-read' // R2 doesn't support ACLs the same way, usually strictly private or public bucket
+          });
+
+          // Sign for 1 hour
+          return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+      } catch (e) {
+          console.error('Failed to sign PUT URL for key:', key, e);
+          throw new InternalServerErrorException('Failed to generate upload URL');
+      }
+  }
+
   async listFiles(prefix?: string): Promise<any[]> {
     try {
       let allFiles: any[] = [];

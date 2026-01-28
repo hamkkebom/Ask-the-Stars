@@ -3,9 +3,10 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState, memo } from 'react';
+import { getOptimizedImageUrl } from '@/utils/image';
+import { useState, memo, useEffect } from 'react';
+import { videosApi } from '@/lib/api/videos';
 
 export interface VideoProps {
     id: string;
@@ -31,10 +32,11 @@ export interface VideoProps {
     matchScore?: number;
     isNew?: boolean;
     streamUid?: string; // Add streamUid property
+    previewUrl?: string; // Animated GIF
 }
 
 function CompactVideoCardImpl({
-    id, title, thumbnailUrl, videoUrl, streamUid,
+    id, title, thumbnailUrl, videoUrl: initialVideoUrl, streamUid, previewUrl,
     counselor = { name: "상담사" },
     creator = { name: "제작자" },
     category, tags, createdAt = "25/01/17",
@@ -42,12 +44,91 @@ function CompactVideoCardImpl({
 }: VideoProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [dynamicVideoUrl, setDynamicVideoUrl] = useState<string | null>(initialVideoUrl || null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [shouldPlay, setShouldPlay] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const showVideoThumbnail = (!thumbnailUrl || thumbnailUrl === "/placeholder.jpg" || imgError) && videoUrl;
+  const videoUrl = dynamicVideoUrl || initialVideoUrl;
+  // Only fallback to video if thumbnail fails AND we have a valid playable video URL
+  // Ideally, we shouldn't autoplay on error unless hovered, but for now we just want to avoid black boxes.
+  // Actually, if thumbnail fails, we should show placeholder unless video is ready.
+  // Let's rely on standard imgError leading to placeholder if videoUrl is not perfect.
+  // BUT current logic was: showVideoThumbnail = (... || imgError) && videoUrl
+  // If videoUrl is S3 link (private), it won't play.
+  // So: Only show video thumbnail if videoUrl is NOT an S3 link (contains signature or is public) OR we are hovered.
+  // Actually, simpler: showVideoThumbnail is ONLY for "Video as Thumbnail" feature.
+  // If imgError, we want to show PLACEHOLDER image, not broken video.
+  const showVideoThumbnail = (!thumbnailUrl || thumbnailUrl === "/placeholder.jpg") && videoUrl;
+
+  // If image errors, we set imgError state, which force renders the Image component with placeholder src?
+  // No, currently imgError was part of showVideoThumbnail condition. I am removing it.
+  // So if imgError is true, showVideoThumbnail remains false (unless title match etc).
+  // Image component below handles src={thumbnailUrl || "/placeholder.jpg"} and onError sets imgError.
+  // Wait, if imgError is set, we need to ensure Image component re-renders with placeholder?
+  // Image component logic: src={thumbnailUrl || "/placeholder.jpg"}
+  // If thumbnailUrl is bad, onError triggers. We setImgError(true).
+  // But src prop doesn't change unless we change it based on imgError?
+  // Let's modify the Image src logic too.
+
+
+  // Device Detection
+  useEffect(() => {
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
+
+  // Intersection Observer for Mobile Autoplay
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        setIsIntersecting(entry.isIntersecting);
+      });
+    }, { threshold: 0.8 }); // Trigger when 80% visible
+
+    const el = document.getElementById(`card-${id}`);
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, [id, isMobile]);
+
+  // Handle 1s Delay for Mobile Autoplay (Intersection)
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    // Strict: Only use intersection autoplay on mobile
+    if (isMobile && isIntersecting && !isHovered) {
+      timer = setTimeout(() => {
+        setShouldPlay(true);
+        // Start fetching preview if needed
+        handleTriggerPreview();
+      }, 1000);
+    } else {
+      setShouldPlay(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isIntersecting, isHovered, id, isMobile]);
+
+  const handleTriggerPreview = async () => {
+    if (isLoadingPreview || dynamicVideoUrl || streamUid) return;
+    setIsLoadingPreview(true);
+    try {
+        const url = await videosApi.getVideoPreviewUrl(id);
+        setDynamicVideoUrl(url);
+    } catch (error) {
+        console.error('Failed to fetch preview URL:', error);
+    } finally {
+        setIsLoadingPreview(false);
+    }
+  };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
     onHoverChange?.(true);
+    // Instant fetch and play for PC hover
+    handleTriggerPreview();
   };
 
   const handleMouseLeave = () => {
@@ -55,8 +136,10 @@ function CompactVideoCardImpl({
     onHoverChange?.(false);
   };
 
+  const isActuallyPlaying = isHovered || shouldPlay;
+
   return (
-    <Link href={`/videos/${id}`} className="block">
+    <Link id={`card-${id}`} href={`/videos/${id}`} className="block">
       <div
         className="group relative w-full flex flex-col gap-3 cursor-pointer"
         onMouseEnter={handleMouseEnter}
@@ -66,23 +149,22 @@ function CompactVideoCardImpl({
         <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-900 border border-white/5 shadow-lg group-hover:shadow-2xl transition-all duration-300 z-0 group-hover:z-10 text-decoration-slice">
 
           {/* Main Image */}
-          <div className={cn("absolute inset-0 transition-transform duration-700 ease-out", isHovered ? "scale-[1.2]" : "scale-100")}>
+          <div className={cn("absolute inset-0 transition-transform duration-700 ease-out", isActuallyPlaying ? "scale-[1.1]" : "scale-100")}>
               {showVideoThumbnail ? (
                   <video
-                      src={videoUrl}
-                      className={cn("object-cover w-full h-full transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-90")}
+                      src={videoUrl || undefined}
+                      className={cn("object-cover w-full h-full transition-opacity duration-300", isActuallyPlaying ? "opacity-0" : "opacity-90")}
                       muted
                       playsInline
                       loop
-                      // metadata loaded -> show first frame
                       onLoadedMetadata={(e) => (e.target as HTMLVideoElement).currentTime = 0.1}
                   />
               ) : (
                   <Image
-                      src={thumbnailUrl || "/placeholder.jpg"}
+                      src={imgError ? "/placeholder.jpg" : getOptimizedImageUrl(thumbnailUrl || "/placeholder.jpg", { width: 400 })}
                       alt={title}
                       fill
-                      className={cn("object-cover transition-opacity duration-300", isHovered ? "opacity-0" : "opacity-90")}
+                      className={cn("object-cover transition-opacity duration-300", isActuallyPlaying ? "opacity-0" : "opacity-90")}
                       unoptimized
                       onError={() => setImgError(true)}
                   />
@@ -91,39 +173,18 @@ function CompactVideoCardImpl({
               <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60" />
           </div>
 
-           {/* Auto-play Video on Hover */}
-           {/* Auto-play Video on Hover */}
-          {isHovered && (
-            streamUid ? (
-              <iframe
-                src={`https://customer-${process.env.NEXT_PUBLIC_CLOUDFLARE_STREAM_CUSTOMER_CODE || '200140d34237d6ec'}.cloudflarestream.com/${streamUid}/iframe?muted=true&autoplay=true&loop=true&controls=false`}
-                className="absolute inset-0 w-full h-full object-cover scale-[1.2]"
-                allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                allowFullScreen
-              />
-            ) : (
-              videoUrl && (
-                <video
-                    src={videoUrl}
-                    className="absolute inset-0 w-full h-full object-cover scale-[1.2]"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                />
-              )
-            )
-          )}
 
-          {/* Play Button on Hover */}
-          <div className={cn(
-            "absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-300",
-            isHovered ? "opacity-100" : "opacity-0"
-          )}>
-            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-xl transform scale-90 group-hover:scale-100 transition-transform">
-              <Play className="w-6 h-6 text-black fill-black ml-1" />
+          {/* Animated GIF Preview on Hover */}
+          {isActuallyPlaying && (previewUrl || videoUrl) && (
+            <div className="absolute inset-0 w-full h-full">
+                {/* Use standard img for GIF to avoid Next.js optimization issues with animated images */}
+                <img
+                    src={previewUrl || videoUrl}
+                    alt={title}
+                    className="w-full h-full object-cover scale-[1.1] transition-transform duration-700"
+                />
             </div>
-          </div>
+          )}
 
           {/* --- Overlays --- */}
           {/* Top Left: Counselor Name (Text Only) */}
@@ -158,9 +219,7 @@ function CompactVideoCardImpl({
   );
 }
 
-export const CompactVideoCard = memo(CompactVideoCardImpl, (prev, next) => {
-    // Custom comparison to ignore function props and deep compare nested objects if needed
-    // Assuming counselor and creator names are what matters for display
+const CompactVideoCard = memo(CompactVideoCardImpl, (prev, next) => {
     return (
         prev.id === next.id &&
         prev.title === next.title &&
@@ -172,3 +231,8 @@ export const CompactVideoCard = memo(CompactVideoCardImpl, (prev, next) => {
         prev.creator?.name === next.creator?.name
     );
 });
+
+// Support both named and default import
+export { CompactVideoCard };
+export default CompactVideoCard;
+

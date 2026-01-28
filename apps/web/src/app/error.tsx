@@ -27,11 +27,13 @@ export default function Error({
           오류가 발생했습니다
         </h1>
 
-        <p className="text-muted-foreground mb-6">
           페이지를 불러오는 중 문제가 발생했습니다.
           <br />
+          <span className="text-red-400 font-mono text-xs block mt-2 bg-black/50 p-2 rounded">
+            {error.message}
+          </span>
+          <br />
           잠시 후 다시 시도해주세요.
-        </p>
 
         {error.digest && (
           <p className="text-xs text-muted-foreground/60 mb-6 font-mono">

@@ -37,6 +37,11 @@ export interface CreateSubmissionDto {
 }
 
 export const submissionsApi = {
+  create: async (data: any) => {
+    const response = await axiosInstance.post('/submissions', data);
+    return response.data;
+  },
+
   getAll: async (projectId?: string) => {
     const response = await axiosInstance.get<Submission[]>('/submissions', {
       params: { projectId }
@@ -56,5 +61,10 @@ export const submissionsApi = {
 
   delete: async (id: string) => {
     await axiosInstance.delete(`/submissions/${id}`);
+  },
+
+  generateUploadUrl: async (data: { uploadLength: number; metadata?: any }) => {
+    const response = await axiosInstance.post('/submissions/upload-url', data);
+    return response.data;
   }
 };

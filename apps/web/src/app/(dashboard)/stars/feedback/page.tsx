@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { m } from 'framer-motion';
 import { formatDate, formatTimestamp } from '@/lib/utils';
 import { MessageSquare, CheckCircle, Clock, Play, ExternalLink, Filter } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/api/axios';
 
 interface FeedbackItem {
   id: string;
@@ -70,32 +72,43 @@ const mockFeedbacks: FeedbackItem[] = [
   },
 ];
 
-const priorityConfig = {
+const priorityConfig: Record<string, { label: string; color: string }> = {
   LOW: { label: '낮음', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
   NORMAL: { label: '보통', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
   HIGH: { label: '높음', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
   URGENT: { label: '긴급', color: 'bg-red-500/20 text-red-400 border-red-500/30 animate-pulse' },
 };
 
-const statusConfig = {
+const statusConfig: Record<string, { label: string; color: string }> = {
   PENDING: { label: '미처리', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
   RESOLVED: { label: '해결됨', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
   WONTFIX: { label: '수정안함', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
 };
 
 export default function StarsFeedbackPage() {
-  const [feedbacks] = useState<FeedbackItem[]>(mockFeedbacks);
   const [filter, setFilter] = useState({ status: 'all', priority: 'all' });
 
-  const filteredFeedbacks = feedbacks.filter((fb) => {
+  // 📡 Real Data Fetching
+  const { data: feedbacks = [], isLoading } = useQuery({
+    queryKey: ['my-feedbacks'],
+    queryFn: async () => {
+      // Fetch all feedbacks for current user (Star)
+      const response = await axiosInstance.get('/feedback');
+      return response.data;
+    }
+  });
+
+  const filteredFeedbacks = feedbacks.filter((fb: FeedbackItem) => {
     if (filter.status !== 'all' && fb.status !== filter.status) return false;
     if (filter.priority !== 'all' && fb.priority !== filter.priority) return false;
     return true;
   });
 
-  const pendingCount = feedbacks.filter((fb) => fb.status === 'PENDING').length;
-  const resolvedCount = feedbacks.filter((fb) => fb.status === 'RESOLVED').length;
-  const urgentCount = feedbacks.filter((fb) => fb.priority === 'URGENT' && fb.status === 'PENDING').length;
+  const pendingCount = feedbacks.filter((fb: FeedbackItem) => fb.status === 'PENDING').length;
+  const resolvedCount = feedbacks.filter((fb: FeedbackItem) => fb.status === 'RESOLVED').length;
+  const urgentCount = feedbacks.filter((fb: FeedbackItem) => fb.priority === 'URGENT' && fb.status === 'PENDING').length;
+
+  if (isLoading) return <div className="p-8 text-center text-gray-500">피드백을 불러오는 중...</div>;
 
   // 🎬 Handle timestamp click - opens video at specific time
   const handleTimestampClick = (feedback: FeedbackItem) => {
@@ -213,7 +226,7 @@ export default function StarsFeedbackPage() {
 
       {/* Feedback List */}
       <div className="space-y-4">
-        {filteredFeedbacks.map((feedback, index) => (
+        {filteredFeedbacks.map((feedback: FeedbackItem, index: number) => (
           <m.div
             key={feedback.id}
             initial={{ opacity: 0, y: 20 }}

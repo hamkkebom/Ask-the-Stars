@@ -22,11 +22,13 @@ export default function GlobalError({
               심각한 오류가 발생했습니다
             </h1>
 
-            <p className="text-slate-400 mb-6">
               애플리케이션에 예상치 못한 문제가 발생했습니다.
               <br />
+              <span className="text-red-400 font-mono text-xs block mt-2 bg-slate-900 p-2 rounded">
+                {error.message}
+              </span>
+              <br />
               페이지를 새로고침하거나 잠시 후 다시 시도해주세요.
-            </p>
 
             {error.digest && (
               <p className="text-xs text-slate-500 mb-6 font-mono">

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { CreateProjectDto, UpdateProjectDto } from './dto';
+import { AssignmentType } from '@prisma/client';
+import { CreateProjectDto, UpdateProjectDto, CreateProjectRequestDto } from './dto';
 
 @Injectable()
 export class ProjectsService {
@@ -80,18 +81,43 @@ export class ProjectsService {
 
   // --- Project Requests (Board) ---
 
+  async createRequest(userId: string, createDto: CreateProjectRequestDto) {
+      return this.prisma.projectRequest.create({
+          data: {
+              ...createDto,
+              createdById: userId,
+              status: 'OPEN',
+              currentAssignees: 0,
+              assignmentType: createDto.assignmentType || AssignmentType.MULTIPLE,
+          }
+      });
+  }
+
   async findAllRequests(): Promise<any> {
       return this.prisma.projectRequest.findMany({
-          where: { status: 'OPEN' },
+          // where: { status: 'OPEN' }, // Start can view FULL/CLOSED too? Maybe filters on frontend.
           orderBy: { createdAt: 'desc' },
-          // Include necessary relations if needed
+          include: {
+              createdBy: { select: { id: true, name: true } }
+          }
       });
   }
 
   async getMyAssignments(userId: string): Promise<any> {
       return this.prisma.projectAssignment.findMany({
           where: { freelancerId: userId },
-          include: { request: true }
+          orderBy: { createdAt: 'desc' },
+          include: {
+              request: {
+                  include: {
+                      createdBy: { select: { id: true, name: true, profileImage: true } } // Project Owner (Agency/Admin)
+                  }
+              },
+              submissions: {
+                  orderBy: { version: 'desc' },
+                  take: 1 // Get latest submission to show status
+              }
+          }
       });
   }
 

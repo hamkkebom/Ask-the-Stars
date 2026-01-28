@@ -3,7 +3,15 @@ import { useAuthStore } from '../store/useAuthStore';
 
 // Environment variable for API URL
 // Fallback to localhost for development if not set
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const getBaseUrl = () => {
+  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+  if (!url.endsWith('/api') && !url.endsWith('/api/')) {
+    return `${url.replace(/\/$/, '')}/api`;
+  }
+  return url;
+};
+
+const API_URL = getBaseUrl();
 
 const apiClient = axios.create({
   baseURL: API_URL,

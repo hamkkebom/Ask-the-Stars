@@ -12,7 +12,8 @@
 |------|----------|------|:----:|
 | 🎨 Frontend | Next.js + React | 15.5.9 / 19.0.0 | ✅ |
 | 🔧 Backend | NestJS + Prisma | 11.1.12 / 6.3.1 | ✅ |
-| 🎬 Video | Plyr + HLS.js | 3.8.4 / 1.6.15 | ✅ |
+| 🎬 Video | Cloudflare Stream + R2 | Hybrid | ✅ |
+| 🧠 AI/ML | OpenAI + pgvector | - | ✅ |
 | 📊 Monitoring | Sentry | 무료 | ✅ |
 | ☁️ Hosting | Vercel + Cloud Run | 서울 | ✅ |
 | 🛡️ Type | Zod (v3.24.1 표준화) | - | ✅ |
@@ -29,8 +30,9 @@
 | [TailwindCSS](https://tailwindcss.com/) | 4.0.8 | 유틸리티 CSS |
 | [Zustand](https://zustand-demo.pmnd.rs/) | 5.0.10 | 상태 관리 |
 | [TanStack Query](https://tanstack.com/query) | 5.62.7 | 서버 상태 관리 |
-| [Plyr](https://plyr.io/) | 3.8.4 | 영상 플레이어 |
-| [HLS.js](https://github.com/video-dev/hls.js) | 1.6.15 | HLS 스트리밍 |
+| [Plyr](https://plyr.io/) | 3.8.4 | 영상 플레이어 (Legacy) |
+| [Cloudflare Stream](https://developers.cloudflare.com/stream/viewing-videos/using-the-stream-player/) | - | 메인 영상 플레이어 (React) |
+| [HLS.js](https://github.com/video-dev/hls.js) | 1.6.15 | HLS 스트리밍 (Legacy fallback) |
 | [Fabric.js](http://fabricjs.com/) | 6.9.1 | Canvas 마킹 |
 | [Socket.io Client](https://socket.io/) | 4.8.3 | WebSocket |
 | [Lucide React](https://lucide.dev/) | 0.469.0 | 아이콘 |
@@ -46,7 +48,8 @@
 | [NestJS](https://nestjs.com/) | 11.1.12 | Node.js 프레임워크 |
 | [Node.js](https://nodejs.org/) | 22.x (Current) | 런타임 (Fat Image Build) |
 | [Prisma](https://www.prisma.io/) | 6.3.1 | ORM |
-| [PostgreSQL](https://www.postgresql.org/) | 17 | 데이터베이스 |
+| [PostgreSQL](https://www.postgresql.org/) | 17 | 데이터베이스 (with pgvector) |
+| [OpenAI](https://openai.com/) | 4.x | AI Embedding & Search |
 | [Redis](https://redis.io/) | - | Socket.io Adapter (Horizontal Scaling) |
 | [BullMQ](https://docs.bullmq.io/) | 5.66.5 | 작업 큐 |
 | [Socket.io](https://socket.io/) | 4.8.3 | WebSocket 서버 (+ Redis Adapter) |
@@ -61,9 +64,9 @@
 |--------|------|------|---------|:----:|
 | [Vercel](https://vercel.com/) | 프론트엔드 호스팅 | 서울 PoP | $0 | ✅ |
 | [Google Cloud Run](https://cloud.google.com/run) | 백엔드 호스팅 | 서울 (asia-northeast3) | $0 (3개월 무료) | ✅ |
-| [Supabase](https://supabase.com/) | PostgreSQL + Auth | 서울 (ap-northeast-2) | $25 | ✅ |
+| [Supabase](https://supabase.com/) | PostgreSQL + Auth | AWS Seoul (Connection Pool: 6543) | $25 | ✅ |
 | [Upstash](https://upstash.com/) | Redis 캐시 | 도쿄 | $0 (Free Tier) | ✅ |
-| [Cloudflare R2](https://www.cloudflare.com/r2/) | 영상 스토리지 | CDN | $0 | ✅ |
+| [Cloudflare R2](https://www.cloudflare.com/r2/) | 영상/이미지 원본 스토리지 | CDN (Image Resizing) | $0 | ✅ |
 | [Cloudflare Stream](https://www.cloudflare.com/stream/) | 영상 스트리밍 | CDN | $5 | ✅ |
 | [Resend](https://resend.com/) | 이메일 발송 | - | $0 (Free Tier) | ✅ |
 

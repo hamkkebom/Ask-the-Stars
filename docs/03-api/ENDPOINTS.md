@@ -55,6 +55,13 @@
 
 ---
 
+## 7️⃣ 미디어 업로드 (Media Uploads) - Hybrid
+*   `POST /uploads/presigned-put-url`: R2 직접 업로드 URL 발급 (PUT)
+*   `POST /videos/import-stream`: R2 -> Stream 복사 및 인코딩 요청
+*   `GET /uploads/presigned`: R2 비공개 파일 접근용 URL 발급 (GET)
+
+---
+
 ## 💡 참고 사항
 *   상세한 Request/Response 스키마는 **Swagger UI** (`/api/docs`)를 통해 확인하시기 바랍니다.
 *   에러 응답 형식: `{ "statusCode": 4xx, "message": "error msg", "error": "Bad Request" }`

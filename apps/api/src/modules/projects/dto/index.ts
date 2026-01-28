@@ -39,3 +39,5 @@ export class UpdateProjectDto {
   @IsNumber()
   budget?: number;
 }
+
+export * from './create-project-request.dto';

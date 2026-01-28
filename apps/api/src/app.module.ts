@@ -13,6 +13,8 @@ import { LeadsModule } from './modules/leads/leads.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { VideosModule } from './modules/videos/videos.module';
 import { CloudflareModule } from './modules/cloudflare/cloudflare.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { AiModule } from './modules/ai/ai.module';
 import { HealthController } from './common/health.controller';
 
 @Module({
@@ -40,6 +42,8 @@ import { HealthController } from './common/health.controller';
 
     VideosModule,
     CloudflareModule,
+    AnalyticsModule,
+    AiModule,
   ],
   controllers: [HealthController],
 })

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum, Min, Max } from 'class-validator';
 import { SubmissionStatus } from '@ask-the-stars/database';
 
 export class CreateSubmissionDto {
@@ -9,6 +9,16 @@ export class CreateSubmissionDto {
   @IsOptional()
   @IsString()
   assignmentId?: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  @Max(5)
+  versionSlot!: number;
+
+  @IsOptional()
+  @IsString()
+  versionTitle?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -28,6 +38,10 @@ export class CreateSubmissionDto {
 
   @IsOptional()
   @IsString()
+  fileKey?: string;
+
+  @IsOptional()
+  @IsString()
   notes?: string;
 }
 
@@ -42,5 +56,11 @@ export class UpdateSubmissionDto {
 
   @IsOptional()
   @IsString()
+  versionTitle?: string;
+
+  @IsOptional()
+  @IsString()
   notes?: string;
 }
+
+export * from './generate-upload-url.dto';

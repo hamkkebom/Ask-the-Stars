@@ -2,6 +2,7 @@ import { after } from 'next/server';
 import VideoDetailClient from './VideoDetailClient';
 import { VideoProps } from '@/components/ui/compact-video-card';
 import { videosApi } from '@/lib/api/videos';
+import { getVideoSrc } from '@/lib/utils/video-url';
 
 // --- Mock Data (Usually fetched from a DB/API) ---
 const mockVideo = {
@@ -57,10 +58,8 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
   try {
     const data = await videosApi.getVideoById(id);
 
-    // Use Signed URL from backend if available, otherwise construct (fallback)
-    const r2Url = (data.technicalSpec as any)?.videoUrl || (data.technicalSpec?.r2Key
-        ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL || 'https://pub-270030d34237d6ec.r2.dev'}/${data.technicalSpec.r2Key}`
-        : null);
+    // Use centralized utility for URL generation
+    const r2Url = (data.technicalSpec as any)?.videoUrl || getVideoSrc(data.technicalSpec);
 
     video = {
       id: data.id,

@@ -9,10 +9,10 @@ initializeSentry();
 };
 
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
+// import { ConfigService } from '@nestjs/config';
+// import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
 
 async function bootstrap() {
 
@@ -20,23 +20,23 @@ async function bootstrap() {
     console.log('>>> BOOTSTRAP STARTING <<<');
     const app = await NestFactory.create(AppModule);
     console.log('>>> APP CREATED <<<');
-    const configService = app.get(ConfigService);
-    const logger = new Logger('Bootstrap');
+    // const configService = app.get(ConfigService);
+    // const logger = new Logger('Bootstrap');
 
-    // Redis Socket.io Adapter
-    const redisUrl = configService.get('REDIS_URL');
-    if (redisUrl) {
-      const redisIoAdapter = new RedisIoAdapter(app, configService);
-      try {
-        await redisIoAdapter.connectToRedis();
-        app.useWebSocketAdapter(redisIoAdapter);
-        logger.log('✅ Redis WebSocket Adapter registered');
-      } catch (err) {
-        logger.error(`❌ Failed to connect to Redis: ${(err as any).message}. Falling back to default adapter.`);
-      }
-    } else {
-      logger.warn('⚠️ REDIS_URL not found. Skipping Redis adapter registration.');
-    }
+    // Redis Socket.io Adapter (Temporarily Disabled for Video Grid Fix)
+    // const redisUrl = configService.get('REDIS_URL');
+    // if (redisUrl) {
+    //   const redisIoAdapter = new RedisIoAdapter(app, configService);
+    //   try {
+    //     await redisIoAdapter.connectToRedis();
+    //     app.useWebSocketAdapter(redisIoAdapter);
+    //     logger.log('✅ Redis WebSocket Adapter registered');
+    //   } catch (err) {
+    //     logger.error(`❌ Failed to connect to Redis: ${(err as any).message}. Falling back to default adapter.`);
+    //   }
+    // } else {
+    //   logger.warn('⚠️ REDIS_URL not found. Skipping Redis adapter registration.');
+    // }
 
 
     // Global validation pipe
@@ -54,7 +54,7 @@ async function bootstrap() {
     // CORS configuration
     const allowedOrigins = process.env.WS_CORS_ORIGIN
       ? process.env.WS_CORS_ORIGIN.split(',').map((origin) => origin.trim())
-      : ['http://localhost:3000', 'https://www.hamkkebom.com', 'https://hamkkebom.com'];
+      : ['http://localhost:3000', 'http://localhost:3001', 'https://www.hamkkebom.com', 'https://hamkkebom.com'];
 
     app.enableCors({
       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {

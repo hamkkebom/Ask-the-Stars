@@ -8,6 +8,8 @@ import { toast } from '@/hooks/use-toast';
 import { GlassCard } from '@/components/ui/glass-card';
 import { useAuthStore } from '@/store/useAuthStore';
 import { formatDate, formatCurrency, cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { projectsApi } from '@/lib/api/projects';
 import {
   LayoutGrid,
   List as ListIcon,
@@ -20,83 +22,9 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-// Types
-interface ProjectRequest {
-  id: string;
-  title: string;
-  description?: string;
-  categories: string[];
-  deadline: string;
-  assignmentType: 'SINGLE' | 'MULTIPLE';
-  maxAssignees: number;
-  currentAssignees: number;
-  status: 'OPEN' | 'FULL' | 'CLOSED' | 'CANCELLED';
-  estimatedBudget?: number;
-  createdAt: string;
-  createdBy?: { name: string };
-  targetCounselor?: { name: string };
-}
+import { ProjectRequest } from '@/lib/api/projects';
 
-// Mock Data
-const mockRequests: ProjectRequest[] = [
-  {
-    id: '1',
-    title: '신년운세 × 신규 상담사 김태희 홍보',
-    description: '2026년 신년운세 시즌 홍보 영상 제작',
-    categories: ['신년운세', '신규상담사', '사주'],
-    deadline: '2026-01-25T23:59:59Z',
-    assignmentType: 'MULTIPLE',
-    maxAssignees: 3,
-    currentAssignees: 1,
-    status: 'OPEN',
-    estimatedBudget: 150000,
-    createdAt: '2026-01-15T10:00:00Z',
-    createdBy: { name: '관리팀' },
-    targetCounselor: { name: '김태희' },
-  },
-  {
-    id: '2',
-    title: '2026 봄 타로 시즌 캠페인',
-    description: '봄 시즌 타로 운세 홍보 영상',
-    categories: ['타로', '계절별', '브랜드홍보'],
-    deadline: '2026-02-10T23:59:59Z',
-    assignmentType: 'SINGLE',
-    maxAssignees: 1,
-    currentAssignees: 0,
-    status: 'OPEN',
-    estimatedBudget: 200000,
-    createdAt: '2026-01-16T14:00:00Z',
-    createdBy: { name: '관리팀' },
-  },
-  {
-    id: '3',
-    title: '인간관계 고민 해결 시리즈',
-    description: '인간관계 상담 프로모션 영상',
-    categories: ['인간관계', '고민'],
-    deadline: '2026-01-20T23:59:59Z',
-    assignmentType: 'MULTIPLE',
-    maxAssignees: 5,
-    currentAssignees: 5,
-    status: 'FULL',
-    estimatedBudget: 120000,
-    createdAt: '2026-01-10T09:00:00Z',
-    createdBy: { name: '관리팀' },
-  },
-  {
-    id: '4',
-    title: '재물운 상승 비법 (숏폼)',
-    description: '숏폼 전용 재물운 콘텐츠 제작',
-    categories: ['사주', '재물운', '숏폼'],
-    deadline: '2026-01-18T23:59:59Z',
-    assignmentType: 'SINGLE',
-    maxAssignees: 1,
-    currentAssignees: 1,
-    status: 'CLOSED',
-    estimatedBudget: 80000,
-    createdAt: '2026-01-05T09:00:00Z',
-    createdBy: { name: '마케팅팀' },
-  },
-];
+// Mock Data Removed
 
 const categoryColors: Record<string, string> = {
   '신년운세': 'bg-red-500/20 text-red-200 border-red-500/30',
@@ -147,17 +75,14 @@ function StatsCard({ title, value, icon: Icon, color }: { title: string, value: 
 }
 
 export default function ProjectBoardPage() {
-  const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
-  const [requests] = useState<ProjectRequest[]>(mockRequests);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(true);
+  const { data: requests = [], isLoading: loading } = useQuery({
+    queryKey: ['project-requests'],
+    queryFn: projectsApi.getProjectRequests,
+    initialData: []
+  });
 
-  // Simulate loading
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Stats calculation
   const totalOpen = requests.filter(r => r.status === 'OPEN').length;
@@ -197,12 +122,13 @@ export default function ProjectBoardPage() {
                <ListIcon className="w-5 h-5" />
              </button>
            </div>
-            <button
-              onClick={() => toast.info('새 요청 등록 기능은 준비 중입니다.', 2000)}
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-            >
-              <Plus className="w-4 h-4" /> 새 요청 등록
-            </button>
+            <Link href="/stars/requests/create">
+              <button
+                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                <Plus className="w-4 h-4" /> 새 요청 등록
+              </button>
+            </Link>
         </div>
       </div>
 

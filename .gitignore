@@ -74,3 +74,7 @@ google-credentials.json
 
 # External Reference Resources (local only)
 agent-skills-main/
+
+# Cloudflare Keys
+apps/api/scripts/new_signing_key.json
+*.pem

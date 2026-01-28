@@ -6,7 +6,7 @@ import { m, AnimatePresence } from 'framer-motion';
 import {
   Menu, X, ChevronDown,
   Star, Video, Megaphone, GraduationCap,
-  Users, Briefcase, Award, BookOpen
+  Users, Briefcase, Award, BookOpen, Search
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -143,8 +143,15 @@ export function MainHeader() {
             ))}
           </nav>
 
-          {/* CTA Buttons */}
+          {/* Search & CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
+             <Link
+              href="/search"
+              className="p-2 text-slate-300 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+              aria-label="검색"
+            >
+              <Search className="w-5 h-5" />
+            </Link>
             <Link
               href="/auth/login"
               className="px-4 py-2 text-sm font-bold text-slate-300 hover:text-white transition-colors"
@@ -213,6 +220,15 @@ export function MainHeader() {
                   )}
                 </div>
               ))}
+              {/* Mobile Search */}
+               <Link
+                    href="/search"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg"
+                  >
+                    <Search className="w-5 h-5" />
+                    통합 검색
+                  </Link>
               <div className="pt-4 border-t border-white/10 space-y-2">
                 <Link
                   href="/auth/login"

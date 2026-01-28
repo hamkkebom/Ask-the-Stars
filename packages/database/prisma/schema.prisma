@@ -4,11 +4,13 @@
 generator client {
   provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [vector]
 }
 
 // ==========================================
@@ -378,6 +380,7 @@ model Video {
   maker              Maker?      @relation(fields: [makerId], references: [id])
   technicalSpec      VideoTechnicalSpec?
   eventLogs          VideoEventLog[]
+  embedding          VideoEmbedding?
 
   @@map("videos")
 }
@@ -630,4 +633,26 @@ enum PostType {
   NOTICE
   EVENT
   CASE_STUDY
+}
+
+// ==========================================
+// AI / Vector Search Models
+// ==========================================
+
+model VideoEmbedding {
+  id        String   @id @default(cuid())
+  videoId   String   @unique @map("video_id")
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  // Vector type is supported via postgresqlExtensions + vector extension
+  // Using Unsupported for raw SQL generation if Prisma type isn't fully ready,
+  // but with previewFeatures, we can try to use it.
+  // Ideally: vector Unsupported("vector(1536)")
+  // OpenAI text-embedding-3-small is 1536 dimensions
+  embedding Unsupported("vector(768)")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("video_embeddings")
 }

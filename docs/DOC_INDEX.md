@@ -21,10 +21,11 @@
 |---|---|---|
 | 🛠️ **[PERMISSIONS.md](./docs/PERMISSIONS.md)** | `docs\PERMISSIONS.md` | 2026-01-19 07:43 |
 | 🛠️ **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | `docs\ARCHITECTURE.md` | 2026-01-19 07:43 |
-| 🛠️ **[API.md](./docs/API.md)** | `docs\API.md` | 2026-01-19 07:42 |
+| 🛠️ **[API_ENDPOINTS.md](./docs/03-api/ENDPOINTS.md)** | `docs\03-api\ENDPOINTS.md` | 2026-01-27 00:00 |
 | 🛠️ **[DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md)** | `docs\DATABASE_SCHEMA.md` | 2026-01-19 07:42 |
 | 🛠️ **[TECH_STACK.md](./docs/TECH_STACK.md)** | `docs\TECH_STACK.md` | 2026-01-19 07:31 |
 | 🛠️ **[TECH_STACK_COMPARISON.md](./docs/TECH_STACK_COMPARISON.md)** | `docs\TECH_STACK_COMPARISON.md` | 2026-01-19 07:23 |
+| 🛠️ **[CLOUDFLARE_INTEGRATION.md](./docs/02-architecture/CLOUDFLARE_INTEGRATION.md)** | `docs\02-architecture\CLOUDFLARE_INTEGRATION.md` | 2026-01-27 00:00 |
 | 🛠️ **[TEST_PLAN.md](./docs/TEST_PLAN.md)** | `docs\TEST_PLAN.md` | 2026-01-17 06:34 |
 | 🛠️ **[system.md](./.context/architecture/system.md)** | `.context\architecture\system.md` | 2026-01-15 09:19 |
 | 🛠️ **[api-schema.md](./.context/docs/api-schema.md)** | `.context\docs\api-schema.md` | 2026-01-15 09:18 |

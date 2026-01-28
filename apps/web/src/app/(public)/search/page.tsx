@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
+import { videosApi } from '@/lib/api/videos';
+
 interface SearchResult {
   type: 'video' | 'counselor';
   id: string;
@@ -62,16 +64,30 @@ function SearchContent() {
     if (!searchQuery.trim()) return;
 
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const filtered = mockResults.filter((r) =>
-      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    try {
+      const videoResults = await videosApi.search(searchQuery);
 
-    setResults(filtered);
-    setIsLoading(false);
+      const mappedResults: SearchResult[] = videoResults.map((v: any) => ({
+        type: 'video',
+        id: v.id,
+        title: v.title,
+        description: v.description || '',
+        metadata: {
+            views: v.views || 0,
+            counselor: v.project?.counselor?.name || '상담사'
+        }
+      }));
+
+      // Keep mock counselors for demo if needed, or just show videos
+      // For now, let's just show videos from AI search
+      setResults(mappedResults);
+    } catch (e) {
+      console.error("Search failed", e);
+      setResults([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {

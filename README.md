@@ -473,6 +473,8 @@ gcloud run deploy api \
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare 계정 ID | ✅ |
 | `CLOUDFLARE_R2_ACCESS_KEY` | R2 액세스 키 | ✅ |
 | `CLOUDFLARE_R2_SECRET_KEY` | R2 시크릿 키 | ✅ |
+| `CLOUDFLARE_SIGNING_KEY_ID` | Stream 서명 키 ID | ✅ |
+| `CLOUDFLARE_SIGNING_KEY_PEM` | Stream 서명 Private Key (RSA) | ✅ |
 | `SENTRY_DSN` | Sentry 에러 추적 DSN | ⚠️ |
 
 ## API Documentation

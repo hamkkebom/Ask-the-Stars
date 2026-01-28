@@ -89,4 +89,17 @@ export class UploadsController {
           key: body.key
       };
   }
+
+  @Post('presigned-put-url')
+  @UseGuards(JwtAuthGuard)
+  async getPresignedPutUrl(@Body() body: { key: string; contentType: string }) {
+      // Validate key to prevent path traversal
+      // Simple check: Allow safe chars. For now simple pass.
+      const url = await this.uploadsService.getPresignedPutUrl(body.key, body.contentType);
+      return {
+          success: !!url,
+          url,
+          key: body.key
+      };
+  }
 }

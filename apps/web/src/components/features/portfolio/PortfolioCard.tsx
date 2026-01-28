@@ -1,5 +1,6 @@
 'use client';
 
+import { getOptimizedImageUrl } from '@/utils/image';
 import { motion } from 'framer-motion';
 import { Play, Eye, Heart, MoreVertical, Edit, Trash2 } from 'lucide-react';
 import { PortfolioItem } from '@/data/mocks/portfolio';
@@ -50,7 +51,7 @@ function PortfolioCardImpl({
         category === 'SHORTS' ? "aspect-[9/16]" : "aspect-video"
       )}>
         <img
-          src={thumbnailUrl}
+          src={getOptimizedImageUrl(thumbnailUrl, { width: 600 })}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />

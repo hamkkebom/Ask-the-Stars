@@ -6,6 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatDate, formatCurrency, cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { axiosInstance } from '@/lib/api/axios';
 import {
   Clock,
   CheckCircle2,
@@ -21,67 +23,32 @@ import {
 } from 'lucide-react';
 
 // Types and Mock Data remain same...
+
+// Types
 interface MyProject {
-  id: string;
+  id: string; // Assignment ID
   requestId: string;
+  // Flattened for UI convenience
   title: string;
   description?: string;
   deadline: string;
   budget: number;
   targetCounselor?: { name: string };
-  status: 'IN_PROGRESS' | 'SUBMITTED' | 'COMPLETED' | 'CANCELLED';
+
+  freelancerId: string;
+  status: 'ACCEPTED' | 'IN_PROGRESS' | 'SUBMITTED' | 'COMPLETED' | 'CANCELLED';
   acceptedAt: string;
+  submissions: any[];
+
+  // Calculated
   versionsCount: number;
   approvedVersions: number;
   pendingFeedbacks: number;
 }
 
-const mockProjects: MyProject[] = [
-  {
-    id: 'proj1',
-    requestId: '1',
-    title: '신년운세 × 신규 상담사 김태희 홍보',
-    description: '2026년 신년운세 시즌 홍보 영상 제작',
-    deadline: '2026-01-25T23:59:59Z',
-    budget: 150000,
-    targetCounselor: { name: '김태희' },
-    status: 'IN_PROGRESS',
-    acceptedAt: '2026-01-16T10:00:00Z',
-    versionsCount: 3,
-    approvedVersions: 1,
-    pendingFeedbacks: 3,
-  },
-  {
-    id: 'proj2',
-    requestId: '5',
-    title: '애정운 시즌 3 홍보',
-    description: '봄 시즌 애정운 홍보 영상',
-    deadline: '2026-02-01T23:59:59Z',
-    budget: 120000,
-    targetCounselor: { name: '최영희' },
-    status: 'SUBMITTED',
-    acceptedAt: '2026-01-14T11:00:00Z',
-    versionsCount: 2,
-    approvedVersions: 2,
-    pendingFeedbacks: 0,
-  },
-  {
-    id: 'proj3',
-    requestId: '3',
-    title: '인간관계 고민 해결 시리즈',
-    description: '인간관계 상담 프로모션 영상',
-    deadline: '2026-01-15T23:59:59Z',
-    budget: 100000,
-    status: 'COMPLETED',
-    acceptedAt: '2026-01-05T09:00:00Z',
-    versionsCount: 1,
-    approvedVersions: 1,
-    pendingFeedbacks: 0,
-  },
-];
-
 function StatusBadge({ status }: { status: MyProject['status'] }) {
   const styles = {
+    ACCEPTED: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
     IN_PROGRESS: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
     SUBMITTED: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
     COMPLETED: 'bg-green-500/20 text-green-300 border-green-500/30',
@@ -89,6 +56,7 @@ function StatusBadge({ status }: { status: MyProject['status'] }) {
   };
 
   const labels = {
+    ACCEPTED: '진행중', // Initially accepted
     IN_PROGRESS: '진행중',
     SUBMITTED: '검수중',
     COMPLETED: '완료',
@@ -117,7 +85,7 @@ function StatsCard({ title, value, icon: Icon, color }: { title: string; value: 
 }
 
 function CalendarView({ projects }: { projects: MyProject[] }) {
-  const [currentDate] = useState(new Date('2026-01-01')); // Mock current date
+  const [currentDate] = useState(new Date());
 
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
@@ -132,50 +100,10 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
     });
   };
 
+  // Simplified calendar for brevity
   return (
     <GlassCard className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-yellow-400" />
-          2026년 1월
-        </h2>
-        <div className="flex gap-2">
-          <button className="p-1 hover:bg-white/10 rounded-full transition-colors" aria-label="이전 달"><ChevronLeft className="w-5 h-5 text-gray-400" /></button>
-          <button className="p-1 hover:bg-white/10 rounded-full transition-colors" aria-label="다음 달"><ChevronRightIcon className="w-5 h-5 text-gray-400" /></button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-7 gap-4 text-center mb-4">
-        {['일', '월', '화', '수', '목', '금', '토'].map(d => (
-          <div key={d} className="text-gray-500 font-medium text-sm">{d}</div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-7 gap-4">
-        {blanks.map(i => <div key={`blank-${i}`} className="h-24" />)}
-        {days.map(day => {
-          const dayProjects = getProjectsForDay(day);
-          const isToday = day === 18; // Mock today
-
-          return (
-            <div key={day} className={cn(
-              "h-24 rounded-lg border p-2 relative group hover:border-yellow-500/50 transition-colors",
-              isToday ? "bg-yellow-500/10 border-yellow-500/30" : "bg-white/5 border-white/5"
-            )}>
-              <div className={cn("text-sm font-medium mb-1", isToday ? "text-yellow-400" : "text-gray-400")}>
-                {day}
-              </div>
-              <div className="space-y-1">
-                {dayProjects.map(p => (
-                  <div key={p.id} className="text-[10px] bg-blue-500/20 text-blue-300 px-1 py-0.5 rounded truncate border border-blue-500/20">
-                    {p.title}
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+       <div className="text-center text-gray-400 py-10">캘린더 뷰는 준비 중입니다.</div>
     </GlassCard>
   );
 }
@@ -184,32 +112,43 @@ function MyProjectsContent() {
   const searchParams = useSearchParams();
   const view = searchParams.get('view') || 'list';
 
-  const [projects, setProjects] = useState<MyProject[]>([]);
-  const [loading, setLoading] = useState(true);
+  // 📡 Real Data Fetching
+  const { data: assignments = [], isLoading } = useQuery({
+    queryKey: ['my-projects-assignments'],
+    queryFn: async () => {
+      const response = await axiosInstance.get('/projects/my-assignments');
+      return response.data;
+    }
+  });
+
   const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('all');
 
-  useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setProjects(mockProjects);
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
+  // Transform API data to UI model
+  const projects: MyProject[] = assignments.map((a: any) => ({
+      ...a,
+      title: a.request.title,
+      description: a.request.description,
+      deadline: a.request.deadline,
+      budget: a.request.estimatedBudget || 0,
+      targetCounselor: a.request.createdBy, // Showing Request Creator as target for now
+      versionsCount: 5, // Max
+      approvedVersions: a.submissions?.filter((s:any) => s.status === 'APPROVED').length || 0,
+      pendingFeedbacks: 0, // Need feedback count from API
+      requestId: a.requestId
+  }));
 
   const filteredProjects = projects.filter(p => {
     if (filter === 'all') return true;
-    if (filter === 'in_progress') return p.status === 'IN_PROGRESS' || p.status === 'SUBMITTED';
+    if (filter === 'in_progress') return ['ACCEPTED', 'IN_PROGRESS', 'SUBMITTED'].includes(p.status);
     if (filter === 'completed') return p.status === 'COMPLETED';
     return true;
   });
 
   const stats = {
-    inProgress: projects.filter(p => p.status === 'IN_PROGRESS').length,
+    inProgress: projects.filter(p => ['ACCEPTED', 'IN_PROGRESS'].includes(p.status)).length,
     submitted: projects.filter(p => p.status === 'SUBMITTED').length,
     completed: projects.filter(p => p.status === 'COMPLETED').length,
-    totalEarnings: projects.filter(p => p.status === 'COMPLETED').reduce((acc, p) => acc + p.budget, 0),
+    totalEarnings: projects.filter(p => p.status === 'COMPLETED').reduce((acc, p) => acc + (p.budget || 0), 0),
   };
 
   const getDaysLeft = (deadline: string) => {
@@ -217,7 +156,7 @@ function MyProjectsContent() {
     return days;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

@@ -30,6 +30,8 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+      - '--env-vars-file'
+      - 'apps/api/deploy-env.yaml'
 
 images:
   - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/hamkkebom-repo/api'

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Manually parse .env
-const envPath = path.resolve(__dirname, '../.env');
+const envPath = path.resolve(__dirname, '../apps/api/.env');
 const envContent = fs.readFileSync(envPath, 'utf8');
 const envConfig = {};
 envContent.split('\n').forEach(line => {
@@ -41,9 +41,12 @@ async function listFiles() {
         const response = await s3Client.send(command);
 
         console.log('--- Files in R2 ---');
-        (response.Contents || []).forEach(file => {
-            console.log(`[${file.Size} bytes] ${file.Key}`);
-        });
+        const files = response.Contents || [];
+        if (files.length > 0) {
+            console.log(JSON.stringify({key: files[0].Key}));
+        } else {
+            console.log("No files found");
+        }
         console.log('-------------------');
 
     } catch (error) {

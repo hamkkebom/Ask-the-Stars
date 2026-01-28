@@ -12,6 +12,18 @@ export class CreateFeedbackDto {
 
   @IsOptional()
   @IsNumber()
+  startTime?: number;
+
+  @IsOptional()
+  @IsNumber()
+  endTime?: number;
+
+  @IsOptional()
+  @IsString()
+  feedbackType?: string; // 자막, BGM, 컷편집 등
+
+  @IsOptional()
+  @IsNumber()
   timestamp?: number;
 
   @IsOptional()
@@ -26,6 +38,18 @@ export class UpdateFeedbackDto {
   @IsOptional()
   @IsString()
   content?: string;
+
+  @IsOptional()
+  @IsNumber()
+  startTime?: number;
+
+  @IsOptional()
+  @IsNumber()
+  endTime?: number;
+
+  @IsOptional()
+  @IsString()
+  feedbackType?: string;
 
   @IsOptional()
   @IsEnum(FeedbackPriority)

@@ -10,7 +10,11 @@ export interface ProjectRequest {
   estimatedBudget: number | null;
   currentAssignees: number;
   maxAssignees: number;
-  status: 'OPEN' | 'FULL' | 'CLOSED';
+  status: 'OPEN' | 'FULL' | 'CLOSED' | 'CANCELLED';
+  assignmentType?: 'SINGLE' | 'MULTIPLE'; // Optional if not always present
+  createdAt: string;
+  createdBy?: { id: string; name: string };
+  targetCounselor?: { id: string; name: string };
 }
 
 export const projectsApi = {
@@ -38,6 +42,11 @@ export const projectsApi = {
   create: async (data: any) => {
     const response = await axiosInstance.post('/projects/requests', data);
     return response.data;
+  },
+
+  createRequest: async (data: any) => {
+      const response = await axiosInstance.post('/projects/requests', data);
+      return response.data;
   },
 
   // --- My Dashboard ---

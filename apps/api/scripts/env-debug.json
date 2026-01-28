@@ -1,0 +1,17 @@
+{
+  "cwd": "C:\\Users\\이경수\\OneDrive\\바탕 화면\\Hankaebom-Star\\apps\\api",
+  "prisma": {
+    "path": "C:\\Users\\이경수\\OneDrive\\바탕 화면\\Hankaebom-Star\\node_modules\\.pnpm\\@prisma+client@6.3.1_prisma@6.3.1_typescript@5.9.3__typescript@5.9.3\\node_modules\\@prisma\\client\\default.js",
+    "clientVersion": null,
+    "hasStreamUid": false,
+    "error": null
+  },
+  "google": {
+    "path": "C:\\Users\\이경수\\OneDrive\\바탕 화면\\Hankaebom-Star\\node_modules\\.pnpm\\@google+generative-ai@0.24.1\\node_modules\\@google\\generative-ai\\dist\\index.js",
+    "error": null
+  },
+  "env": {
+    "GEMINI_API_KEY_EXISTS": false,
+    "GEMINI_KEY_LENGTH": 0
+  }
+}

@@ -22,7 +22,7 @@ const requestSchema = z.object({
   }),
   budget: z.coerce.number().min(10000, '예산은 10,000원 이상이어야 합니다.'),
   maxAssignees: z.coerce.number().min(1, '최소 1명 이상이어야 합니다.').max(10, '최대 10명까지 가능합니다.'),
-  assignmentType: z.enum([AssignmentType.SINGLE, AssignmentType.MULTIPLE]), // Use enum values for safety
+  assignmentType: z.enum([AssignmentType.SINGLE, AssignmentType.MULTIPLE, AssignmentType.GROUP]), // Use enum values for safety
   targetCounselorId: z.string().optional(),
 });
 
@@ -149,19 +149,26 @@ export default function CreateRequestPage() {
            {/* Assignment Type */}
            <div>
             <label className={labelClass}>모집 방식</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <label className="cursor-pointer">
                 <input type="radio" value="MULTIPLE" {...register('assignmentType')} className="sr-only peer" />
-                <div className="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary/20 peer-checked:border-primary transition-all text-center">
-                  <span className="block font-bold text-white mb-1">다중 모집 (공개)</span>
+                <div className="p-4 h-full rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary/20 peer-checked:border-primary transition-all text-center">
+                  <span className="block font-bold text-white mb-1">다중 배정 (중복)</span>
                   <span className="text-xs text-gray-400">여러 상담사가 지원 가능</span>
                 </div>
               </label>
               <label className="cursor-pointer">
                 <input type="radio" value="SINGLE" {...register('assignmentType')} className="sr-only peer" />
-                <div className="p-4 rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary/20 peer-checked:border-primary transition-all text-center">
-                  <span className="block font-bold text-white mb-1">단독 지명</span>
+                <div className="p-4 h-full rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary/20 peer-checked:border-primary transition-all text-center">
+                  <span className="block font-bold text-white mb-1">단독 배정</span>
                   <span className="text-xs text-gray-400">특정 상담사 1명에게만 요청</span>
+                </div>
+              </label>
+              <label className="cursor-pointer">
+                <input type="radio" value="GROUP" {...register('assignmentType')} className="sr-only peer" />
+                <div className="p-4 h-full rounded-xl border border-white/10 bg-white/5 peer-checked:bg-primary/20 peer-checked:border-primary transition-all text-center">
+                  <span className="block font-bold text-white mb-1">그룹 배정</span>
+                  <span className="text-xs text-gray-400">그룹 단위로 의뢰 진행</span>
                 </div>
               </label>
             </div>

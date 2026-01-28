@@ -22,7 +22,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'api'
+      - 'ask-the-stars-api'
       - '--image'
       - 'asia-northeast3-docker.pkg.dev/$PROJECT_ID/hamkkebom-repo/api'
       - '--region'

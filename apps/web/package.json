@@ -11,6 +11,9 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@ask-the-stars/ui": "file:../../packages/ui",
+    "@ask-the-stars/types": "file:../../packages/types",
+    "@ask-the-stars/utils": "file:../../packages/utils",
     "@cloudflare/stream-react": "^1.9.3",
     "@hookform/resolvers": "3.9.1",
     "@sentry/nextjs": "^9.4.0",
@@ -36,11 +39,6 @@
     "tus-js-client": "^4.3.1",
     "zod": "3.24.1",
     "zustand": "^5.0.10"
-  },
-  "dependencies": {
-    "@ask-the-stars/ui": "file:../../packages/ui",
-    "@ask-the-stars/types": "file:../../packages/types",
-    "@ask-the-stars/utils": "file:../../packages/utils"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

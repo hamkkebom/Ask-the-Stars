@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+// @ts-ignore - Plyr types are not properly exported
 import Plyr from 'plyr';
 import Hls from 'hls.js';
 import 'plyr/dist/plyr.css';
@@ -66,6 +67,10 @@ export function VideoPlayer({
       const hls = new Hls({
         enableWorker: true,
         lowLatencyMode: true,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 600,
+        maxBufferSize: 60 * 1000 * 1000,
+        maxBufferHole: 0.5,
       });
       hls.loadSource(src);
       hls.attachMedia(video);
@@ -76,16 +81,21 @@ export function VideoPlayer({
       });
 
       hls.on(Hls.Events.ERROR, (_, data) => {
+        console.error('HLS Error:', data);
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
+              console.log('Attempting to restart HLS stream...');
               hls.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
+              console.log('Attempting to recover from media error...');
               hls.recoverMediaError();
               break;
             default:
+              console.log('Destroying HLS instance due to fatal error');
               hls.destroy();
+              hlsRef.current = null;
               break;
           }
         }
@@ -103,20 +113,23 @@ export function VideoPlayer({
     function initPlyr() {
       if (playerRef.current) {
         playerRef.current.destroy();
+        playerRef.current = null;
       }
 
       const player = new Plyr(video, {
-        controls: controls ? [
-          'play-large',
-          'play',
-          'progress',
-          'current-time',
-          'duration',
-          'mute',
-          'volume',
-          'settings',
-          'fullscreen',
-        ] : [],
+        controls: controls
+          ? [
+              'play-large',
+              'play',
+              'progress',
+              'current-time',
+              'duration',
+              'mute',
+              'volume',
+              'settings',
+              'fullscreen',
+            ]
+          : [],
         settings: ['quality', 'speed'],
         autoplay,
         loop: { active: loop },
@@ -131,6 +144,13 @@ export function VideoPlayer({
           settings: '설정',
           speed: '속도',
           quality: '화질',
+        },
+        // Performance optimizations
+        hideControls: true,
+        resetOnEnd: true,
+        tooltips: {
+          controls: true,
+          seek: true,
         },
       });
 
@@ -162,14 +182,42 @@ export function VideoPlayer({
     }
 
     return () => {
+      console.log('Cleaning up video player resources...');
+
+      // Clean up HLS instance
       if (hlsRef.current) {
+        hlsRef.current.off(Hls.Events.MANIFEST_PARSED, () => {});
+        hlsRef.current.off(Hls.Events.ERROR, () => {});
+        hlsRef.current.detachMedia();
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
+
+      // Clean up Plyr instance
       if (playerRef.current) {
+        playerRef.current.off('ready', () => {});
+        playerRef.current.off('timeupdate', () => {});
+        playerRef.current.off('seeking', () => {});
+        playerRef.current.off('ended', () => {});
+        playerRef.current.off('loadedmetadata', () => {});
         playerRef.current.destroy();
         playerRef.current = null;
       }
+
+      // Clean up video element
+      if (video) {
+        // Pause and clear video source
+        video.pause();
+        video.removeAttribute('src');
+        video.load(); // Reset media element
+
+        // Clear any pending timeouts or intervals
+        if (video.srcObject) {
+          video.srcObject = null;
+        }
+      }
+
+      console.log('Video player cleanup completed');
     };
   }, [src, controls, autoplay, loop, muted]);
 
@@ -218,21 +266,28 @@ export function VideoPlayer({
 
 // Export utilities for external control
 export function useVideoPlayerControls(ref: React.RefObject<HTMLDivElement>) {
-  const seekTo = useCallback((time: number) => {
-    const video = ref.current?.querySelector('video');
-    if (video) {
-      video.currentTime = time;
-    }
-  }, [ref]);
+  const seekTo = useCallback(
+    (time: number) => {
+      const video = ref.current?.querySelector('video');
+      if (video) {
+        video.currentTime = time;
+      }
+    },
+    [ref]
+  );
 
   const getCurrentTime = useCallback(() => {
     const wrapper = ref.current?.querySelector('[data-current-time]');
-    return wrapper ? parseFloat(wrapper.getAttribute('data-current-time') || '0') : 0;
+    return wrapper
+      ? parseFloat(wrapper.getAttribute('data-current-time') || '0')
+      : 0;
   }, [ref]);
 
   const getDuration = useCallback(() => {
     const wrapper = ref.current?.querySelector('[data-duration]');
-    return wrapper ? parseFloat(wrapper.getAttribute('data-duration') || '0') : 0;
+    return wrapper
+      ? parseFloat(wrapper.getAttribute('data-duration') || '0')
+      : 0;
   }, [ref]);
 
   return { seekTo, getCurrentTime, getDuration };

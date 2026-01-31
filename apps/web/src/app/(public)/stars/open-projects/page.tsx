@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { projectsApi, ProjectRequest } from "@/lib/api/projects";
 import { Loader2, Briefcase, Calendar, DollarSign, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProjectBoardPage() {
   const [requests, setRequests] = useState<ProjectRequest[]>([]);
@@ -17,8 +18,11 @@ export default function ProjectBoardPage() {
 
   const loadRequests = async () => {
     try {
-      const data = await projectsApi.getProjectRequests();
-      setRequests(data);
+      // ✅ 병렬 처리로 워터폴 제거
+      const [requests] = await Promise.all([
+        projectsApi.getProjectRequests()
+      ]);
+      setRequests(requests);
     } catch (err) {
       console.error(err);
     } finally {
@@ -65,9 +69,49 @@ export default function ProjectBoardPage() {
                    <h3 className="text-xl font-bold text-neutral-500">현재 모집 중인 프로젝트가 없습니다.</h3>
                    <p className="text-neutral-600 mt-2">새로운 의뢰가 등록될 때까지 기다려주세요.</p>
                </div>
-           ) : (
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                   {requests.map((req) => (
+            ) : loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="relative group bg-neutral-900 border border-white/5 rounded-2xl p-6">
+                            <div className="flex flex-col h-full">
+                                {/* Badges Skeleton */}
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    <Skeleton className="h-6 w-16 rounded-full" />
+                                    <Skeleton className="h-6 w-20 rounded-full" />
+                                </div>
+
+                                {/* Content Skeleton */}
+                                <div className="space-y-3 mb-6">
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-full" />
+                                    <Skeleton className="h-4 w-5/6" />
+                                </div>
+
+                                {/* Meta Info Skeleton */}
+                                <div className="space-y-3 mb-6 pt-6 border-t border-white/5">
+                                    <div className="flex items-center justify-between">
+                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-4 w-20" />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <Skeleton className="h-4 w-12" />
+                                        <Skeleton className="h-4 w-16" />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <Skeleton className="h-4 w-16" />
+                                        <Skeleton className="h-4 w-12" />
+                                    </div>
+                                </div>
+
+                                {/* Action Skeleton */}
+                                <Skeleton className="w-full h-12 rounded-xl" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {requests.map((req) => (
                        <div key={req.id} className="relative group bg-neutral-900 border border-white/5 rounded-2xl p-6 hover:border-vibrant-cyan/50 hover:bg-neutral-800/50 transition-all duration-300">
                            <div className="flex flex-col h-full">
                                {/* Badges */}
@@ -94,7 +138,7 @@ export default function ProjectBoardPage() {
                                            <Calendar className="w-4 h-4" />
                                            <span>마감일</span>
                                        </div>
-                                       <span className="font-medium">{new Date(req.deadline).toLocaleDateString()}</span>
+                                       <span className="font-medium">{req.deadline ? new Date(req.deadline).toLocaleDateString() : '미정'}</span>
                                    </div>
                                    <div className="flex items-center justify-between text-sm">
                                        <div className="flex items-center gap-2 text-neutral-300">
@@ -110,12 +154,12 @@ export default function ProjectBoardPage() {
                                            <Briefcase className="w-4 h-4" />
                                             <span>모집 현황</span>
                                        </div>
-                                       <span className={cn(
-                                           "font-medium",
-                                           req.currentAssignees >= req.maxAssignees ? "text-red-400" : "text-blue-400"
-                                       )}>
-                                           {req.currentAssignees} / {req.maxAssignees} 명
-                                       </span>
+                                        <span className={cn(
+                                            "font-medium",
+                                            (req.currentAssignees ?? 0) >= (req.maxAssignees ?? 1) ? "text-red-400" : "text-blue-400"
+                                        )}>
+                                            {req.currentAssignees ?? 0} / {req.maxAssignees ?? 1} 명
+                                        </span>
                                    </div>
                                </div>
 

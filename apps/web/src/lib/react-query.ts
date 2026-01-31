@@ -4,10 +4,20 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
-        staleTime: 60 * 1000,
+        staleTime: 5 * 60 * 1000, // 5분
+        retry: (failureCount, error: any) => {
+          if (error?.status === 404) return false;
+          if (error?.status === 401) return false; // 인증 오류는 재시도 안함
+          return failureCount < 3;
+        },
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: true,
+        networkMode: 'online', // 오프라인일때는 재시도 안함
+      },
+      mutations: {
         retry: 1,
+        networkMode: 'online',
       },
     },
   });

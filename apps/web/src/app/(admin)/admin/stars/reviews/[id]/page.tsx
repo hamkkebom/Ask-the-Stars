@@ -154,13 +154,17 @@ export default function ReviewDetailPage({ params }: { params: Promise<{ id: str
   const loadData = async () => {
     try {
       setLoading(true);
-      const sub = await submissionsApi.getById(id);
+      // ✅ 병렬 처리로 워터폴 제거
+      const [sub, all] = await Promise.all([
+        submissionsApi.getById(id),
+        submissionsApi.getAll()
+      ]);
+      
       setSubmission(sub);
       setSelectedVersionA(sub);
 
       // Fetch similar versions (all submissions for the same assignment)
       if (sub.assignmentId) {
-          const all = await submissionsApi.getAll(); // Filter by assignmentId on client for simplicity
           const rel = all.filter(s => s.assignmentId === sub.assignmentId).sort((a,b) => b.version - a.version);
           setVersions(rel);
           if (rel.length > 1) setSelectedVersionB(rel[1]);

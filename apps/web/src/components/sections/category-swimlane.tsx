@@ -31,18 +31,42 @@ export function CategorySwimlane({ title, category, viewAllLink }: CategorySwiml
   const videos = data?.data || [];
 
   // Transform API data to VideoProps
-  const videoItems: VideoProps[] = videos.map((v: any) => ({
+  const videoItems: VideoProps[] = videos.map((v: any) => {
+    // Get creator name with fallbacks (avoid "System Admin")
+    const creatorName = v.freelancer?.name || v.maker?.name && v.maker.name !== 'System Admin'
+      ? (v.freelancer?.name || v.maker?.name)
+      : v.project?.owner?.name && v.project.owner.name !== 'System Admin'
+        ? v.project.owner.name
+        : '함께봄 스튜디오';
+
+    // Get counselor name with fallbacks
+    const counselorName = v.project?.counselor?.name && v.project.counselor.name !== 'System Admin'
+      ? v.project.counselor.name
+      : '상담사';
+
+    // Get category with fallback (support mock data direct category)
+    const categoryName = v.category || v.project?.category?.name || '영상';
+
+    // Format date consistently as YYYY.MM.DD (support both createdAt and created_at)
+    const rawDate = v.createdAt || v.created_at;
+    const date = rawDate ? new Date(rawDate) : new Date();
+    const formattedDate = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+
+    return {
       id: v.id,
-      title: v.project?.title || v.versionLabel,
-      thumbnailUrl: getThumbnailSrc(v.technicalSpec) || v.thumbnailUrl || "/placeholder.jpg",
-      videoUrl: v.videoUrl || null,
-      description: v.feedback,
-      category: v.project?.category?.name || "기타",
-      tags: [v.project?.counselor?.name || "일반"],
-      counselor: { name: v.project?.counselor?.name || "상담사" },
-      creator: { name: v.maker?.name || v.project?.owner?.name || "함께봄" },
-      createdAt: new Date(v.createdAt).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '/').replace('.', ''),
-  }));
+      // Support direct title (mock) or nested project.title (real DB)
+      title: v.title || v.project?.title || v.versionLabel || '제목 없음',
+      // Support direct thumbnail_url (mock) or technicalSpec (real DB)
+      thumbnailUrl: v.thumbnail_url || getThumbnailSrc(v.technicalSpec) || v.thumbnailUrl || "/images/video-placeholder.svg",
+      videoUrl: v.stream_url || v.r2_url || v.videoUrl || null,
+      description: v.description || v.feedback,
+      category: categoryName,
+      tags: [],  // Remove duplicate tags - category already shows the type
+      counselor: { name: counselorName },
+      creator: { name: creatorName },
+      createdAt: formattedDate,
+    };
+  });
 
 
 

@@ -143,7 +143,7 @@ export default function VideoDetailClient({ video, categoryVideos, creatorVideos
                             ))}
                         </div>
                         <p className="text-neutral-300 leading-relaxed whitespace-pre-line">
-                            {video.description}
+                            {video.description || '이 영상에 대한 설명이 아직 없습니다. 영상을 감상해보세요! 💜'}
                         </p>
                     </div>
                 </div>
@@ -243,8 +243,12 @@ export default function VideoDetailClient({ video, categoryVideos, creatorVideos
                     <div className="p-6">
                          <div className="flex items-center gap-4 mb-4">
                              <div className="w-16 h-16 rounded-full border-2 border-vibrant-cyan/30 p-0.5">
-                                 <div className="w-full h-full rounded-full overflow-hidden relative">
-                                    <Image src={video.counselor.avatarUrl} alt={video.counselor.name} fill className="object-cover" />
+                                 <div className="w-full h-full rounded-full overflow-hidden relative bg-gradient-to-br from-vibrant-cyan/20 to-vibrant-magenta/20 flex items-center justify-center">
+                                    {video.counselor?.avatarUrl ? (
+                                        <Image src={video.counselor.avatarUrl} alt={video.counselor.name || '상담사'} fill className="object-cover" />
+                                    ) : (
+                                        <span className="text-2xl font-bold text-white/60">{(video.counselor?.name || '상')[0]}</span>
+                                    )}
                                  </div>
                              </div>
                              <div>
@@ -272,8 +276,16 @@ export default function VideoDetailClient({ video, categoryVideos, creatorVideos
                     <div className="space-y-4">
                         {creatorVideos.map(v => (
                             <div key={v.id} className="group cursor-pointer">
-                                <div className="relative aspect-video rounded-lg overflow-hidden mb-2 border border-white/5">
-                                     <Image src={v.thumbnailUrl} alt={v.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                                <div className="relative aspect-video rounded-lg overflow-hidden mb-2 border border-white/5 bg-neutral-800">
+                                     {v.thumbnailUrl && v.thumbnailUrl !== '/placeholder.jpg' ? (
+                                         <Image src={v.thumbnailUrl} alt={v.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                                     ) : (
+                                         <div className="absolute inset-0 flex items-center justify-center">
+                                             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                                                 <svg className="w-5 h-5 text-white/40" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg>
+                                             </div>
+                                         </div>
+                                     )}
                                      <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/60 rounded text-[10px] text-white backdrop-blur-sm">
                                          10:05
                                      </div>

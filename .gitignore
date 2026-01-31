@@ -78,3 +78,4 @@ agent-skills-main/
 # Cloudflare Keys
 apps/api/scripts/new_signing_key.json
 *.pem
+node_modules

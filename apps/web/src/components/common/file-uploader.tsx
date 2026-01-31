@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Button } from '@ask-the-stars/ui';
+import { Button } from '@/components/ui/button';
 import { UploadCloud, X, File as FileIcon, Loader2 } from 'lucide-react';
 import { uploadsApi } from '@/lib/api/uploads';
 import { cn } from '@/lib/utils';

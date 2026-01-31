@@ -1,319 +1,276 @@
-﻿'use client';
+'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { m } from 'framer-motion';
 import {
-  TrendingUp, Clock, MessageSquare, Wallet, Bell,
-  CheckCircle2, AlertTriangle, Calendar, ArrowRight,
-  Play, FileVideo, DollarSign
+  Eye,
+  Video,
+  DollarSign,
+  TrendingUp,
+  ArrowUpRight,
+  ArrowDownRight,
+  Play,
+  MessageSquare,
+  Clock,
+  CheckCircle,
 } from 'lucide-react';
 
-// Mock data for notifications
-const mockNotifications = [
+// Mock 채널 분석 데이터
+const channelAnalytics = {
+  views: { value: 1234, change: 12.5, up: true },
+  completedVideos: { value: 24, change: 8.3, up: true },
+  earnings: { value: 1850000, change: -2.1, up: false },
+};
+
+// Mock 최근 게시 콘텐츠
+const recentContent = [
   {
-    id: 'n1',
-    type: 'feedback',
-    title: '긴급 피드백 도착',
-    desc: '신년운세 영상 #1024에 수정 요청',
-    time: '5분 전',
-    urgent: true
+    id: '1',
+    title: '브랜드 스토리 영상 v3',
+    thumbnail: null,
+    status: '승인됨',
+    statusColor: 'text-green-400',
+    views: 234,
+    uploadedAt: '3시간 전',
   },
   {
-    id: 'n2',
-    type: 'payment',
-    title: '정산 완료',
-    desc: '타로 리딩 영상 #1021 - ₩120,000',
-    time: '1시간 전',
-    urgent: false
+    id: '2',
+    title: '제품 소개 영상',
+    thumbnail: null,
+    status: '검수중',
+    statusColor: 'text-yellow-400',
+    views: null,
+    uploadedAt: '1일 전',
   },
   {
-    id: 'n3',
-    type: 'project',
-    title: '새 프로젝트 매칭',
-    desc: '재물운 상승 비법 영상 제작',
-    time: '3시간 전',
-    urgent: false
+    id: '3',
+    title: '기업 홍보 영상',
+    thumbnail: null,
+    status: '피드백',
+    statusColor: 'text-orange-400',
+    views: null,
+    uploadedAt: '3일 전',
   },
 ];
 
-// Mock data for today's tasks
-const mockTodayTasks = [
-  {
-    id: 't1',
-    title: '운세 영상 제작 #1024',
-    type: 'deadline',
-    desc: '오늘 마감',
-    status: 'urgent',
-    link: '/stars/my-projects'
-  },
-  {
-    id: 't2',
-    title: '신년운세 영상 #1023',
-    type: 'feedback',
-    desc: '피드백 3건 대기',
-    status: 'pending',
-    link: '/stars/feedback'
-  },
-  {
-    id: 't3',
-    title: '포트폴리오 업데이트',
-    type: 'task',
-    desc: '새 작업물 추가 권장',
-    status: 'optional',
-    link: '/stars/portfolio'
-  },
+// Mock 최근 피드백
+const recentFeedback = [
+  { id: '1', type: '수정요청', message: '자막 위치 조정 부탁드립니다', time: '2시간 전' },
+  { id: '2', type: '승인', message: '잘됐어요! 감사합니다', time: '5시간 전' },
+  { id: '3', type: '수정요청', message: '음악 볼륨 조절 필요', time: '1일 전' },
 ];
 
-const getNotificationIcon = (type: string) => {
-  switch (type) {
-    case 'feedback': return <MessageSquare className="w-4 h-4" />;
-    case 'payment': return <DollarSign className="w-4 h-4" />;
-    case 'project': return <FileVideo className="w-4 h-4" />;
-    default: return <Bell className="w-4 h-4" />;
-  }
-};
+// Mock 오늘의 할 일
+const todayTasks = [
+  { id: '1', title: '브랜드 영상 편집', completed: false, urgent: true },
+  { id: '2', title: '피드백 반영', completed: false, urgent: false },
+  { id: '3', title: '최종 렌더링', completed: true, urgent: false },
+];
 
-const getTaskStatusStyle = (status: string) => {
-  switch (status) {
-    case 'urgent': return 'bg-red-500/20 text-red-400 border-red-500/30';
-    case 'pending': return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
-    case 'optional': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-    default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+function formatCurrency(value: number) {
+  if (value >= 10000) {
+    return `₩${(value / 10000).toFixed(0)}만`;
   }
-};
+  return `₩${value.toLocaleString()}`;
+}
 
 export default function StarsDashboardPage() {
-  const [notifications] = useState(mockNotifications);
-  const [todayTasks] = useState(mockTodayTasks);
-
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white">별님 대시보드</h1>
-        <p className="text-gray-400 mt-1">
-          내 프로젝트 현황과 수입을 확인하세요.
-        </p>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0 }}
-          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/20">
-              <Clock className="w-5 h-5 text-blue-400" />
-            </div>
-            <span className="text-sm font-medium text-gray-400">진행 중 프로젝트</span>
-          </div>
-          <div className="mt-4 text-4xl font-bold text-white">3</div>
-        </m.div>
-
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-500/20">
-              <TrendingUp className="w-5 h-5 text-green-400" />
-            </div>
-            <span className="text-sm font-medium text-gray-400">새 제작요청</span>
-          </div>
-          <div className="mt-4 text-4xl font-bold text-white">7</div>
-        </m.div>
-
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-orange-500/20">
-              <MessageSquare className="w-5 h-5 text-orange-400" />
-            </div>
-            <span className="text-sm font-medium text-gray-400">대기 중 피드백</span>
-          </div>
-          <div className="mt-4 text-4xl font-bold text-white">5</div>
-        </m.div>
-
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-yellow-500/20">
-              <Wallet className="w-5 h-5 text-yellow-400" />
-            </div>
-            <span className="text-sm font-medium text-gray-400">이번 달 예상 수입</span>
-          </div>
-          <div className="mt-4 text-4xl font-bold text-white">₩850K</div>
-        </m.div>
-      </div>
-
-      {/* Two Column Layout: Notifications + Today's Tasks */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* 🔔 Notifications Widget */}
-        <m.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden"
-        >
-          <div className="flex items-center justify-between border-b border-white/10 p-4">
-            <div className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-yellow-400" />
-              <h2 className="text-lg font-semibold text-white">알림</h2>
-              <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-xs font-bold">
-                {notifications.filter(n => n.urgent).length}
-              </span>
-            </div>
-            <Link href="/stars/notifications" className="text-sm text-gray-400 hover:text-white transition-colors">
-              전체 보기 →
+    <div className="space-y-6">
+      {/* 채널 분석 */}
+      <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#3f3f3f]">
+          <h2 className="text-white font-medium">채널 분석</h2>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-[#aaa]">최근 28일</span>
+            <Link href="/stars/analytics" className="text-blue-400 hover:underline">
+              분석으로 이동
             </Link>
           </div>
-          <div className="divide-y divide-white/5">
-            {notifications.map((notification, i) => (
-              <m.div
-                key={notification.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 + i * 0.1 }}
-                className={`p-4 hover:bg-white/5 transition-colors cursor-pointer ${
-                  notification.urgent ? 'bg-red-500/5' : ''
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg ${
-                    notification.urgent
-                      ? 'bg-red-500/20 text-red-400'
-                      : 'bg-white/10 text-gray-400'
-                  }`}>
-                    {getNotificationIcon(notification.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium text-white truncate">{notification.title}</p>
-                      {notification.urgent && (
-                        <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold">
-                          긴급
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-500 truncate">{notification.desc}</p>
-                  </div>
-                  <span className="text-xs text-gray-600 whitespace-nowrap">{notification.time}</span>
-                </div>
-              </m.div>
-            ))}
-          </div>
-        </m.div>
-
-        {/* 📋 Today's Tasks Widget */}
-        <m.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-          className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden"
-        >
-          <div className="flex items-center justify-between border-b border-white/10 p-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">오늘의 할 일</h2>
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold">
-                {todayTasks.length}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#3f3f3f]">
+          {/* 조회수 */}
+          <div className="p-6">
+            <div className="flex items-center gap-2 text-[#aaa] text-sm mb-2">
+              <Eye className="w-4 h-4" />
+              조회수
+            </div>
+            <div className="flex items-end gap-3">
+              <span className="text-3xl font-bold text-white">
+                {channelAnalytics.views.value.toLocaleString()}
+              </span>
+              <span className={`flex items-center text-sm ${
+                channelAnalytics.views.up ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {channelAnalytics.views.up ? (
+                  <ArrowUpRight className="w-4 h-4" />
+                ) : (
+                  <ArrowDownRight className="w-4 h-4" />
+                )}
+                {Math.abs(channelAnalytics.views.change)}%
               </span>
             </div>
-            <Link href="/stars/my-projects/calendar" className="text-sm text-gray-400 hover:text-white transition-colors">
-              캘린더 보기 →
-            </Link>
           </div>
-          <div className="divide-y divide-white/5">
-            {todayTasks.map((task, i) => (
-              <m.div
-                key={task.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 + i * 0.1 }}
-              >
-                <Link
-                  href={task.link}
-                  className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      task.status === 'urgent' ? 'bg-red-500 animate-pulse' :
-                      task.status === 'pending' ? 'bg-orange-500' : 'bg-blue-500'
-                    }`} />
-                    <div>
-                      <p className="font-medium text-white group-hover:text-yellow-400 transition-colors">
-                        {task.title}
-                      </p>
-                      <p className="text-sm text-gray-500">{task.desc}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-lg text-xs font-medium border ${getTaskStatusStyle(task.status)}`}>
-                      {task.status === 'urgent' ? '마감 임박' :
-                       task.status === 'pending' ? '대기 중' : '선택'}
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
-                  </div>
-                </Link>
-              </m.div>
-            ))}
+
+          {/* 완료 영상 */}
+          <div className="p-6">
+            <div className="flex items-center gap-2 text-[#aaa] text-sm mb-2">
+              <Video className="w-4 h-4" />
+              완료 영상
+            </div>
+            <div className="flex items-end gap-3">
+              <span className="text-3xl font-bold text-white">
+                {channelAnalytics.completedVideos.value}
+              </span>
+              <span className={`flex items-center text-sm ${
+                channelAnalytics.completedVideos.up ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {channelAnalytics.completedVideos.up ? (
+                  <ArrowUpRight className="w-4 h-4" />
+                ) : (
+                  <ArrowDownRight className="w-4 h-4" />
+                )}
+                {Math.abs(channelAnalytics.completedVideos.change)}%
+              </span>
+            </div>
           </div>
-        </m.div>
+
+          {/* 수입 */}
+          <div className="p-6">
+            <div className="flex items-center gap-2 text-[#aaa] text-sm mb-2">
+              <DollarSign className="w-4 h-4" />
+              수입
+            </div>
+            <div className="flex items-end gap-3">
+              <span className="text-3xl font-bold text-white">
+                {formatCurrency(channelAnalytics.earnings.value)}
+              </span>
+              <span className={`flex items-center text-sm ${
+                channelAnalytics.earnings.up ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {channelAnalytics.earnings.up ? (
+                  <ArrowUpRight className="w-4 h-4" />
+                ) : (
+                  <ArrowDownRight className="w-4 h-4" />
+                )}
+                {Math.abs(channelAnalytics.earnings.change)}%
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* My Projects */}
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden"
-      >
-        <div className="flex items-center justify-between border-b border-white/10 p-4">
-          <h2 className="text-lg font-semibold text-white">내 프로젝트</h2>
-          <Link href="/stars/my-projects" className="text-sm text-gray-400 hover:text-white transition-colors">
-            전체 보기 →
+      {/* 최근 게시 콘텐츠 */}
+      <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#3f3f3f]">
+          <h2 className="text-white font-medium">최근 게시 콘텐츠</h2>
+          <Link href="/stars/my-videos" className="text-sm text-blue-400 hover:underline">
+            모두 보기
           </Link>
         </div>
-        <div className="divide-y divide-white/5">
-          {[
-            { title: '운세 영상 제작 #1024', status: '작업 중', statusColor: 'bg-blue-500/20 text-blue-400', deadline: '1월 20일' },
-            { title: '신년 운세 영상 #1023', status: '피드백 대기', statusColor: 'bg-orange-500/20 text-orange-400', deadline: '1월 18일' },
-            { title: '타로 리딩 영상 #1021', status: '수정 요청', statusColor: 'bg-red-500/20 text-red-400', deadline: '1월 17일' },
-          ].map((project, i) => (
-            <div key={i} className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white/5">
-                  <Play className="w-4 h-4 text-gray-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-white">{project.title}</p>
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    마감: {project.deadline}
-                  </p>
+        <div className="divide-y divide-[#3f3f3f]">
+          {recentContent.map((content) => (
+            <Link
+              key={content.id}
+              href={`/stars/my-videos/${content.id}`}
+              className="flex items-center gap-4 p-4 hover:bg-[#3f3f3f] transition-colors"
+            >
+              {/* Thumbnail */}
+              <div className="w-28 h-16 bg-[#3f3f3f] rounded-lg flex items-center justify-center shrink-0">
+                <Play className="w-6 h-6 text-[#666]" />
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-medium truncate">{content.title}</p>
+                <div className="flex items-center gap-3 mt-1 text-sm">
+                  <span className={content.statusColor}>{content.status}</span>
+                  <span className="text-[#666]">•</span>
+                  <span className="text-[#aaa]">{content.uploadedAt}</span>
                 </div>
               </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-medium ${project.statusColor}`}>
-                {project.status}
-              </span>
-            </div>
+
+              {/* Views */}
+              {content.views !== null && (
+                <div className="text-right shrink-0">
+                  <p className="text-white font-medium">{content.views}</p>
+                  <p className="text-[#aaa] text-sm">조회수</p>
+                </div>
+              )}
+            </Link>
           ))}
         </div>
-      </m.div>
+      </div>
+
+      {/* 하단 2열 레이아웃 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 최근 피드백 */}
+        <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#3f3f3f]">
+            <h2 className="text-white font-medium flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-[#aaa]" />
+              최근 피드백
+            </h2>
+            <Link href="/stars/feedback" className="text-sm text-blue-400 hover:underline">
+              모두 보기
+            </Link>
+          </div>
+          <div className="divide-y divide-[#3f3f3f]">
+            {recentFeedback.map((feedback) => (
+              <div key={feedback.id} className="p-4 hover:bg-[#3f3f3f] transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className={`px-2 py-0.5 rounded text-xs font-medium ${
+                    feedback.type === '승인'
+                      ? 'bg-green-500/20 text-green-400'
+                      : 'bg-orange-500/20 text-orange-400'
+                  }`}>
+                    {feedback.type}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm truncate">{feedback.message}</p>
+                    <p className="text-[#666] text-xs mt-1">{feedback.time}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 오늘의 할 일 */}
+        <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#3f3f3f]">
+            <h2 className="text-white font-medium flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#aaa]" />
+              오늘의 할 일
+            </h2>
+            <Link href="/stars/my-projects" className="text-sm text-blue-400 hover:underline">
+              모두 보기
+            </Link>
+          </div>
+          <div className="divide-y divide-[#3f3f3f]">
+            {todayTasks.map((task) => (
+              <div key={task.id} className="flex items-center gap-3 p-4 hover:bg-[#3f3f3f] transition-colors">
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                  task.completed
+                    ? 'bg-green-500 border-green-500'
+                    : 'border-[#666]'
+                }`}>
+                  {task.completed && <CheckCircle className="w-3 h-3 text-white" />}
+                </div>
+                <span className={`flex-1 ${
+                  task.completed ? 'text-[#666] line-through' : 'text-white'
+                }`}>
+                  {task.title}
+                </span>
+                {task.urgent && !task.completed && (
+                  <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs">
+                    긴급
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-

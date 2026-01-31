@@ -58,43 +58,45 @@ export default async function VideoDetailPage({ params }: { params: Promise<{ id
   try {
     const data = await videosApi.getVideoById(id);
 
-    // Use centralized utility for URL generation
-    const r2Url = (data.technicalSpec as any)?.videoUrl || getVideoSrc(data.technicalSpec);
+    // Guard against null data
+    if (!data) {
+      throw new Error('Video not found');
+    }
+
+    // Use centralized utility for URL generation, with safe property access
+    const techSpec = data as any; // Type assertion for extended properties
+    const r2Url = techSpec.technicalSpec?.videoUrl || getVideoSrc(techSpec.technicalSpec);
 
     video = {
       id: data.id,
       title: data.project?.title || '제목 없음',
       // Prefer Stream UID for client handling, fallback to R2 URL
-      streamUid: data.technicalSpec?.streamUid,
+      streamUid: techSpec.technicalSpec?.streamUid,
       videoUrl: r2Url,
-      thumbnailUrl: data.technicalSpec?.thumbnailUrl,
-      views: 0, // Not in API response yet
-      likes: 0, // Not in API response yet
-      createdAt: new Date(data.createdAt).toLocaleDateString(),
-      description: data.feedback || data.project?.description || '설명이 없습니다.',
-      categories: data.project?.category ? [data.project.category.name] : ['기타'],
-      tags: [], // Not in API response yet
+      thumbnailUrl: techSpec.technicalSpec?.thumbnailUrl,
+      views: techSpec.views || 0,
+      likes: techSpec.likes || 0,
+      createdAt: new Date(data.created_at).toLocaleDateString(),
+      description: techSpec.feedback || data.project?.client?.name || '설명이 없습니다.',
+      categories: data.project?.client ? [data.project.client.name] : ['기타'],
+      tags: [],
       counselor: {
-        id: data.project?.counselor?.id || 'unknown',
-        name: data.project?.counselor?.name || '상담사',
+        id: techSpec.counselor?.id || techSpec.project?.client?.id || 'unknown',
+        name: techSpec.counselor?.name || data.project?.client?.name || '상담사',
         role: '전문가',
-        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.project?.counselor?.name || 'Counselor'}`,
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${techSpec.counselor?.name || data.project?.client?.name || 'Counselor'}`,
         stats: { rating: 5.0, reviews: 0, consultations: 0 }
       },
       creator: {
-        id: data.maker?.id || 'unknown',
-        name: data.maker?.name || '제작자',
-        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.maker?.name || 'Creator'}`
+        id: techSpec.maker?.id || techSpec.freelancer_id || 'unknown',
+        name: techSpec.maker?.name || techSpec.freelancer?.name || '제작자',
+        avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${techSpec.maker?.name || techSpec.freelancer?.name || 'Creator'}`
       },
       // Pass raw technical spec if needed
-      technicalSpec: data.technicalSpec
+      technicalSpec: techSpec.technicalSpec
     };
   } catch (e) {
       console.error("Failed to fetch video:", e);
-      // Fallback or Redirect (for now, let's render a fallback UI or throw)
-      // throw new Error('Video not found');
-      // For smoother UX during dev, maybe fallback to mock if fetch fails?
-      // No, let's show Error.
       return (
           <div className="min-h-screen flex items-center justify-center text-white">
               <div className="text-center">

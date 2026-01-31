@@ -1,5 +1,5 @@
-import apiClient from '../axios';
-import { SignupDto, LoginDto, User } from '@ask-the-stars/types';
+import { axiosInstance as apiClient } from './axios';
+import type { SignupDto, LoginDto, User } from '@/types';
 
 interface AuthResponse {
   access_token: string;

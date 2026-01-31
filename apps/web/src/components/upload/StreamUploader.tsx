@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Upload } from 'tus-js-client';
-import { Button } from '@ask-the-stars/ui';
+import { Button } from '@/components/ui/button';
 import { GlassCard } from '../ui/glass-card';
 import { UploadCloud, X, FileVideo, AlertCircle } from 'lucide-react';
 import axios from 'axios';

@@ -414,7 +414,7 @@ export class VideosService {
 
         let categoryName = '기타';
         let startedAt: Date | null = null;
-        let counselorName = '대상없음';
+        let counselorName = '일반';
         let refinedTitle = fileName.replace(/\.[^/.]+$/, "");
         let versionLabel = 'v1.0';
 
@@ -512,7 +512,7 @@ export class VideosService {
     });
 
     let counselor = await this.prisma.counselor.findFirst({
-      where: { name: meta.counselorName || '대상없음' },
+      where: { name: meta.counselorName || '일반' },
     });
 
     if (!counselor) {

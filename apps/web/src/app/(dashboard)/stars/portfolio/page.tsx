@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { m } from 'framer-motion';
 import { PortfolioGrid } from '@/components/features/portfolio/PortfolioGrid';

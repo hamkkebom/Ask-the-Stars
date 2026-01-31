@@ -1,4 +1,4 @@
-import { cn } from "@ask-the-stars/ui";
+import { cn } from "@/lib/utils";
 import { m, HTMLMotionProps } from "framer-motion";
 
 interface GlassCardProps extends HTMLMotionProps<"div"> {

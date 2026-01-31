@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { formatDate, formatCurrency } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/api/axios';
-import { Modal } from '@ask-the-stars/ui';
+import { Modal } from '@/components/ui/modal';
 import StreamPlayer from '@/components/player/StreamPlayer';
 
 // Types

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { UserRole } from '@ask-the-stars/types';
+import { UserRole } from '@/types';
 
 interface User {
   id: string;

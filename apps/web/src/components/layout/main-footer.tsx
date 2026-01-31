@@ -3,36 +3,10 @@
 import Link from 'next/link';
 import { m } from 'framer-motion';
 import {
-  Star, Video, Megaphone, GraduationCap,
-  Mail, MapPin, Phone,
+  Mail, MapPin, Phone, Send,
   Twitter, Youtube, Instagram, Linkedin
 } from 'lucide-react';
-
-const services = [
-  { label: 'Stars (프리랜서)', href: '/stars', icon: <Star className="w-4 h-4" aria-hidden="true" /> },
-  { label: 'Studio (영상 제작)', href: '/studio', icon: <Video className="w-4 h-4" aria-hidden="true" /> },
-  { label: 'Marketing (대행)', href: '/marketing', icon: <Megaphone className="w-4 h-4" aria-hidden="true" /> },
-  { label: 'Education (교육)', href: '/education', icon: <GraduationCap className="w-4 h-4" aria-hidden="true" /> },
-];
-
-const company = [
-  { label: '회사 소개', href: '/about' },
-  { label: '비전', href: '/about/vision' },
-  { label: '연혁', href: '/about/history' },
-  { label: '기업문화', href: '/about/culture' },
-  { label: '연락처', href: '/about/contact' },
-];
-
-const support = [
-  { label: '고객센터', href: '/help' },
-  { label: 'FAQ', href: '/help/faq' },
-  { label: '뉴스룸', href: '/news' },
-];
-
-const legal = [
-  { label: '이용약관', href: '/help/terms' },
-  { label: '개인정보처리방침', href: '/help/privacy' },
-];
+import { footerLinks } from '@/config/navigation-config';
 
 const socials = [
   { label: 'Twitter', href: 'https://twitter.com', icon: <Twitter className="w-5 h-5" aria-hidden="true" /> },
@@ -43,12 +17,12 @@ const socials = [
 
 export function MainFooter() {
   return (
-    <footer className="relative bg-background border-t border-white/5">
+    <footer className="relative bg-black border-t border-white/5">
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
@@ -57,20 +31,20 @@ export function MainFooter() {
                 함께봄
               </span>
             </Link>
-            <p className="text-gray-400 mb-6 max-w-sm">
+            <p className="text-gray-400 mb-6 max-w-sm text-sm leading-relaxed">
               AI 기반 영상 제작 인재 생태계. 프리랜서 150명+와 함께하는 영상 협업 플랫폼입니다.
             </p>
 
             {/* Contact Info */}
-            <div className="space-y-3 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
+            <div className="space-y-2 text-sm text-gray-500">
+              <a href="mailto:contact@hamkkebom.com" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Mail className="w-4 h-4" aria-hidden="true" />
                 <span>contact@hamkkebom.com</span>
-              </div>
-              <div className="flex items-center gap-2">
+              </a>
+              <a href="tel:02-123-4567" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Phone className="w-4 h-4" aria-hidden="true" />
                 <span>02-123-4567</span>
-              </div>
+              </a>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" aria-hidden="true" />
                 <span>서울특별시 강남구</span>
@@ -80,16 +54,32 @@ export function MainFooter() {
 
           {/* Services */}
           <div>
-            <h4 className="text-white font-semibold mb-4">서비스</h4>
-            <ul className="space-y-3">
-              {services.map((item) => (
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">서비스</h4>
+            <ul className="space-y-2.5">
+              {footerLinks.services.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                    className="text-sm text-gray-500 hover:text-white transition-colors"
                   >
-                    {item.icon}
-                    <span>{item.label}</span>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Education */}
+          <div>
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">교육</h4>
+            <ul className="space-y-2.5">
+              {footerLinks.education.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-gray-500 hover:text-white transition-colors"
+                  >
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -98,13 +88,13 @@ export function MainFooter() {
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-semibold mb-4">회사</h4>
-            <ul className="space-y-3">
-              {company.map((item) => (
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">회사</h4>
+            <ul className="space-y-2.5">
+              {footerLinks.company.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-sm text-gray-500 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -115,13 +105,13 @@ export function MainFooter() {
 
           {/* Support */}
           <div>
-            <h4 className="text-white font-semibold mb-4">고객지원</h4>
-            <ul className="space-y-3">
-              {support.map((item) => (
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">고객지원</h4>
+            <ul className="space-y-2.5">
+              {footerLinks.support.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-sm text-gray-500 hover:text-white transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -131,27 +121,54 @@ export function MainFooter() {
           </div>
         </div>
 
+        {/* Newsletter Signup */}
+        <div className="mt-12 pt-8 border-t border-white/10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+              <h4 className="text-white font-semibold mb-1">뉴스레터 구독</h4>
+              <p className="text-sm text-gray-500">최신 소식과 교육 정보를 받아보세요.</p>
+            </div>
+            <form className="flex gap-2 w-full md:w-auto" onSubmit={(e) => e.preventDefault()}>
+              <input
+                type="email"
+                placeholder="이메일 주소"
+                className="flex-1 md:w-64 px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-colors"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                <span className="hidden sm:inline">구독</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
         {/* Bottom */}
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-8 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-600">
               © 2026 함께봄. All rights reserved.
             </p>
             <div className="flex gap-4">
-              {legal.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-sm text-gray-500 hover:text-white transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              <Link
+                href="/help/terms"
+                className="text-sm text-gray-600 hover:text-white transition-colors"
+              >
+                이용약관
+              </Link>
+              <Link
+                href="/help/privacy"
+                className="text-sm text-gray-600 hover:text-white transition-colors"
+              >
+                개인정보처리방침
+              </Link>
             </div>
           </div>
 
           {/* Social Links */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {socials.map((social) => (
               <m.a
                 key={social.label}
@@ -160,7 +177,7 @@ export function MainFooter() {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-2 text-gray-500 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 text-gray-600 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                 aria-label={social.label}
               >
                 {social.icon}

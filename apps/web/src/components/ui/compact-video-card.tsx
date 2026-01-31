@@ -25,6 +25,9 @@ export interface VideoProps {
     category: string;
     tags: string[];
     views?: number;
+    likes?: number;  // 👍 좋아요 수
+    isAdApproved?: boolean;  // ✓ 광고 승인 여부
+    isVertical?: boolean;  // 세로 영상 여부
     createdAt?: string; // "25/01/17"
     duration?: string;
     videoUrl?: string; // Add videoUrl property
@@ -40,6 +43,7 @@ function CompactVideoCardImpl({
     counselor = { name: "상담사" },
     creator = { name: "제작자" },
     category, tags, createdAt = "25/01/17",
+    views = 0, likes = 0, isAdApproved = false, isVertical = false,
     onHoverChange
 }: VideoProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -187,15 +191,36 @@ function CompactVideoCardImpl({
           )}
 
           {/* --- Overlays --- */}
-          {/* Top Left: Counselor Name (Text Only) */}
+          {/* Top Left: Creator Name (glassmorphism badge) */}
           <div className="absolute top-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
+              <span className="text-[11px] text-white/90 font-medium tracking-tight">{creator?.name}</span>
+          </div>
+
+          {/* Top Right: Badges (Ad Approved + Likes) */}
+          <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 items-end pointer-events-none z-20">
+              {isAdApproved && (
+                  <div className="px-2 py-0.5 bg-blue-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
+                      <span className="text-[10px] text-white font-bold">광고 ✓</span>
+                  </div>
+              )}
+              {likes > 0 && (
+                  <div className="px-2 py-0.5 bg-rose-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
+                      <span className="text-[10px] text-white font-medium">👍 {likes}</span>
+                  </div>
+              )}
+          </div>
+
+          {/* Bottom Left: Counselor Name */}
+          <div className="absolute bottom-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
               <span className="text-[11px] text-white/90 font-medium tracking-tight">{counselor?.name}</span>
           </div>
 
-          {/* Bottom Left: Creator Name (Text Only) */}
-          <div className="absolute bottom-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
-              <span className="text-[11px] text-white/90 font-medium tracking-tight">{creator?.name}</span>
-          </div>
+          {/* Bottom Right: Views Count */}
+          {views > 0 && (
+              <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded-full flex items-center gap-1 pointer-events-none z-20">
+                  <span className="text-[10px] text-white/80 font-medium">👁 {views.toLocaleString()}</span>
+              </div>
+          )}
         </div>
 
         {/* --- Detailed Info (Below: Title, Category, Worry, Date) --- */}
@@ -207,9 +232,13 @@ function CompactVideoCardImpl({
 
             {/* Metadata: Category • Worry (Tag) • Date */}
             <div className="flex items-center gap-2 text-[12px] text-neutral-400 font-normal">
-                <span className="text-vibrant-cyan">{category}</span>
-                <span className="text-neutral-600">•</span>
-                <span className="text-neutral-300">{tags[0] || "고민상담"}</span>
+                <span className="text-vibrant-cyan">{category || '영상'}</span>
+                {tags && tags.length > 0 && tags[0] && (
+                  <>
+                    <span className="text-neutral-600">•</span>
+                    <span className="text-neutral-300">{tags[0]}</span>
+                  </>
+                )}
                 <span className="text-neutral-600">•</span>
                 <span>{createdAt}</span>
             </div>

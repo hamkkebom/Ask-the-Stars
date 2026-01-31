@@ -1,4 +1,5 @@
-import { AwardHeader } from "@/components/layout/award-header";
+import { SimpleHeader } from "@/components/layout/simple-header";
+import { MainFooter } from "@/components/layout/main-footer";
 import { FloatingCTA } from "@/components/ui/floating-cta";
 
 export default function PublicLayout({
@@ -8,11 +9,13 @@ export default function PublicLayout({
 }) {
   return (
     <>
-      <AwardHeader />
-      <main className="min-h-screen bg-background text-foreground">
+      <SimpleHeader />
+      <main className="min-h-screen bg-black text-white pt-16">
         {children}
       </main>
+      <MainFooter />
       <FloatingCTA />
     </>
   );
 }
+

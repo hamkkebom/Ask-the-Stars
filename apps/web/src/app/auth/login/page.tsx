@@ -1,130 +1,156 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ask-the-stars/ui';
-import { Button } from '@ask-the-stars/ui';
-import { useAuthStore } from '@/store/useAuthStore';
-import { authApi } from '@/lib/api/auth';
-import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-// Schema Validation
-const loginSchema = z.object({
-  email: z.string().email('유효한 이메일 주소를 입력해주세요.'),
-  password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다.'),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
-  const setAccessToken = useAuthStore((state) => state.setAccessToken);
-  const setUser = useAuthStore((state) => state.setUser);
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/stars/dashboard';
 
-  const [loading, setLoading] = useState(false);
+  const { signIn, loading } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-  });
-
-  const onSubmit = async (data: LoginFormValues) => {
-    setLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
-    try {
-      const response = await authApi.login(data);
-      setAccessToken(response.access_token);
 
-      // Fetch User Profile
-      // Ideally backend returns user info with login, but here we fetch separately if needed or check token
-      // For now let's assume we fetch profile to get role
-      const user = await authApi.getProfile();
-      setUser(user);
-
-      router.push('/dashboard');
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.message || '로그인에 실패했습니다.');
-    } finally {
-      setLoading(false);
+    if (!email || !password) {
+      setError('이메일과 비밀번호를 입력해주세요.');
+      return;
     }
+
+    const result = await signIn(email, password);
+
+    if (result.error) {
+      if (result.error.message.includes('Invalid login')) {
+        setError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      } else {
+        setError(result.error.message);
+      }
+      return;
+    }
+
+    router.push(redirect);
+    router.refresh();
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-black text-center text-white">로그인</CardTitle>
-          <CardDescription className="text-center text-slate-400 font-medium">
-            별들에게 물어봐 계정으로 로그인하세요
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-bold leading-none text-slate-300">
-                이메일
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                inputMode="email"
-                placeholder="name@example.com"
-                className={`flex h-12 w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all ${errors.email ? 'border-red-500/50 bg-red-500/5' : ''}`}
-                {...register('email')}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
+    <div>
+      <h1 className="text-2xl font-bold text-white text-center mb-2">
+        로그인
+      </h1>
+      <p className="text-[#aaa] text-center mb-8">
+        계정에 접속하여 작업을 시작하세요
+      </p>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-bold leading-none text-slate-300">
-                  비밀번호
-                </label>
-                <Link href="/auth/forgot-password" className="text-sm font-bold text-primary hover:text-primary/80 transition-colors">
-                  비밀번호를 잊으셨나요?
-                </Link>
-              </div>
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                className={`flex h-12 w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2 text-sm text-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition-all ${errors.password ? 'border-red-500/50 bg-red-500/5' : ''}`}
-                {...register('password')}
-              />
-              {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
-              )}
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Email */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-[#aaa] mb-2">
+            이메일
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@example.com"
+            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+            disabled={loading}
+          />
+        </div>
 
-            {error && (
-              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
-                {error}
-              </div>
-            )}
-
-            <Button type="submit" className="w-full h-12 rounded-xl font-black text-lg shadow-lg shadow-primary/20" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              로그인
-            </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <div className="text-center text-sm text-slate-500 font-medium">
-            계정이 없으신가요?{' '}
-            <Link href="/auth/signup" className="font-bold text-primary hover:text-primary/80 transition-colors">
-              회원가입
-            </Link>
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-[#aaa] mb-2">
+            비밀번호
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 pr-12 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+              disabled={loading}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
           </div>
-        </CardFooter>
-      </Card>
+        </div>
+
+        {/* Forgot Password */}
+        <div className="text-right">
+          <Link
+            href="/auth/forgot-password"
+            className="text-sm text-yellow-500 hover:underline"
+          >
+            비밀번호를 잊으셨나요?
+          </Link>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              로그인 중...
+            </>
+          ) : (
+            '로그인'
+          )}
+        </button>
+      </form>
+
+      {/* Signup Link */}
+      <div className="mt-6 text-center text-sm text-[#aaa]">
+        계정이 없으신가요?{' '}
+        <Link href="/auth/signup" className="text-yellow-500 hover:underline">
+          회원가입
+        </Link>
+      </div>
     </div>
   );
 }
+
+function LoginFallback() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+

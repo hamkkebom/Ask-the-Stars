@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ChevronDown, Clock, Sparkles, Globe, Grid, Filter } from 'lucide-react';
+import { Search, ChevronDown, Clock, Sparkles, Globe, Grid, Filter, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CompactVideoCard, { VideoProps } from '@/components/ui/compact-video-card';
 import { FILTERS } from '@/data/mocks/advanced-video-grid';
 import { FilterButton, FilterPill } from './advanced-video-grid-components';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { videosApi } from '@/lib/api/videos';
 
 
@@ -19,6 +19,7 @@ type CounselorType = 'ALL' | 'TAROT' | 'MECHANICS' | 'SHAMANISM';
 
 export function AdvancedVideoGrid() {
   const [activeTray, setActiveTray] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Active Filters State
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -65,16 +66,34 @@ export function AdvancedVideoGrid() {
 
   const videos: VideoProps[] = allVideos.map((v: any) => ({
     id: v.id,
-    title: v.project?.title || v.versionLabel,
-    thumbnailUrl: getThumbnailSrc(v.technicalSpec) || v.thumbnailUrl || "/placeholder.jpg",
-    videoUrl: v.videoUrl || null,
-    description: v.feedback,
-    category: v.project?.category?.name || "기타",
-    tags: [v.project?.counselor?.name || "일반"],
-    counselor: { name: v.project?.counselor?.name || "상담사" },
-    creator: { name: v.maker?.name || v.project?.owner?.name || "함께봄" },
-    createdAt: new Date(v.createdAt).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '/').replace('.', ''),
+    // Handle both mock data (title) and real DB (project?.title)
+    title: v.title || v.project?.title || v.versionLabel || '제목 없음',
+    thumbnailUrl: v.thumbnail_url || getThumbnailSrc(v.technicalSpec) || v.thumbnailUrl || "/placeholder.jpg",
+    videoUrl: v.stream_url || v.r2_url || v.videoUrl || null,
+    description: v.description || v.feedback,
+    category: v.category || v.project?.category?.name || "기타",
+    tags: [v.counselor?.name || v.project?.counselor?.name || "일반"],
+    counselor: { name: v.counselor?.name || v.project?.counselor?.name || "상담사" },
+    creator: { name: v.freelancer?.name || v.maker?.name || v.project?.owner?.name || "함께봄" },
+    createdAt: new Date(v.created_at || v.createdAt).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '/').replace('.', ''),
+    // New badge fields
+    views: v.views || 0,
+    likes: v.likes || 0,
+    isAdApproved: v.isAdApproved || false,
   }));
+
+  // Client-side search filtering
+  const filteredVideos = useMemo(() => {
+    if (!searchQuery.trim()) return videos;
+    const query = searchQuery.toLowerCase();
+    return videos.filter(v =>
+      v.title.toLowerCase().includes(query) ||
+      v.category.toLowerCase().includes(query) ||
+      v.counselor?.name.toLowerCase().includes(query) ||
+      v.creator?.name.toLowerCase().includes(query) ||
+      v.tags.some(t => t.toLowerCase().includes(query))
+    );
+  }, [videos, searchQuery]);
 
   // Intersection Observer
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -145,6 +164,29 @@ export function AdvancedVideoGrid() {
       <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10 px-6 py-3 transition-all">
         <div className="max-w-[1920px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
+            {/* Search Bar */}
+            <div className="relative w-full md:w-80 flex-shrink-0">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                    type="search"
+                    inputMode="search"
+                    enterKeyHint="search"
+                    autoComplete="off"
+                    placeholder="영상 검색 (제목, 카테고리, 상담사...)"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-neutral-900/80 border border-white/10 rounded-full pl-11 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-vibrant-cyan/50 focus:ring-1 focus:ring-vibrant-cyan/20 transition-all placeholder:text-gray-500"
+                />
+                {searchQuery && (
+                    <button
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                )}
+            </div>
+
             {/* Filter Groups (Trays) */}
             <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar w-full md:w-auto">
 
@@ -191,7 +233,11 @@ export function AdvancedVideoGrid() {
              {/* Right Side: Sort & Count */}
             <div className="flex items-center gap-4 ml-auto min-w-max">
                 <span className="text-sm text-gray-400 font-mono hidden sm:block">
-                    Total <span className="text-white font-bold">{videos.length}</span> / 542
+                    {searchQuery ? (
+                        <>검색 결과 <span className="text-white font-bold">{filteredVideos.length}</span>건</>
+                    ) : (
+                        <>Total <span className="text-white font-bold">{filteredVideos.length}</span> / 542</>
+                    )}
                 </span>
 
                 {/* Sort Dropdown (Simple for now, can be tray too if needed) */}
@@ -411,7 +457,7 @@ export function AdvancedVideoGrid() {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"
             >
               <AnimatePresence mode="popLayout">
-                {videos.map((video, index) => (
+                {filteredVideos.map((video, index) => (
                   <motion.div
                     key={video.id}
                     layout

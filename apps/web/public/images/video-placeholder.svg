@@ -1,0 +1,17 @@
+<svg width="400" height="225" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="225" fill="#1a1a2e"/>
+  <rect x="0" y="0" width="400" height="225" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Play button circle -->
+  <circle cx="200" cy="112" r="35" fill="#00d4ff" opacity="0.2"/>
+  <circle cx="200" cy="112" r="28" stroke="#00d4ff" stroke-width="2" fill="none"/>
+  <!-- Play triangle -->
+  <path d="M193 100 L215 112 L193 124 Z" fill="#00d4ff"/>
+  <!-- Text -->
+  <text x="200" y="170" fill="#888" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">영상 준비중</text>
+</svg>

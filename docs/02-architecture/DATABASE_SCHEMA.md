@@ -1,197 +1,256 @@
 # Database Schema Design
 
+> **문서 버전**: 2026-01-29
+> **플랫폼 비전**: 영상 갤러리 + 프리랜서 + 관리자
+
 ## Overview
-This schema is designed to support the 6 key business areas defined in the Sitemap.
-It extends the existing Supabase (PostgreSQL) schema with new modules for **Education (LMS)** and **Content Management (News)**.
 
-## 🏗️ Schema Modules
+이 스키마는 함께봄 플랫폼의 3가지 핵심 영역을 지원합니다:
+1. **영상 갤러리** - 넷플릭스 스타일 영상 시청
+2. **프리랜서(Stars)** - 프로젝트 수주 및 영상 제작
+3. **관리자(Admin)** - 검수/승인/정산
 
-### 1. User & Auth (Base)
-*Existing `User` model with Roles.*
-- **Extensions**:
-    - Profile extensions for `Stars` (Portfolio, Skills).
-    - `Instructor` profile for Education? (Can use `Counselor` or `Admin`).
+---
 
-### 2. Education (LMS) 🆕
-*Supporting `/education/` and `/lms/`*
+## 🏗️ 핵심 모델
+
+### 1. User & Auth
 
 ```mermaid
 erDiagram
-    Course ||--o{ Module : contains
-    Module ||--o{ Lesson : contains
-    Course ||--o{ Enrollment : has
-    User ||--o{ Enrollment : takes
-    Lesson ||--o{ Progress : tracks
+    User ||--o{ StarProfile : has
+    User ||--o{ Video : uploads
+    User ||--o{ Project : manages
 
-    Course {
+    User {
         string id PK
-        string title
-        string slug
-        string level "BASIC, ADVANCED"
-        decimal price
-        string thumbnail_url
-        boolean is_published
+        string email UK
+        string passwordHash
+        enum role "ADMIN, STAR, CLIENT"
+        datetime createdAt
     }
-    Module {
+    StarProfile {
         string id PK
-        string title
-        int order_index
-        string course_id FK
-    }
-    Lesson {
-        string id PK
-        string title
-        string type "VIDEO, QUIZ, ASSIGNMENT"
-        string video_r2_key "R2 Path"
-        int order_index
-        string module_id FK
-    }
-    Enrollment {
-        string id PK
-        string user_id FK
-        string course_id FK
-        enum status "ACTIVE, COMPLETED"
-        datetime enrolled_at
+        string userId FK
+        string displayName
+        string bio
+        string portfolioUrl
+        string grade "SILVER, GOLD, PLATINUM"
     }
 ```
 
-### 3. Studio & Stars (Project Flow)
-*Supporting `/stars/` and `/studio/`*
-*Existing `Project` architecture is robust.*
-- **Refinements**:
-    - `Contest`: Can use `ProjectRequest` with `type=CONTEST`.
-    - `Portfolio`: Filter `Project` where `status=COMPLETED` and `public_display=true`.
+---
 
-### 4. Content (News & Notice) 🆕
-*Supporting `/news/` and `/help/`*
+### 2. Videos (Gallery)
 
 ```mermaid
 erDiagram
-    Post ||--o{ Tag : has
-    Post {
+    Video ||--o| VideoTechnicalSpec : has
+    Video }|--o{ Category : belongsTo
+    User ||--o{ Video : uploads
+
+    Video {
         string id PK
         string title
-        string content "Markdown/HTML"
-        string slug "SEO Friendly"
-        enum type "NEWS, NOTICE, EVENT"
-        string thumbnail_url
-        datetime published_at
+        string description
+        string thumbnailUrl
+        string streamUid "Cloudflare Stream"
+        string r2Key "R2 Storage"
+        enum status "DRAFT, PENDING, PUBLISHED"
+        string uploaderId FK
+        datetime createdAt
+    }
+    VideoTechnicalSpec {
+        string id PK
+        string videoId FK
+        int width
+        int height
+        int duration "seconds"
+        int fileSize "bytes"
+        string codec
+    }
+    Category {
+        string id PK
+        string name
+        string slug UK
     }
 ```
 
-## 📝 Proposed Prisma Schema Addition
+---
+
+### 3. Projects & Assignments
+
+```mermaid
+erDiagram
+    Project ||--o{ ProjectAssignment : has
+    Project ||--o{ Submission : receives
+    User ||--o{ ProjectAssignment : works
+
+    Project {
+        string id PK
+        string title
+        string description
+        enum status "OPEN, IN_PROGRESS, COMPLETED"
+        decimal budget
+        datetime deadline
+    }
+    ProjectAssignment {
+        string id PK
+        string projectId FK
+        string starId FK
+        enum status "ASSIGNED, ACCEPTED, SUBMITTED, APPROVED"
+    }
+    Submission {
+        string id PK
+        string projectId FK
+        string starId FK
+        string videoId FK
+        string note
+        datetime submittedAt
+    }
+```
+
+---
+
+### 4. Settlements (정산)
+
+```mermaid
+erDiagram
+    Settlement ||--|| User : paysTo
+    Settlement ||--o| Submission : basedOn
+
+    Settlement {
+        string id PK
+        string userId FK
+        string submissionId FK
+        decimal amount
+        enum type "PRIMARY, SECONDARY"
+        enum status "PENDING, APPROVED, PAID"
+        datetime approvedAt
+        datetime paidAt
+    }
+```
+
+---
+
+## 📝 Prisma Schema (Core)
 
 ```prisma
-// --- Education (LMS) ---
-model Course {
+// --- User ---
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  role          String   @default("CLIENT") // ADMIN, STAR, CLIENT
+  
+  profile       StarProfile?
+  videos        Video[]
+  settlements   Settlement[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model StarProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  displayName   String
+  bio           String?
+  portfolioUrl  String?
+  grade         String   @default("SILVER") // SILVER, GOLD, PLATINUM
+  
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+// --- Video ---
+model Video {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  thumbnailUrl  String?
+  streamUid     String?  // Cloudflare Stream
+  r2Key         String?  // R2 Storage path
+  status        String   @default("DRAFT") // DRAFT, PENDING, PUBLISHED
+  
+  uploaderId    String
+  uploader      User     @relation(fields: [uploaderId], references: [id])
+  
+  technicalSpec VideoTechnicalSpec?
+  categories    Category[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model VideoTechnicalSpec {
+  id        String @id @default(cuid())
+  videoId   String @unique
+  width     Int?
+  height    Int?
+  duration  Int?   // seconds
+  fileSize  Int?   // bytes
+  codec     String?
+  
+  video     Video  @relation(fields: [videoId], references: [id])
+}
+
+// --- Project ---
+model Project {
   id          String   @id @default(cuid())
   title       String
-  slug        String   @unique
-  description String?  @db.Text
-  level       String   // BASIC, ADVANCED
-  price       Decimal  @default(0)
-  isPublished Boolean  @default(false)
+  description String?
+  status      String   @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED
+  budget      Decimal?
+  deadline    DateTime?
   
-  modules     Module[]
-  enrollments Enrollment[]
+  assignments ProjectAssignment[]
+  submissions Submission[]
   
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
-model Module {
-  id        String   @id @default(cuid())
-  title     String
-  order     Int
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id])
-  lessons   Lesson[]
+model ProjectAssignment {
+  id        String @id @default(cuid())
+  projectId String
+  starId    String
+  status    String @default("ASSIGNED") // ASSIGNED, ACCEPTED, SUBMITTED, APPROVED
+  
+  project   Project @relation(fields: [projectId], references: [id])
+  
+  @@unique([projectId, starId])
 }
 
-model Lesson {
-  id          String   @id @default(cuid())
-  title       String
-  type        String   // VIDEO, TEXT, QUIZ
-  content     String?  // Text content or JSON
-  videoR2Key  String?  // R2 Key for video
-  duration    Int?     // Seconds
-  order       Int
-  movieId     String
-  module      Module   @relation(fields: [movieId], references: [id])
+// --- Settlement ---
+model Settlement {
+  id           String   @id @default(cuid())
+  userId       String
+  amount       Decimal
+  type         String   // PRIMARY, SECONDARY
+  status       String   @default("PENDING") // PENDING, APPROVED, PAID
+  
+  user         User     @relation(fields: [userId], references: [id])
+  
+  approvedAt   DateTime?
+  paidAt       DateTime?
+  createdAt    DateTime @default(now())
 }
+```
 
-model Enrollment {
-  id        String   @id @default(cuid())
-  userId    String
-  courseId  String
-  status    String   // ACTIVE, COMPLETED
-  progress  Int      @default(0) // %
-  user      User     @relation(fields: [userId], references: [id])
-  course    Course   @relation(fields: [courseId], references: [id])
-  createdAt DateTime @default(now())
-  
-  @@unique([userId, courseId])
-}
+---
 
-// --- Content ---
-model Post {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String   @db.Text
-  type        String   // NEWS, NOTICE
-  isPublished Boolean  @default(true)
-  publishedAt DateTime @default(now())
-}
+## 🔄 핵심 워크플로우
 
-// --- Counselors (Offline 500) ---
-model Counselor {
-  id          String   @id @default(cuid())
-  
-  // 1. Basic Identity
-  name        String
-  displayName String?  // 호명
-  shortId     String?  @unique // 상담사ID
-  phone       String?
-  email       String?
-  
-  // 2. Profile & Content
-  profileImageUrl String? // 이미지 주소/사진
-  introduction    String? @db.Text // 소개글
-  career          String? @db.Text // 경력사항
-  notice          String? @db.Text // 공지사항
-  
-  // 3. Classification
-  majorCategories String[] // 주요상담분야
-  tags            String[] // 해시태그
-  category        String?  // 분류
-  region          String?
-  
-  // 4. Flags
-  isKokkok        Boolean  @default(false) // 콕콕상담
-  isDonation      Boolean  @default(false) // 기부상담
-  isGift          Boolean  @default(false) // 선물상담
-  hasRateIncrease Boolean  @default(false) // 인상참여
-  attendedSession Boolean  @default(false) // 설명회참석
-  isAdApplied     Boolean  @default(false) // 광고신청
-  
-  // 5. Metrics
-  prevFee             Decimal? // 이전 이용료
-  increasedFee        Decimal? // 인상 이용료
-  targetTimeCurrent   Int?     // 현재 목표시간
-  targetTimePrev      Int?     // 이전 목표시간
-  targetTimeChallenge Int?     // 도전 목표시간
-  waitingTime         Int?     // 대기시간
-  
-  status      String   @default("ACTIVE")
-  
-  // Management
-  agencyId    String?
-  manager     User?    @relation(fields: [agencyId], references: [id])
-  
-  projects    Project[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
+```
+Project 생성 (Admin)
+       ↓
+ProjectAssignment 생성 (Star 배정)
+       ↓
+Submission 생성 (Star 업로드)
+       ↓
+Admin 검토/승인
+       ↓
+┌──────┴──────┐
+↓             ↓
+Video.status  Settlement 생성
+= PUBLISHED   (APPROVED)
 ```

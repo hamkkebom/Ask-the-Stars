@@ -5,13 +5,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-import { Button } from '@ask-the-stars/ui';
+import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { projectsApi } from '@/lib/api/projects';
 import { toast } from '@/hooks/use-toast';
 import Link from 'next/link';
-import { AssignmentType } from '@ask-the-stars/types';
+import { AssignmentType } from '@/types';
 
 const requestSchema = z.object({
   title: z.string().min(5, '제목은 5자 이상이어야 합니다.'),

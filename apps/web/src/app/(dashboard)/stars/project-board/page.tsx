@@ -39,23 +39,29 @@ function getCategoryStyle(cat: string) {
 }
 
 function StatusBadge({ status }: { status: ProjectRequest['status'] }) {
-  const styles = {
+  const styles: Record<string, string> = {
     OPEN: 'bg-green-500/20 text-green-300 border-green-500/30',
     FULL: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
     CLOSED: 'bg-gray-500/20 text-gray-300 border-gray-500/30',
     CANCELLED: 'bg-red-500/20 text-red-300 border-red-500/30',
+    IN_PROGRESS: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    REVIEW: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    COMPLETED: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
   };
 
-  const labels = {
+  const labels: Record<string, string> = {
     OPEN: '모집중',
     FULL: '모집마감',
     CLOSED: '완료',
     CANCELLED: '취소됨',
+    IN_PROGRESS: '진행중',
+    REVIEW: '검수중',
+    COMPLETED: '완료됨',
   };
 
   return (
-    <span className={cn("px-2 py-0.5 rounded textxs font-medium border", styles[status])}>
-      {labels[status]}
+    <span className={cn("px-2 py-0.5 rounded text-xs font-medium border", styles[status] || styles.OPEN)}>
+      {labels[status] || status}
     </span>
   );
 }
@@ -228,9 +234,9 @@ export default function ProjectBoardPage() {
                           <div className="flex items-center justify-between">
                             <span>마감일</span>
                             <span className={cn(
-                              new Date(item.deadline) < new Date() ? "text-red-400" : "text-gray-300"
+                              item.deadline && new Date(item.deadline) < new Date() ? "text-red-400" : "text-gray-300"
                             )}>
-                              {formatDate(item.deadline)}
+                              {item.deadline ? formatDate(item.deadline) : '-'}
                             </span>
                           </div>
                           <div className="pt-2 border-t border-white/5 flex items-center justify-between mt-2">
@@ -266,7 +272,7 @@ export default function ProjectBoardPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-white font-bold">{formatCurrency(item.estimatedBudget ?? 0)}</p>
-                  <p className="text-xs text-gray-400">{formatDate(item.deadline)} 까지</p>
+                  <p className="text-xs text-gray-400">{item.deadline ? formatDate(item.deadline) : '-'} 까지</p>
                 </div>
              </GlassCard>
            ))}

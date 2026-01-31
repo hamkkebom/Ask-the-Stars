@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
@@ -85,13 +85,16 @@ function StatsCard({ title, value, icon: Icon, color }: { title: string; value: 
 }
 
 function CalendarView({ projects }: { projects: MyProject[] }) {
-  const [currentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
 
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const blanks = Array.from({ length: firstDay }, (_, i) => i);
+
+  const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
   const getProjectsForDay = (day: number) => {
     return projects.filter(p => {
@@ -100,13 +103,84 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
     });
   };
 
-  // Simplified calendar for brevity
+  const isToday = (day: number) => {
+    const today = new Date();
+    return day === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
+  };
+
+  const goToPrevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  const goToNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  const goToToday = () => setCurrentDate(new Date());
+
   return (
     <GlassCard className="p-6">
-       <div className="text-center text-gray-400 py-10">캘린더 뷰는 준비 중입니다.</div>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-white">
+          {currentDate.getFullYear()}년 {months[currentDate.getMonth()]}
+        </h2>
+        <div className="flex items-center gap-2">
+          <button onClick={goToToday} className="px-3 py-1.5 text-sm text-vibrant-cyan hover:bg-vibrant-cyan/10 rounded-lg transition-colors">오늘</button>
+          <button onClick={goToPrevMonth} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">←</button>
+          <button onClick={goToNextMonth} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">→</button>
+        </div>
+      </div>
+
+      {/* Weekdays */}
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {weekdays.map((day, i) => (
+          <div key={day} className={`text-center py-2 text-sm font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Calendar Grid */}
+      <div className="grid grid-cols-7 gap-1">
+        {blanks.map((_, i) => <div key={`blank-${i}`} className="aspect-square" />)}
+        {days.map(day => {
+          const dayProjects = getProjectsForDay(day);
+          const hasDeadline = dayProjects.length > 0;
+          const dayOfWeek = (firstDay + day - 1) % 7;
+          return (
+            <div
+              key={day}
+              className={`aspect-square p-1 rounded-lg border transition-all cursor-pointer group relative ${
+                isToday(day) ? 'bg-vibrant-cyan/20 border-vibrant-cyan/50' :
+                hasDeadline ? 'bg-orange-500/10 border-orange-500/30 hover:border-orange-500/50' :
+                'border-transparent hover:bg-white/5'
+              }`}
+            >
+              <span className={`text-sm font-medium ${isToday(day) ? 'text-vibrant-cyan' : dayOfWeek === 0 ? 'text-red-400' : dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-300'}`}>
+                {day}
+              </span>
+              {hasDeadline && (
+                <div className="absolute bottom-1 left-1 right-1 flex gap-0.5">
+                  {dayProjects.slice(0, 3).map((_, i) => <div key={i} className="flex-1 h-1 rounded-full bg-orange-500" />)}
+                </div>
+              )}
+              {hasDeadline && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10 min-w-[150px]">
+                  <div className="bg-neutral-800 border border-white/10 rounded-lg p-2 shadow-xl">
+                    <p className="text-xs text-gray-400 mb-1">마감 예정</p>
+                    {dayProjects.map((p, i) => <p key={i} className="text-sm text-white truncate">{p.title}</p>)}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-6 mt-6 pt-4 border-t border-white/5">
+        <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-vibrant-cyan/50" /><span className="text-xs text-gray-400">오늘</span></div>
+        <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-orange-500" /><span className="text-xs text-gray-400">마감일</span></div>
+      </div>
     </GlassCard>
   );
 }
+
 
 function MyProjectsContent() {
   const searchParams = useSearchParams();

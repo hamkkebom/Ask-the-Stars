@@ -1,17 +1,20 @@
 # URL Functional Specs & Data Map
 
+> **문서 버전**: 2026-01-29
+> **플랫폼 비전**: 영상 갤러리 + 프리랜서 + 관리자
+
 ## Overview
 This document maps every major Sitemap URL to its required **User Inputs**, **Database Models**, and **Output Metrics**.
 
 ---
 
-## 🏗️ 1. Main & Corporate (`/`)
+## 🎬 1. Videos (Public) (`/videos/`)
 
-| URL | Function | Input (User Action) | DB Models | Output / Metrics |
+| URL | Function | Input | DB Models | Output |
 |---|---|---|---|---|
-| `/` | Landing Page | Visit | - | Page Views, Lead Banner Clicks |
-| `/contact/` | Inquiry | Form Submit (Name, Email, Message) | `Lead` (status=NEW) | "Success Message" |
-| `/news/{slug}` | Read News | View Article | `Post` | Views Count, Rel. Articles |
+| `/videos/` | Gallery | Search, Filter | `Video` | Video Grid, View Count |
+| `/videos/{id}` | Detail | Play | `Video`, `VideoTechnicalSpec` | Stream Player, Metadata |
+| `/videos/category/{slug}` | Category Filter | Select Category | `Video`, `Category` | Filtered List |
 
 ---
 
@@ -19,10 +22,15 @@ This document maps every major Sitemap URL to its required **User Inputs**, **Da
 
 | URL | Function | Input | DB Models | Output |
 |---|---|---|---|---|
-| `/admin/` | Overlord Dashboard | - | `User`, `Project`, `Settlement` | Total Revenue, Weekly Active Stars |
-| `/admin/stars/projects` | Manage Projects | Filter (Status, Date) | `Project`, `ProjectAssignment` | Project List, Status Dist. |
-| `/admin/finance/payouts` | Process Payouts | Select Users -> "Approve" | `Settlement` (update status) | Total Payout Amount, Bank Files |
-| `/admin/marketing/` | Campaign Mgmt | Create Campaign (Target, Budget) | `Campaign` | ROAS, CTR, Spend |
+| `/admin/` | Dashboard | - | `User`, `Project`, `Settlement` | Revenue, Active Stars |
+| `/admin/videos/` | Video Assets | Filter | `Video`, `VideoTechnicalSpec` | R2/Stream Status |
+| `/admin/stars/` | Freelancer Mgmt | Filter | `User`, `StarProfile` | Star List, Grades |
+| `/admin/stars/projects/` | Projects | Filter | `Project`, `ProjectAssignment` | Project Status |
+| `/admin/stars/requests/` | Requests | Assign | `ProjectRequest` | Pending Requests |
+| `/admin/stars/reviews/{id}` | Review/Approve | **Approve/Reject** | `Submission` | → **Triggers Payout** |
+| `/admin/finance/` | Finance | Approve Payout | `Settlement` | Payout Amount |
+| `/admin/activity-log/` | Activity Log | Filter | `ActivityLog` | System Events |
+| `/admin/clients/` | Clients | View | `User` (role=CLIENT) | Client List |
 
 ---
 
@@ -30,38 +38,39 @@ This document maps every major Sitemap URL to its required **User Inputs**, **Da
 
 | URL | Function | Input | DB Models | Output |
 |---|---|---|---|---|
-| `/stars/dashboard` | Main View | - | `ProjectAssignment`, `Settlement` | Active Projects, Pending Earnings |
-| `/stars/project-board` | Find Work | Search/Filter | `ProjectRequest` (status=OPEN) | Available Requests List |
-| `/stars/request/{id}` | Apply/Accept | "Accept Request" Button | `ProjectAssignment` (create) | Confirmation, Project Slot -1 |
-| `/stars/upload` | **Submit Video** | **File Upload (MP4)**, Note, Version | `Submission`, `Video`, `R2` | **Stream UID (Encoding)**, Upload Progress |
-| `/stars/earnings` | Check Pay | Date Range Filter | `Settlement` | Monthly Income Chart |
+| `/stars/` | Dashboard | - | `ProjectAssignment`, `Settlement` | Active Projects, Pending Earnings |
+| `/stars/project-board/` | Find Work | Search/Filter | `ProjectRequest` (status=OPEN) | Available Requests |
+| `/stars/projects/{id}` | Project Detail | Accept/Reject | `ProjectAssignment` | Project Info |
+| `/stars/upload/` | **Upload Video** | **File Upload (MP4)**, Meta | `Submission`, `Video`, `R2` | **Stream UID**, Progress |
+| `/stars/my-videos/` | My Videos | View | `Video` | Video List |
+| `/stars/my-videos/{id}` | **Edit Video** | **Title/Thumb/File** | `Video` | Update Confirmation |
+| `/stars/earnings/` | Earnings | Date Filter | `Settlement` | Income Chart |
+| `/stars/feedback/` | Feedback | View | `Feedback` | Feedback List |
+| `/stars/work-journal/` | Work Journal | Create Entry | `WorkJournal` | Entry Saved |
 
 ---
 
-## 🎬 4. Studio (B2B/Contests) (`/studio/`)
+## 🔄 Key Workflow: Approval → Payout
 
-| URL | Function | Input | DB Models | Output |
-|---|---|---|---|---|
-| `/studio/request` | Request Production | Form (Budget, Ref, Deadline) | `ProjectRequest` | Estimate Range, Success Email |
-| `/studio/contests/` | List Contests | - | `ProjectRequest` (type=CONTEST) | Active Contests, Prize Amounts |
-| `/studio/contests/{id}` | **Submit Entry** | **File Upload**, Description | `Submission` | Entry ID, Participation Cert |
-
----
-
-## 📢 5. Marketing (`/marketing/`)
-
-| URL | Function | Input | DB Models | Output |
-|---|---|---|---|---|
-| `/marketing/request` | Request Agency | Form (Company, Goal, Budget) | `Lead` (type=AGENCY) | Consultation Slot |
-| `/marketing/cases` | Case Studies | Filter (Industry) | `Post` (type=CASE), `Campaign` | Performance Graphs (Views/Sales) |
+```
+/stars/upload/ → Submission Created
+       ↓
+/admin/stars/reviews/{id} → Admin Review
+       ↓
+    Approve → Triggers:
+       ↓
+┌──────┴──────┐
+↓             ↓
+Video.status  Settlement.status
+= PUBLISHED   = APPROVED
+```
 
 ---
 
-## 🎓 6. Education (`/education/`) 🆕
+## 🔐 4. Auth (`/auth/`)
 
 | URL | Function | Input | DB Models | Output |
 |---|---|---|---|---|
-| `/education/courses` | List Courses | Level Filter | `Course` | Available Courses, Prices |
-| `/education/courses/{slug}` | Course Detail | "Enroll" Button (Payment) | `Enrollment`, `Payment` | **Access Granted**, Receipt |
-| `/lms/curriculum` | **Watch Lecture** | Select Lesson | `Enrollment`, `Lesson` | **Stream UID + JWT Token** |
-| `/lms/assignments` | Submit Homework | Text/File Upload | `Submission` (type=HOMEWORK) | Grades, Feedback |
+| `/auth/login` | Login | Email, Password | `User` | Access Token |
+| `/auth/signup/stars` | Star Signup | Profile, Portfolio | `User`, `StarProfile` | Account Created |
+| `/auth/signup/client` | Client Signup | Basic Info | `User` | Account Created |

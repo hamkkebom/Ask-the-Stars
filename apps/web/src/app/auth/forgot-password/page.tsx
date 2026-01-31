@@ -1,97 +1,88 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@ask-the-stars/ui';
-import { Button } from '@ask-the-stars/ui';
-import { authApi } from '@/lib/api/auth';
-import { Loader2 } from 'lucide-react';
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email('유효한 이메일 주소를 입력해주세요.'),
-});
-
-type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+import { useAuth } from '@/lib/hooks/useAuth';
+import { Loader2, ArrowLeft } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
+  const { resetPassword } = useAuth();
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ForgotPasswordFormValues>({
-    resolver: zodResolver(forgotPasswordSchema),
-  });
-
-  const onSubmit = async (data: ForgotPasswordFormValues) => {
-    setLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(null);
-    setSuccessMessage(null);
-    try {
-      await authApi.requestPasswordReset(data.email);
-      setSuccessMessage('비밀번호 재설정 링크가 이메일로 전송되었습니다.');
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.message || '요청 처리에 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setLoading(false);
+
+    if (!email) {
+      setError('이메일을 입력해주세요.');
+      return;
     }
+
+    setLoading(true);
+    const { error } = await resetPassword(email);
+    setLoading(false);
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    setSuccess(true);
   };
 
+  if (success) {
+    return (
+      <div className="text-center py-8">
+        <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="text-3xl">📧</span>
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">이메일을 확인하세요</h2>
+        <p className="text-[#aaa] mb-6">
+          {email}로 비밀번호 재설정 링크를<br />발송했습니다.
+        </p>
+        <Link href="/auth/login" className="text-yellow-500 hover:underline">
+          로그인 페이지로 돌아가기
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen items-center justify-center bg-slate-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">비밀번호 찾기</CardTitle>
-          <CardDescription className="text-center">
-            가입한 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {successMessage ? (
-            <div className="p-4 bg-green-50 text-green-700 rounded-md text-center">
-              <p className="font-medium">{successMessage}</p>
-              <p className="mt-2 text-sm">이메일을 확인해주세요.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium leading-none">
-                  이메일
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  className={`flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.email ? 'border-red-500' : ''}`}
-                  {...register('email')}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
-                )}
-              </div>
+    <div>
+      <Link href="/auth/login" className="inline-flex items-center gap-1 text-[#aaa] hover:text-white transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" />
+        로그인으로 돌아가기
+      </Link>
 
-              {error && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
-                  {error}
-                </div>
-              )}
+      <h1 className="text-2xl font-bold text-white text-center mb-2">비밀번호 찾기</h1>
+      <p className="text-[#aaa] text-center mb-8">가입하신 이메일 주소를 입력하세요</p>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                재설정 링크 받기
-              </Button>
-            </form>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <Link href="/auth/login" className="text-sm font-medium text-blue-600 hover:text-blue-500">
-            로그인으로 돌아가기
-          </Link>
-        </CardFooter>
-      </Card>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-[#aaa] mb-2">이메일</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@example.com"
+            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500"
+            disabled={loading}
+          />
+        </div>
+
+        {error && <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+        >
+          {loading ? <><Loader2 className="w-5 h-5 animate-spin" />전송 중...</> : '재설정 링크 보내기'}
+        </button>
+      </form>
     </div>
   );
 }

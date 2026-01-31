@@ -1,84 +1,133 @@
-# 📚 프로젝트 문서 인덱스 (Project Documentation - 함께봄)
-> **마지막 업데이트**: 2026. 1. 19. 오후 5:02:04
-> 프로젝트의 모든 마크다운 문서를 카테고리별로 정리했습니다.
+# 📚 프로젝트 문서 인덱스
 
-## 🏠 메인 및 기획 (Core & Planning)
+> **마지막 업데이트**: 2026-01-30
+> **플랫폼 비전**: 영상 갤러리 + 프리랜서 + 관리자
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| 🏠 **[SITEMAP.md](./docs/SITEMAP.md)** | `docs\SITEMAP.md` | 2026-01-19 07:57 |
-| 🏠 **[WORKFLOW.md](./docs/WORKFLOW.md)** | `docs\WORKFLOW.md` | 2026-01-17 10:23 |
-| 🏠 **[FINAL_SUMMARY.md](./FINAL_SUMMARY.md)** | `FINAL_SUMMARY.md` | 2026-01-17 08:55 |
-| 🏠 **[README.md](./README.md)** | `README.md` | 2026-01-17 05:54 |
-| 🏠 **[bug-fix.md](./.agent/workflows/bug-fix.md)** | `.agent\workflows\bug-fix.md` | 2026-01-17 05:35 |
-| 🏠 **[feature-dev.md](./.agent/workflows/feature-dev.md)** | `.agent\workflows\feature-dev.md` | 2026-01-17 05:35 |
-| 🏠 **[CHANGELOG.md](./docs/CHANGELOG.md)** | `docs\CHANGELOG.md` | 2026-01-17 05:24 |
-| 🏠 **[README.md](./docs/README.md)** | `docs\README.md` | 2026-01-17 05:23 |
+---
 
-## 🛠️ 기술 사양 (Technical Specs)
+## 🎯 핵심 문서 (Quick Links)
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| 🛠️ **[PERMISSIONS.md](./docs/PERMISSIONS.md)** | `docs\PERMISSIONS.md` | 2026-01-19 07:43 |
-| 🛠️ **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | `docs\ARCHITECTURE.md` | 2026-01-19 07:43 |
-| 🛠️ **[API_ENDPOINTS.md](./docs/03-api/ENDPOINTS.md)** | `docs\03-api\ENDPOINTS.md` | 2026-01-27 00:00 |
-| 🛠️ **[DATABASE_SCHEMA.md](./docs/DATABASE_SCHEMA.md)** | `docs\DATABASE_SCHEMA.md` | 2026-01-19 07:42 |
-| 🛠️ **[TECH_STACK.md](./docs/TECH_STACK.md)** | `docs\TECH_STACK.md` | 2026-01-19 07:31 |
-| 🛠️ **[TECH_STACK_COMPARISON.md](./docs/TECH_STACK_COMPARISON.md)** | `docs\TECH_STACK_COMPARISON.md` | 2026-01-19 07:23 |
-| 🛠️ **[CLOUDFLARE_INTEGRATION.md](./docs/02-architecture/CLOUDFLARE_INTEGRATION.md)** | `docs\02-architecture\CLOUDFLARE_INTEGRATION.md` | 2026-01-27 00:00 |
-| 🛠️ **[TEST_PLAN.md](./docs/TEST_PLAN.md)** | `docs\TEST_PLAN.md` | 2026-01-17 06:34 |
-| 🛠️ **[system.md](./.context/architecture/system.md)** | `.context\architecture\system.md` | 2026-01-15 09:19 |
-| 🛠️ **[api-schema.md](./.context/docs/api-schema.md)** | `.context\docs\api-schema.md` | 2026-01-15 09:18 |
-| 🛠️ **[database.md](./.context/architecture/database.md)** | `.context\architecture\database.md` | 2026-01-15 09:18 |
+| 문서 | 설명 |
+|------|------|
+| [SITEMAP.md](./02-architecture/SITEMAP.md) | 사이트맵 (37 페이지) |
+| [OVERVIEW.md](./02-architecture/OVERVIEW.md) | 시스템 아키텍처 |
+| [TECH_STACK.md](./02-architecture/TECH_STACK.md) | 기술 스택 |
+| [ENDPOINTS.md](./03-api/ENDPOINTS.md) | API 엔드포인트 |
 
-## 📘 가이드 및 정책 (Guides)
+---
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| 📘 **[ACCOUNT_MANAGEMENT.md](./docs/ACCOUNT_MANAGEMENT.md)** | `docs\ACCOUNT_MANAGEMENT.md` | 2026-01-19 02:57 |
-| 📘 **[CODING_CONVENTION.md](./docs/CODING_CONVENTION.md)** | `docs\CODING_CONVENTION.md` | 2026-01-17 06:35 |
-| 📘 **[CONTRIBUTING.md](./docs/CONTRIBUTING.md)** | `docs\CONTRIBUTING.md` | 2026-01-17 06:34 |
-| 📘 **[USER_GUIDE.md](./docs/USER_GUIDE.md)** | `docs\USER_GUIDE.md` | 2026-01-17 06:34 |
-| 📘 **[security.md](./.agent/rules/security.md)** | `.agent\rules\security.md` | 2026-01-17 05:34 |
-| 📘 **[SECURITY.md](./SECURITY.md)** | `SECURITY.md` | 2026-01-16 10:38 |
+## 📁 01-getting-started (5개)
 
-## ⚙️ 운영 및 배포 (Operations)
+| 문서 | 설명 |
+|------|------|
+| [GITHUB_SETUP.md](./01-getting-started/GITHUB_SETUP.md) | GitHub 설정 |
+| [INSTALLATION.md](./01-getting-started/INSTALLATION.md) | 설치 가이드 |
+| [LOCAL_SETUP.md](./01-getting-started/LOCAL_SETUP.md) | 로컬 환경 설정 |
+| [QUICK_START.md](./01-getting-started/QUICK_START.md) | 빠른 시작 |
+| [TROUBLESHOOTING.md](./01-getting-started/TROUBLESHOOTING.md) | 문제 해결 |
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| ⚙️ **[INCIDENT_RESPONSE.md](./docs/INCIDENT_RESPONSE.md)** | `docs\INCIDENT_RESPONSE.md` | 2026-01-17 06:34 |
-| ⚙️ **[RUNBOOK.md](./docs/RUNBOOK.md)** | `docs\RUNBOOK.md` | 2026-01-17 06:34 |
-| ⚙️ **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** | `docs\DEPLOYMENT.md` | 2026-01-17 05:23 |
+---
 
-## 📝 작업 일지 (Daily Logs)
+## 📁 02-architecture (8개)
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| 📝 **[2026-01-22 100점 최적화 완료 보고서](./docs/korean_logs/2026-01-22_optimization_complete.md) ✅** | `docs\korean_logs\2026-01-22_optimization_complete.md` | 2026-01-22 00:00 |
-| 📝 **[2026-01-21 작업일지 v2](./docs/korean_logs/2026-01-21_작업일지_v2.md)** | `docs\korean_logs\2026-01-21_작업일지_v2.md` | 2026-01-21 00:00 |
-| 📝 **[2026-01-19_작업일지.md](./docs/korean_logs/2026-01-19_작업일지.md)** | `docs\korean_logs\2026-01-19_작업일지.md` | 2026-01-19 07:17 |
-| 📝 **[2026-01-18_작업일지.md](./docs/korean_logs/2026-01-18_작업일지.md)** | `docs\korean_logs\2026-01-18_작업일지.md` | 2026-01-19 07:17 |
-| 📝 **[2026-01-17_작업일지.md](./docs/korean_logs/2026-01-17_작업일지.md)** | `docs\korean_logs\2026-01-17_작업일지.md` | 2026-01-19 07:17 |
-| 📝 **[2026-01-16_작업일지.md](./docs/korean_logs/2026-01-16_작업일지.md)** | `docs\korean_logs\2026-01-16_작업일지.md` | 2026-01-17 03:23 |
+| 문서 | 설명 |
+|------|------|
+| [OVERVIEW.md](./02-architecture/OVERVIEW.md) | 시스템 아키텍처 |
+| [SITEMAP.md](./02-architecture/SITEMAP.md) | 사이트맵 ⭐ |
+| [TECH_STACK.md](./02-architecture/TECH_STACK.md) | 기술 스택 |
+| [DATABASE_SCHEMA.md](./02-architecture/DATABASE_SCHEMA.md) | DB 스키마 |
+| [CLOUDFLARE_INTEGRATION.md](./02-architecture/CLOUDFLARE_INTEGRATION.md) | Cloudflare 연동 |
+| [STORAGE_STRATEGY.md](./02-architecture/STORAGE_STRATEGY.md) | 저장소 전략 |
+| [VIDEO_STRATEGY_COMPARISON.md](./02-architecture/VIDEO_STRATEGY_COMPARISON.md) | 영상 전략 비교 |
+| [C4_DIAGRAMS.md](./02-architecture/C4_DIAGRAMS.md) | C4 다이어그램 |
 
-## 🤖 에이전트/시스템 (Agent)
+---
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| 🤖 **[SKILL.md](./.agent/skills/db-migration/SKILL.md)** | `.agent\skills\db-migration\SKILL.md` | 2026-01-17 06:35 |
-| 🤖 **[global.md](./.agent/rules/global.md)** | `.agent\rules\global.md` | 2026-01-17 05:34 |
-| 🤖 **[style.md](./.agent/rules/style.md)** | `.agent\rules\style.md` | 2026-01-17 05:33 |
-| 🤖 **[2026-01-16_github_initial_setup.md](./artifacts/plans/2026-01-16_github_initial_setup.md)** | `artifacts\plans\2026-01-16_github_initial_setup.md` | 2026-01-17 03:22 |
-| 🤖 **[ui-kit.md](./.context/style/ui-kit.md)** | `.context\style\ui-kit.md` | 2026-01-17 03:20 |
-| 🤖 **[SKILL.md](./.agent/skills/git-commit/SKILL.md)** | `.agent\skills\git-commit\SKILL.md` | 2026-01-16 05:04 |
-| 🤖 **[requirements.md](./.context/product/requirements.md)** | `.context\product\requirements.md` | 2026-01-15 09:21 |
+## 📁 03-api (3개)
 
-## 📂 기타 (Misc)
+| 문서 | 설명 |
+|------|------|
+| [README.md](./03-api/README.md) | API 개요 |
+| [ENDPOINTS.md](./03-api/ENDPOINTS.md) | API 엔드포인트 |
+| [AUTHENTICATION.md](./03-api/AUTHENTICATION.md) | 인증 API |
 
-| 문서명 (Link) | 경로 (Path) | 업데이트 (Modified) |
-|---|---|---|
-| 📂 **[DOCUMENT_INDEX.md](./docs/DOCUMENT_INDEX.md)** | `docs\DOCUMENT_INDEX.md` | 2026-01-17 05:50 |
-| 📂 **[PULL_REQUEST_TEMPLATE.md](./.github/PULL_REQUEST_TEMPLATE.md)** | `.github\PULL_REQUEST_TEMPLATE.md` | 2026-01-17 04:21 |
-| 📂 **[GITHUB_SETUP.md](./docs/GITHUB_SETUP.md)** | `docs\GITHUB_SETUP.md` | 2026-01-17 03:24 |
+---
 
-  
+## 📁 04-development (12개)
+
+| 문서 | 설명 |
+|------|------|
+| [CODING_CONVENTION.md](./04-development/CODING_CONVENTION.md) | 코딩 컨벤션 |
+| [GIT_WORKFLOW.md](./04-development/GIT_WORKFLOW.md) | Git 워크플로우 |
+| [TESTING.md](./04-development/TESTING.md) | 테스트 가이드 |
+| [LOCAL_SITEMAP.md](./04-development/LOCAL_SITEMAP.md) | 로컬 사이트맵 (자동생성) |
+| [CLOUDFLARE_HYBRID_ARCHITECTURE.md](./04-development/CLOUDFLARE_HYBRID_ARCHITECTURE.md) | 하이브리드 아키텍처 |
+| [VAMS_INTEGRATION_REPORT.md](./04-development/VAMS_INTEGRATION_REPORT.md) | VAMS 연동 |
+| [react-performance-rules.md](./04-development/react-performance-rules.md) | React 성능 규칙 |
+
+---
+
+## 📁 05-operations (8개)
+
+| 문서 | 설명 |
+|------|------|
+| [DEPLOYMENT.md](./05-operations/DEPLOYMENT.md) | 배포 가이드 |
+| [RUNBOOK.md](./05-operations/RUNBOOK.md) | 운영 런북 |
+| [INCIDENT_RESPONSE.md](./05-operations/INCIDENT_RESPONSE.md) | 장애 대응 |
+| [INFRASTRUCTURE_CHECKLIST.md](./05-operations/INFRASTRUCTURE_CHECKLIST.md) | 인프라 체크리스트 |
+| [DOMAIN_CONNECTION_CHECKLIST.md](./05-operations/DOMAIN_CONNECTION_CHECKLIST.md) | 도메인 연결 |
+| [VERCEL_DNS_SETUP.md](./05-operations/VERCEL_DNS_SETUP.md) | Vercel DNS |
+| [GABIA_DNS_FIX.md](./05-operations/GABIA_DNS_FIX.md) | 가비아 DNS 수정 |
+| [ACCOUNT_MANAGEMENT.md](./05-operations/ACCOUNT_MANAGEMENT.md) | 계정 관리 |
+
+---
+
+## 📁 06-security (3개)
+
+| 문서 | 설명 |
+|------|------|
+| [SECURITY.md](./06-security/SECURITY.md) | 보안 개요 |
+| [SECURITY_POLICY.md](./06-security/SECURITY_POLICY.md) | 보안 정책 |
+| [PERMISSIONS.md](./06-security/PERMISSIONS.md) | 권한 관리 |
+
+---
+
+## 📁 07-user-guides (2개)
+
+| 문서 | 설명 |
+|------|------|
+| [USER_GUIDE.md](./07-user-guides/USER_GUIDE.md) | 사용자 가이드 |
+| [FAQ.md](./07-user-guides/FAQ.md) | 자주 묻는 질문 |
+
+---
+
+## 📁 08-adr (1개)
+
+| 문서 | 설명 |
+|------|------|
+| [0001-tech-stack-selection.md](./08-adr/0001-tech-stack-selection.md) | 기술 스택 결정 |
+
+---
+
+## 📁 09-planning (2개)
+
+| 문서 | 설명 |
+|------|------|
+| [ROADMAP.md](./09-planning/ROADMAP.md) | 로드맵 |
+| [MILESTONES.md](./09-planning/MILESTONES.md) | 마일스톤 |
+
+---
+
+## 📝 작업 일지 (korean_logs)
+
+| 문서 | 날짜 |
+|------|------|
+| [2026-01-22_optimization_complete.md](./korean_logs/2026-01-22_optimization_complete.md) | 100점 최적화 완료 |
+| [2026-01-21_작업일지_v2.md](./korean_logs/2026-01-21_작업일지_v2.md) | 2026-01-21 |
+| [2026-01-19_작업일지.md](./korean_logs/2026-01-19_작업일지.md) | 2026-01-19 |
+| [2026-01-18_작업일지.md](./korean_logs/2026-01-18_작업일지.md) | 2026-01-18 |
+| [2026-01-17_작업일지.md](./korean_logs/2026-01-17_작업일지.md) | 2026-01-17 |
+| [2026-01-16_작업일지.md](./korean_logs/2026-01-16_작업일지.md) | 2026-01-16 |
+
+---
+*총 문서 수: ~65개 (삭제 후)*

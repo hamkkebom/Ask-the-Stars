@@ -6,7 +6,7 @@ import {
   ArrowRight, Star, Video, Megaphone, GraduationCap,
   Users, Briefcase, Award, Sparkles
 } from 'lucide-react';
-import { MainHeader } from '@/components/layout/main-header';
+import { SimpleHeader } from '@/components/layout/simple-header';
 import { MainFooter } from '@/components/layout/main-footer';
 
 const stats = [
@@ -59,7 +59,7 @@ const features = [
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
-      <MainHeader />
+      <SimpleHeader />
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">

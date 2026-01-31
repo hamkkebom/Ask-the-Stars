@@ -11,13 +11,11 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@ask-the-stars/types": "workspace:*",
-    "@ask-the-stars/ui": "workspace:*",
-    "@ask-the-stars/utils": "workspace:*",
     "@cloudflare/stream-react": "^1.9.3",
     "@hookform/resolvers": "3.9.1",
     "@sentry/nextjs": "^9.4.0",
-    "@supabase/supabase-js": "^2.47.10",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.90.1",
     "@tanstack/react-query": "^5.62.7",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
@@ -38,6 +36,11 @@
     "tus-js-client": "^4.3.1",
     "zod": "3.24.1",
     "zustand": "^5.0.10"
+  },
+  "dependencies": {
+    "@ask-the-stars/ui": "file:../../packages/ui",
+    "@ask-the-stars/types": "file:../../packages/types",
+    "@ask-the-stars/utils": "file:../../packages/utils"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

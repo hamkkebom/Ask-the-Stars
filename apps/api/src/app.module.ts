@@ -16,6 +16,9 @@ import { CloudflareModule } from './modules/cloudflare/cloudflare.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { AiModule } from './modules/ai/ai.module';
 import { HealthController } from './common/health.controller';
+// New modules (v2)
+import { PortfoliosModule } from './modules/portfolios/portfolios.module';
+import { ResourcesModule } from './modules/resources/resources.module';
 
 @Module({
   imports: [
@@ -44,6 +47,10 @@ import { HealthController } from './common/health.controller';
     CloudflareModule,
     AnalyticsModule,
     AiModule,
+
+    // New modules (v2)
+    PortfoliosModule,
+    ResourcesModule,
   ],
   controllers: [HealthController],
 })

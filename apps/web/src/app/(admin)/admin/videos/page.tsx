@@ -1,189 +1,240 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { axiosInstance as api } from '@/lib/api';
-import { formatBytes } from '@/lib/utils';
-import { FileVideo, Loader2, Play, RefreshCw, HardDrive, Database, CheckCircle2 } from 'lucide-react';
-import { GlassCard } from '@/components/ui/glass-card';
+import { useState } from 'react';
+import Link from 'next/link';
+import {
+  Search,
+  Filter,
+  Play,
+  MoreVertical,
+  Eye,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Download,
+} from 'lucide-react';
 
-// Define the file interface
-interface R2File {
-  key: string;
-  size: number;
-  lastModified: string;
-  url: string;
-  folder: string;
+// Mock 영상 데이터
+const mockVideos = [
+  {
+    id: '1',
+    title: '삼성 브랜드 스토리',
+    thumbnail: null,
+    status: 'public',
+    statusLabel: '공개',
+    views: 1234,
+    uploadedAt: '2026-01-28',
+    freelancer: '김영상',
+    client: '삼성전자',
+  },
+  {
+    id: '2',
+    title: 'LG 신제품 런칭',
+    thumbnail: null,
+    status: 'public',
+    statusLabel: '공개',
+    views: 856,
+    uploadedAt: '2026-01-26',
+    freelancer: '이크리에이터',
+    client: 'LG전자',
+  },
+  {
+    id: '3',
+    title: '현대 기업 PR',
+    thumbnail: null,
+    status: 'private',
+    statusLabel: '비공개',
+    views: 0,
+    uploadedAt: '2026-01-24',
+    freelancer: '박프로',
+    client: '현대자동차',
+  },
+  {
+    id: '4',
+    title: 'SK 연말행사 하이라이트',
+    thumbnail: null,
+    status: 'reviewing',
+    statusLabel: '검수중',
+    views: 0,
+    uploadedAt: '2026-01-22',
+    freelancer: '최에디터',
+    client: 'SK하이닉스',
+  },
+];
+
+const statusTabs = [
+  { id: 'all', label: '전체', count: mockVideos.length },
+  { id: 'public', label: '공개', count: mockVideos.filter(v => v.status === 'public').length },
+  { id: 'private', label: '비공개', count: mockVideos.filter(v => v.status === 'private').length },
+  { id: 'reviewing', label: '검수중', count: mockVideos.filter(v => v.status === 'reviewing').length },
+];
+
+function getStatusIcon(status: string) {
+  switch (status) {
+    case 'public':
+      return <CheckCircle className="w-4 h-4 text-green-400" />;
+    case 'private':
+      return <XCircle className="w-4 h-4 text-gray-400" />;
+    case 'reviewing':
+      return <Clock className="w-4 h-4 text-yellow-400" />;
+    default:
+      return null;
+  }
 }
 
-export default function VideoAssetsPage() {
-  const [selectedVideo, setSelectedVideo] = useState<R2File | null>(null);
+export default function AdminVideosPage() {
+  const [activeTab, setActiveTab] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedVideos, setSelectedVideos] = useState<string[]>([]);
 
-  const { data, isLoading, error, refetch } = useQuery<{ success: boolean; files: R2File[] }>({
-    queryKey: ['r2-videos'],
-    queryFn: async () => {
-      const res = await api.get('/uploads');
-      return res.data;
-    },
+  const filteredVideos = mockVideos.filter(video => {
+    if (activeTab !== 'all' && video.status !== activeTab) return false;
+    if (searchQuery && !video.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
   });
-
-  const { data: dbKeys } = useQuery<string[]>({
-    queryKey: ['db-video-keys'],
-    queryFn: async () => {
-      const res = await api.get('/videos/database/keys');
-      return res.data;
-    },
-  });
-
-  const registeredKeys = new Set(dbKeys || []);
-
-  const files = data?.files || [];
-  const videos = files.filter(f => f.key.endsWith('.mp4') || f.key.endsWith('.mov'));
-  const folders = Array.from(new Set(videos.map(v => v.folder)));
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold mb-1">영상 자산 관리 (R2)</h1>
-          <p className="text-slate-400">R2 버킷에 저장된 영상 파일 목록입니다.</p>
-        </div>
-        <button
-          onClick={() => refetch()}
-          className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
-        >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-          새로고침
+        <h1 className="text-2xl font-bold text-white">영상 자산</h1>
+        <button className="flex items-center gap-2 px-4 py-2 bg-[#212121] border border-[#3f3f3f] rounded-lg text-[#aaa] hover:bg-[#3f3f3f] transition-colors">
+          <Download className="w-4 h-4" />
+          내보내기
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-6">
-        <GlassCard className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
-              <FileVideo className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-slate-400 text-sm">전체 비디오</p>
-              <p className="text-2xl font-bold">{videos.length}개</p>
-            </div>
-          </div>
-        </GlassCard>
-        <GlassCard className="p-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-500">
-              <HardDrive className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-slate-400 text-sm">총 용량</p>
-              <p className="text-2xl font-bold">
-                {formatBytes(videos.reduce((acc, curr) => acc + curr.size, 0))}
-              </p>
-            </div>
-          </div>
-        </GlassCard>
-        <GlassCard className="p-6">
-           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-500">
-              <Loader2 className="w-6 h-6" />
-            </div>
-             <div>
-              <p className="text-slate-400 text-sm">로딩 상태</p>
-              <p className="text-2xl font-bold">{isLoading ? '로딩 중...' : '완료'}</p>
-            </div>
-          </div>
-        </GlassCard>
+      <div className="grid grid-cols-4 gap-4">
+        <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] p-4">
+          <p className="text-[#aaa] text-sm">전체 영상</p>
+          <p className="text-2xl font-bold text-white mt-1">542</p>
+        </div>
+        <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] p-4">
+          <p className="text-[#aaa] text-sm">총 조회수</p>
+          <p className="text-2xl font-bold text-white mt-1">12.4K</p>
+        </div>
+        <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] p-4">
+          <p className="text-[#aaa] text-sm">R2 저장 용량</p>
+          <p className="text-2xl font-bold text-white mt-1">1.2TB</p>
+        </div>
+        <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] p-4">
+          <p className="text-[#aaa] text-sm">이번달 업로드</p>
+          <p className="text-2xl font-bold text-white mt-1">24</p>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* File List */}
-        <div className="lg:col-span-2 space-y-4">
-          {isLoading ? (
-             <div className="flex items-center justify-center py-20">
-               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-             </div>
-          ) : videos.length === 0 ? (
-             <GlassCard className="p-12 text-center text-slate-400">
-               영상이 없습니다.
-             </GlassCard>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              {videos.map((video) => (
-                <div
-                  key={video.key}
-                  onClick={() => setSelectedVideo(video)}
-                  className={`group relative p-4 rounded-xl border transition-all cursor-pointer hover:bg-white/5 ${
-                    selectedVideo?.key === video.key
-                      ? 'border-primary bg-primary/5'
-                      : 'border-white/5 bg-white/5'
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center">
-                      <FileVideo className="w-5 h-5 text-slate-400" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {registeredKeys.has(video.key) && (
-                        <span className="flex items-center gap-1 text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">
-                          <CheckCircle2 className="w-3 h-3" />
-                          DB 연동됨
-                        </span>
-                      )}
-                      <span className="text-xs text-slate-500 bg-slate-900/50 px-2 py-1 rounded">
-                        {video.folder}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="font-medium text-sm truncate mb-1" title={video.key}>
-                    {video.key.split('/').pop()}
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    {formatBytes(video.size)} • {new Date(video.lastModified).toLocaleDateString()}
-                  </p>
+      {/* Tabs */}
+      <div className="flex items-center gap-1 border-b border-[#3f3f3f]">
+        {statusTabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === tab.id
+                ? 'text-white border-white'
+                : 'text-[#aaa] border-transparent hover:text-white'
+            }`}
+          >
+            {tab.label}
+            <span className="ml-2 text-[#666]">{tab.count}</span>
+          </button>
+        ))}
+      </div>
 
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                    <Play className="w-8 h-8 text-white fill-white" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+      {/* Filters */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#aaa]" />
+          <input
+            type="text"
+            placeholder="영상 검색"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg pl-10 pr-4 py-2 text-white placeholder-[#aaa] focus:outline-none focus:border-[#666]"
+          />
+        </div>
+        <button className="flex items-center gap-2 px-4 py-2 bg-[#212121] border border-[#3f3f3f] rounded-lg text-[#aaa] hover:bg-[#3f3f3f] transition-colors">
+          <Filter className="w-4 h-4" />
+          필터
+        </button>
+      </div>
+
+      {/* Table */}
+      <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
+        {/* Table Header */}
+        <div className="grid grid-cols-[auto_1fr_120px_100px_120px_120px_40px] gap-4 px-4 py-3 border-b border-[#3f3f3f] text-sm text-[#aaa]">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded border-[#666] bg-transparent"
+            />
+          </div>
+          <div>영상</div>
+          <div>상태</div>
+          <div>조회수</div>
+          <div>제작자</div>
+          <div>업로드</div>
+          <div></div>
         </div>
 
-        {/* Preview Player */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-6">
-            <h2 className="font-bold mb-4">미리보기</h2>
-            {selectedVideo ? (
-              <GlassCard className="p-4 overflow-hidden">
-                <div className="aspect-video bg-black rounded-lg overflow-hidden mb-4">
-                  <video
-                    src={selectedVideo.url}
-                    controls
-                    className="w-full h-full object-contain"
-                  />
+        {/* Table Body */}
+        <div className="divide-y divide-[#3f3f3f]">
+          {filteredVideos.map((video) => (
+            <div
+              key={video.id}
+              className="grid grid-cols-[auto_1fr_120px_100px_120px_120px_40px] gap-4 px-4 py-3 items-center hover:bg-[#3f3f3f] transition-colors"
+            >
+              <div>
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded border-[#666] bg-transparent"
+                />
+              </div>
+
+              <Link href={`/admin/videos/${video.id}`} className="flex items-center gap-3 group">
+                <div className="w-28 h-16 bg-[#3f3f3f] rounded-lg flex items-center justify-center shrink-0">
+                  <Play className="w-5 h-5 text-[#666]" />
                 </div>
-                <div className="space-y-2">
-                   <p className="font-medium truncate">{selectedVideo.key.split('/').pop()}</p>
-                   <div className="flex items-center justify-between text-sm text-slate-400">
-                      <span>{formatBytes(selectedVideo.size)}</span>
-                      <span>{selectedVideo.folder}</span>
-                   </div>
-                   <div className="pt-4 border-t border-white/10 mt-4">
-                      <p className="text-xs text-slate-500 mb-1">Direct URL</p>
-                      <code className="block w-full p-2 bg-black/30 rounded text-xs text-slate-300 break-all">
-                        {selectedVideo.url}
-                      </code>
-                   </div>
+                <div className="min-w-0">
+                  <p className="text-white font-medium truncate group-hover:text-blue-400 transition-colors">
+                    {video.title}
+                  </p>
+                  <p className="text-[#aaa] text-sm truncate">{video.client}</p>
                 </div>
-              </GlassCard>
-            ) : (
-              <GlassCard className="p-8 text-center text-slate-400 min-h-[300px] flex items-center justify-center">
-                <p>영상을 선택하여 미리보기</p>
-              </GlassCard>
-            )}
-          </div>
+              </Link>
+
+              <div className="flex items-center gap-2">
+                {getStatusIcon(video.status)}
+                <span className="text-sm text-[#aaa]">{video.statusLabel}</span>
+              </div>
+
+              <div className="text-white text-sm">
+                {video.views > 0 ? (
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5 text-[#666]" />
+                    {video.views.toLocaleString()}
+                  </span>
+                ) : (
+                  <span className="text-[#666]">-</span>
+                )}
+              </div>
+
+              <div className="text-[#aaa] text-sm truncate">
+                {video.freelancer}
+              </div>
+
+              <div className="text-[#aaa] text-sm">
+                {video.uploadedAt}
+              </div>
+
+              <div>
+                <button className="p-1 hover:bg-[#272727] rounded transition-colors">
+                  <MoreVertical className="w-4 h-4 text-[#aaa]" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

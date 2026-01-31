@@ -1,0 +1,64 @@
+﻿
+> @ask-the-stars/web@1.0.1 build C:\Users\이경수\OneDrive\문서\Hankaebom-Star\apps\web
+> next build
+
+   ▲ Next.js 15.5.9
+   - Environments: .env
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 14.4s
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/78) ...
+node.exe : TypeError: Can
+not read properties of un
+defined (reading 'call')
+At C:\Users\이경수\AppData\R
+oaming\npm\pnpm.ps1:24 ch
+ar:5
++     & "node$exe"  "$bas
+edir/node_modules/pnpm/bi
+n/pnpm.cjs" $args
++     ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo       
+       : NotSpecified:   
+  (TypeError: Cann...r   
+ eading 'call'):Strin    
+g) [], RemoteExcepti    o
+n
+    + FullyQualifiedErro 
+   rId : NativeCommandE  
+  rror
+ 
+    at Object.c [as requi
+re] (C:\Users\이경수\OneDriv
+e\문서\Hankaebom-Star\apps\
+web\.next\server\webpack-
+runtime.js:1:143)
+Error occurred prerenderi
+ng page "/admin/finance/p
+ayouts". Read more: https
+://nextjs.org/docs/messag
+es/prerender-error
+TypeError: Cannot read pr
+operties of undefined (re
+ading 'call')
+    at Object.c [as requi
+re] (C:\Users\이경수\OneDriv
+e\문서\Hankaebom-Star\apps\
+web\.next\server\webpack-
+runtime.js:1:143)
+Export encountered an err
+or on /(admin)/admin/fina
+nce/payouts/page: /admin/
+finance/payouts, exiting 
+the build.
+ ⨯ Next.js build worker e
+xited with code: 1 and si
+gnal: null
+ ELIFECYCLE  Command failed with exit code 1.

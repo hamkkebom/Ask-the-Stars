@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../database/prisma.service';
 import * as argon2 from 'argon2';
@@ -10,7 +14,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly mailService: MailService,
+    private readonly mailService: MailService
   ) {}
 
   async signup(signupDto: SignupDto) {
@@ -47,13 +51,17 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('이메일 또는 비밀번호가 올바르지 않습니다.');
+      throw new UnauthorizedException(
+        '이메일 또는 비밀번호가 올바르지 않습니다.'
+      );
     }
 
     const isPasswordValid = await argon2.verify(user.password, password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('이메일 또는 비밀번호가 올바르지 않습니다.');
+      throw new UnauthorizedException(
+        '이메일 또는 비밀번호가 올바르지 않습니다.'
+      );
     }
 
     return this.generateTokens(user.id, user.email);
@@ -119,9 +127,12 @@ export class AuthService {
   async confirmPasswordReset(token: string, newPassword: string) {
     try {
       const payload = this.jwtService.verify(token);
-      if (payload.type !== 'reset') throw new UnauthorizedException('유효하지 않은 토큰입니다.');
+      if (payload.type !== 'reset')
+        throw new UnauthorizedException('유효하지 않은 토큰입니다.');
 
-      const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+      });
       if (!user) throw new UnauthorizedException('사용자를 찾을 수 없습니다.');
 
       const hashedPassword = await argon2.hash(newPassword);
@@ -131,7 +142,7 @@ export class AuthService {
       });
 
       return { message: '비밀번호가 성공적으로 변경되었습니다.' };
-    } catch (e) {
+    } catch (_e) {
       throw new UnauthorizedException('토큰이 만료되었거나 유효하지 않습니다.');
     }
   }

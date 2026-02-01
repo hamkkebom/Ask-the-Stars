@@ -10,7 +10,13 @@ import { AiModule } from '../ai/ai.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [DatabaseModule, forwardRef(() => UploadsModule), CloudflareModule, ConfigModule, AiModule],
+  imports: [
+    DatabaseModule,
+    forwardRef(() => UploadsModule),
+    CloudflareModule,
+    ConfigModule,
+    AiModule,
+  ],
   controllers: [VideosController, CloudflareWebhookController],
   providers: [VideosService],
   exports: [VideosService],

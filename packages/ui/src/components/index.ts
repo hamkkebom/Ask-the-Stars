@@ -7,6 +7,7 @@ export {
   CardTitle,
   CardDescription,
 } from './card';
+export { GlassCard, type GlassCardProps } from './glass-card';
 export { Modal, type ModalProps } from './modal';
 export { Table, type TableProps } from './table';
 export { VideoPlayer, type VideoPlayerProps } from './video-player';

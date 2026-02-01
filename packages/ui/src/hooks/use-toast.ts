@@ -33,23 +33,20 @@ const toastReducer = (state: ToastState, action: ToastAction): ToastState => {
 export function useToast() {
   const [state, dispatch] = React.useReducer(toastReducer, { toasts: [] });
 
-  const toast = React.useCallback(
-    (props: Omit<Toast, 'id'>) => {
-      const id = Math.random().toString(36).slice(2);
-      const newToast: Toast = { ...props, id };
+  const toast = React.useCallback((props: Omit<Toast, 'id'>) => {
+    const id = Math.random().toString(36).slice(2);
+    const newToast: Toast = { ...props, id };
 
-      dispatch({ type: 'ADD_TOAST', toast: newToast });
+    dispatch({ type: 'ADD_TOAST', toast: newToast });
 
-      // Auto-dismiss
-      const duration = props.duration ?? 5000;
-      setTimeout(() => {
-        dispatch({ type: 'REMOVE_TOAST', id });
-      }, duration);
+    // Auto-dismiss
+    const duration = props.duration ?? 5000;
+    setTimeout(() => {
+      dispatch({ type: 'REMOVE_TOAST', id });
+    }, duration);
 
-      return id;
-    },
-    []
-  );
+    return id;
+  }, []);
 
   const dismiss = React.useCallback((id: string) => {
     dispatch({ type: 'REMOVE_TOAST', id });

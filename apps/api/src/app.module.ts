@@ -55,4 +55,3 @@ import { ResourcesModule } from './modules/resources/resources.module';
   controllers: [HealthController],
 })
 export class AppModule {}
-

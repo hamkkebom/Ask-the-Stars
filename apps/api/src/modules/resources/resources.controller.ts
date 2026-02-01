@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ResourcesService } from './resources.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { ResourceCategory } from '@prisma/client';
 import { CreateResourceDto, UpdateResourceDto } from './dto';
 
 @Controller('resources')
@@ -20,10 +21,9 @@ export class ResourcesController {
   // ==================== Public ====================
 
   @Get()
-  async findAll(
-    @Query('category') category?: string,
-  ): Promise<any> {
-    return this.resourcesService.findAll(category, true);
+  async findAll(@Query('category') category?: string): Promise<any> {
+    const categoryEnum = category as ResourceCategory | undefined;
+    return this.resourcesService.findAll(categoryEnum, true);
   }
 
   @Get('popular')
@@ -58,7 +58,7 @@ export class ResourcesController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateResourceDto: UpdateResourceDto,
+    @Body() updateResourceDto: UpdateResourceDto
   ): Promise<any> {
     return this.resourcesService.update(id, updateResourceDto);
   }

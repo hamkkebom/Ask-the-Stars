@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -19,18 +18,18 @@ async function auditVideos() {
         streamUid: null,
       },
       select: {
-          id: true,
-          r2Key: true,
-          fileSize: true, // Optional: Estimate duration from size? Not accurate but helpful context
-      }
+        id: true,
+        r2Key: true,
+        fileSize: true, // Optional: Estimate duration from size? Not accurate but helpful context
+      },
     });
 
     const count = eligibleSpecs.length;
     console.log(`\n📋 Videos Eligible for Migration: ${count}`);
 
     if (count === 0) {
-        console.log('✅ No videos need migration.');
-        return;
+      console.log('✅ No videos need migration.');
+      return;
     }
 
     // 3. Estimate Cost
@@ -39,21 +38,22 @@ async function auditVideos() {
 
     const assumedDurationMinutes = 10; // Assumption: Average 10 mins per video
     const totalMinutes = count * assumedDurationMinutes;
-    const costPer1000Mins = 5.00;
+    const costPer1000Mins = 5.0;
     const estimatedCost = (totalMinutes / 1000) * costPer1000Mins;
 
     console.log('\n💰 Estimated Monthly Storage Cost (Cloudflare Stream)');
     console.log('------------------------------------------------');
     console.log(`Assumed Avg Duration: ${assumedDurationMinutes} minutes`);
-    console.log(`Total Minutes:        ${totalMinutes.toLocaleString()} minutes`);
+    console.log(
+      `Total Minutes:        ${totalMinutes.toLocaleString()} minutes`
+    );
     console.log(`Estimated Cost:       $${estimatedCost.toFixed(2)} / month`);
     console.log('------------------------------------------------');
     console.log('* Note: Actual cost depends on exact video duration.');
 
     // 4. Sample check
     console.log(`\nSample R2 Keys to be migrated:`);
-    eligibleSpecs.slice(0, 5).forEach(spec => console.log(`- ${spec.r2Key}`));
-
+    eligibleSpecs.slice(0, 5).forEach((spec) => console.log(`- ${spec.r2Key}`));
   } catch (error) {
     console.error('❌ Audit failed:', error);
   } finally {

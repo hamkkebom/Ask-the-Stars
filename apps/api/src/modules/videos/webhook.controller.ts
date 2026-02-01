@@ -1,5 +1,12 @@
-
-import { Controller, Post, Headers, Req, BadRequestException, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Headers,
+  Req,
+  BadRequestException,
+  UnauthorizedException,
+  Logger,
+} from '@nestjs/common';
 import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 import { VideosService } from './videos.service';
 import { Request } from 'express';
@@ -10,13 +17,13 @@ export class CloudflareWebhookController {
 
   constructor(
     private readonly cloudflareService: CloudflareStreamService,
-    private readonly videosService: VideosService,
+    private readonly videosService: VideosService
   ) {}
 
   @Post()
   async handleWebhook(
     @Headers('webhook-signature') signature: string,
-    @Req() req: Request,
+    @Req() req: Request
   ) {
     // Get raw body for signature verification
     // In NestJS with body-parser, req.body is already parsed JSON.
@@ -37,11 +44,13 @@ export class CloudflareWebhookController {
     // Let's assume standard JSON body for now.
     const payloadString = JSON.stringify(req.body);
 
-    if (!this.cloudflareService.verifyWebhookSignature(signature, payloadString)) {
-       // Warn but maybe don't block 100% while debugging if secret is not set yet by user
-       // But user said they WILL set it. So we block.
-       this.logger.error('Invalid Webhook Signature');
-       throw new UnauthorizedException('Invalid Webhook Signature');
+    if (
+      !this.cloudflareService.verifyWebhookSignature(signature, payloadString)
+    ) {
+      // Warn but maybe don't block 100% while debugging if secret is not set yet by user
+      // But user said they WILL set it. So we block.
+      this.logger.error('Invalid Webhook Signature');
+      throw new UnauthorizedException('Invalid Webhook Signature');
     }
 
     const event = req.body;
@@ -52,17 +61,17 @@ export class CloudflareWebhookController {
     // Structure: { uid, status: { state: "ready" | "error", ... }, ... }
 
     if (!event.uid) {
-        throw new BadRequestException('Missing UID');
+      throw new BadRequestException('Missing UID');
     }
 
     if (event.status?.state === 'ready') {
-        const duration = event.duration || 0; // Duration in seconds
-        await this.videosService.syncVideoStatus(event.uid, 'FINAL', duration);
+      const duration = event.duration || 0; // Duration in seconds
+      await this.videosService.syncVideoStatus(event.uid, 'FINAL', duration);
     } else if (event.status?.state === 'error') {
-        await this.videosService.syncVideoStatus(event.uid, 'FAILED');
+      await this.videosService.syncVideoStatus(event.uid, 'FAILED');
     } else {
-        // 'downloading', 'queued', 'encoding' ... ignore or log
-        this.logger.debug(`Ignoring state: ${event.status?.state}`);
+      // 'downloading', 'queued', 'encoding' ... ignore or log
+      this.logger.debug(`Ignoring state: ${event.status?.state}`);
     }
 
     return { received: true };

@@ -1,4 +1,16 @@
-import { Controller, Post, Get, UseInterceptors, UploadedFile, UseGuards, ParseFilePipe, MaxFileSizeValidator, Query, Body, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  UseInterceptors,
+  UploadedFile,
+  UseGuards,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  Query,
+  Body,
+  Request,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadsService } from './uploads.service';
 import { VideosService, CreateVideoDto } from '../videos/videos.service';
@@ -8,7 +20,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 export class UploadsController {
   constructor(
     private readonly uploadsService: UploadsService,
-    private readonly videosService: VideosService,
+    private readonly videosService: VideosService
   ) {}
 
   @Post()
@@ -24,11 +36,11 @@ export class UploadsController {
           // new FileTypeValidator({ fileType: '.(png|jpeg|jpg|mp4|mov|avi)' }),
         ],
         fileIsRequired: true,
-      }),
+      })
     )
     file: any,
     @Body() body: any,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const isVideo = file.mimetype.startsWith('video');
     const folder = isVideo ? 'videos' : 'images';
@@ -55,10 +67,10 @@ export class UploadsController {
           streamId: result.streamId,
           size: file.size,
           filename: file.originalname,
-          mimetype: file.mimetype
+          mimetype: file.mimetype,
         },
         dto,
-        req.user.userId, // From JwtAuthGuard
+        req.user.userId // From JwtAuthGuard
       );
     }
 
@@ -82,24 +94,27 @@ export class UploadsController {
   @Post('presigned')
   @UseGuards(JwtAuthGuard)
   async getPresignedUrl(@Body() body: { key: string }) {
-      const url = await this.uploadsService.getPresignedUrl(body.key);
-      return {
-          success: !!url,
-          url,
-          key: body.key
-      };
+    const url = await this.uploadsService.getPresignedUrl(body.key);
+    return {
+      success: !!url,
+      url,
+      key: body.key,
+    };
   }
 
   @Post('presigned-put-url')
   @UseGuards(JwtAuthGuard)
   async getPresignedPutUrl(@Body() body: { key: string; contentType: string }) {
-      // Validate key to prevent path traversal
-      // Simple check: Allow safe chars. For now simple pass.
-      const url = await this.uploadsService.getPresignedPutUrl(body.key, body.contentType);
-      return {
-          success: !!url,
-          url,
-          key: body.key
-      };
+    // Validate key to prevent path traversal
+    // Simple check: Allow safe chars. For now simple pass.
+    const url = await this.uploadsService.getPresignedPutUrl(
+      body.key,
+      body.contentType
+    );
+    return {
+      success: !!url,
+      url,
+      key: body.key,
+    };
   }
 }

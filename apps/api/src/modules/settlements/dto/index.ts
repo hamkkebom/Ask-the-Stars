@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+} from 'class-validator';
 import { SettlementType, SettlementStatus } from '@ask-the-stars/database';
 
 export class CreateSettlementDto {

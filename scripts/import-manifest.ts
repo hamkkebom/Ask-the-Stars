@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -8,7 +7,10 @@ const prisma = new PrismaClient();
 async function run() {
   console.log('🚀 Starting Professional Manifest JSON Import...');
 
-  const manifestPath = path.resolve(process.cwd(), '슈퍼베이스/professional_manifest.json');
+  const manifestPath = path.resolve(
+    process.cwd(),
+    '슈퍼베이스/professional_manifest.json'
+  );
   if (!fs.existsSync(manifestPath)) {
     console.error('❌ professional_manifest.json not found at:', manifestPath);
     return;
@@ -22,7 +24,9 @@ async function run() {
   // Get System User
   const systemUser = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
   if (!systemUser) {
-    console.error('❌ Admin user not found. Please create one first or run sync script with existing user.');
+    console.error(
+      '❌ Admin user not found. Please create one first or run sync script with existing user.'
+    );
     return;
   }
 
@@ -41,31 +45,40 @@ async function run() {
       const pInfo = projData.info;
 
       // 1. Reference Data (Category, Counselor, Channel)
-      const category = pInfo.category ? await prisma.category.upsert({
-        where: { name: pInfo.category },
-        update: {},
-        create: { name: pInfo.category }
-      }) : null;
+      const category = pInfo.category
+        ? await prisma.category.upsert({
+            where: { name: pInfo.category },
+            update: {},
+            create: { name: pInfo.category },
+          })
+        : null;
 
-      const counselor = pInfo.counselor ? await prisma.counselor.upsert({
-        where: { name: pInfo.counselor },
-        update: {},
-        create: { name: pInfo.counselor }
-      }) : null;
+      const counselor = pInfo.counselor
+        ? await prisma.counselor.upsert({
+            where: { name: pInfo.counselor },
+            update: {},
+            create: { name: pInfo.counselor },
+          })
+        : null;
 
       // Handle channel (can be string or array)
       let channelName: string | null = null;
       if (Array.isArray(pInfo.channel) && pInfo.channel.length > 0) {
         channelName = pInfo.channel[0];
-      } else if (typeof pInfo.channel === 'string' && pInfo.channel.trim() !== '') {
+      } else if (
+        typeof pInfo.channel === 'string' &&
+        pInfo.channel.trim() !== ''
+      ) {
         channelName = pInfo.channel;
       }
 
-      const channel = channelName ? await prisma.channel.upsert({
-        where: { name: channelName },
-        update: {},
-        create: { name: channelName }
-      }) : null;
+      const channel = channelName
+        ? await prisma.channel.upsert({
+            where: { name: channelName },
+            update: {},
+            create: { name: channelName },
+          })
+        : null;
 
       // 2. Create Project
       // We'll use the FIRST version's data for project-level info if possible
@@ -83,7 +96,7 @@ async function run() {
           categoryId: category?.id,
           counselorId: counselor?.id,
           channelId: channel?.id,
-        }
+        },
       });
 
       // 3. Create Videos (Versions)
@@ -103,12 +116,17 @@ async function run() {
             isAdminConfirmed: ver.version?.isAdminConfirmed || false,
             feedback: ver.collaboration?.feedback || '',
             internalComment: ver.collaboration?.internalComment || '',
-            completedAt: (ver.completedAt && ver.completedAt !== '날짜미상') ? new Date(ver.completedAt) : null,
+            completedAt:
+              ver.completedAt && ver.completedAt !== '날짜미상'
+                ? new Date(ver.completedAt)
+                : null,
             technicalSpec: {
               create: {
                 filename: ver.media?.filename?.split('/').pop() || '',
                 format: ver.media?.format || 'mp4',
-                fileSize: ver.media?.fileSize ? BigInt(ver.media.fileSize) : null,
+                fileSize: ver.media?.fileSize
+                  ? BigInt(ver.media.fileSize)
+                  : null,
                 duration: ver.media?.duration || null,
                 overallBitrate: ver.media?.overallBitrate || null,
                 videoCodec: ver.media?.video?.codec || null,
@@ -126,27 +144,35 @@ async function run() {
                 thumbnailWidth: ver.media?.thumbnailWidth || null,
                 thumbnailHeight: ver.media?.thumbnailHeight || null,
                 r2Key: ver.delivery?.recommendedR2Key || '',
-                r2KeyThumbAvif: ver.delivery?.recommendedThumbnailAvifR2Key || null,
-                r2KeyThumbWebp: ver.delivery?.recommendedThumbnailWebpR2Key || null,
+                r2KeyThumbAvif:
+                  ver.delivery?.recommendedThumbnailAvifR2Key || null,
+                r2KeyThumbWebp:
+                  ver.delivery?.recommendedThumbnailWebpR2Key || null,
                 r2KeyThumbOg: ver.delivery?.recommendedThumbnailOgR2Key || null,
-              } as any
-            }
-          }
+              } as any,
+            },
+          },
         });
       }
 
       importCount++;
-      if (importCount % 50 === 0) console.log(`⏳ Imported ${importCount} projects...`);
+      if (importCount % 50 === 0)
+        console.log(`⏳ Imported ${importCount} projects...`);
     } catch (err: any) {
-      console.error(`❌ Failed to import project ${projData.project_id}:`, err.message);
+      console.error(
+        `❌ Failed to import project ${projData.project_id}:`,
+        err.message
+      );
     }
   }
 
-  console.log(`✅ Professional Manifest Import Completed. Total: ${importCount} projects synced.`);
+  console.log(
+    `✅ Professional Manifest Import Completed. Total: ${importCount} projects synced.`
+  );
 }
 
 run()
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   })

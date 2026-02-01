@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -12,12 +11,15 @@ async function run() {
   if (!fs.existsSync(csvPath)) {
     console.error('❌ metadata.csv not found at:', csvPath);
     const files = fs.readdirSync(process.cwd());
-    console.log('Current root files:', files.filter(f => f.toLowerCase().endsWith('.csv')));
+    console.log(
+      'Current root files:',
+      files.filter((f) => f.toLowerCase().endsWith('.csv'))
+    );
     return;
   }
 
   const content = fs.readFileSync(csvPath, 'utf8');
-  const lines = content.split('\n').filter(l => l.trim() !== '');
+  const lines = content.split('\n').filter((l) => l.trim() !== '');
   const header = lines[0].split(',');
 
   // Column Map (based on observation)
@@ -33,7 +35,9 @@ async function run() {
     return;
   }
 
-  console.log('🧹 Cleaning up existing project/video data for a fresh start...');
+  console.log(
+    '🧹 Cleaning up existing project/video data for a fresh start...'
+  );
   // We clean everything to ensure the CSV is the source of truth
   await prisma.$transaction([
     prisma.videoTechnicalSpec.deleteMany(),
@@ -51,7 +55,8 @@ async function run() {
     const counselorName = row[2] || '대상없음';
     const title = row[3] || '제목없음';
     const versionLabel = row[4] || 'v1.0';
-    const videoStatus = (row[5] === 'FINAL' || row[5] === 'APPROVED') ? 'FINAL' : 'DRAFT';
+    const videoStatus =
+      row[5] === 'FINAL' || row[5] === 'APPROVED' ? 'FINAL' : 'DRAFT';
     const resolution = row[6];
     const durationStr = row[7]?.replace('s', '');
     const duration = durationStr ? parseFloat(durationStr) : null;
@@ -66,14 +71,14 @@ async function run() {
       const category = await prisma.category.upsert({
         where: { name: categoryName },
         update: {},
-        create: { name: categoryName }
+        create: { name: categoryName },
       });
 
       // 2. Counselor
       const counselor = await prisma.counselor.upsert({
         where: { name: counselorName },
         update: {},
-        create: { name: counselorName }
+        create: { name: counselorName },
       });
 
       // 3. Project & Video & Spec
@@ -100,11 +105,11 @@ async function run() {
                   duration: duration,
                   videoCodec: codec,
                   format: r2Key.split('.').pop()?.toLowerCase() || 'mp4',
-                } as any
-              }
-            }
-          }
-        }
+                } as any,
+              },
+            },
+          },
+        },
       });
       count++;
       if (count % 50 === 0) console.log(`⏳ Imported ${count} videos...`);
@@ -139,7 +144,7 @@ function parseCsvRow(line: string): string[] {
 }
 
 run()
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   })

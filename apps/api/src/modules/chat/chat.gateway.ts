@@ -10,8 +10,8 @@ import {
 } from '@nestjs/websockets';
 import { Logger, UseGuards } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ChatService, MessageDto, CreateMessageDto } from './chat.service';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { ChatService, CreateMessageDto } from './chat.service';
 
 @WebSocketGateway({
   cors: {
@@ -24,7 +24,7 @@ import { ChatService, MessageDto, CreateMessageDto } from './chat.service';
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server: Server;
+  @WebSocketServer() server!: Server;
   private logger: Logger = new Logger('ChatGateway');
 
   // 연결된 클라이언트 관리
@@ -33,7 +33,7 @@ export class ChatGateway
 
   constructor(private chatService: ChatService) {}
 
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     this.logger.log('Chat Gateway initialized');
   }
 

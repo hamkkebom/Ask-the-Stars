@@ -4,7 +4,10 @@ import { ko } from 'date-fns/locale';
 /**
  * 날짜를 한국어 형식으로 포맷팅
  */
-export function formatDate(date: Date | string, formatString = 'yyyy년 MM월 dd일'): string {
+export function formatDate(
+  date: Date | string,
+  formatString = 'yyyy년 MM월 dd일'
+): string {
   const d = typeof date === 'string' ? parseISO(date) : date;
   if (!isValid(d)) return '';
   return format(d, formatString, { locale: ko });

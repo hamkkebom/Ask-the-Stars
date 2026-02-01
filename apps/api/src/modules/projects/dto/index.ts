@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+} from 'class-validator';
 import { ProjectStatus } from '@ask-the-stars/database';
 
 export class CreateProjectDto {

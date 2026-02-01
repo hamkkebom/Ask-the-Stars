@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
+import { ResourceCategory } from '@prisma/client';
 import { CreateResourceDto, UpdateResourceDto } from './dto';
 
 @Injectable()
@@ -12,7 +13,7 @@ export class ResourcesService {
     });
   }
 
-  async findAll(category?: string, isPublic?: boolean): Promise<any> {
+  async findAll(category?: ResourceCategory, isPublic?: boolean): Promise<any> {
     return this.prisma.resource.findMany({
       where: {
         ...(category && { category }),

@@ -8,7 +8,7 @@ async function main() {
   const categories = await prisma.category.findMany({ take: 5 });
 
   console.log('--- USERS ---');
-  console.log(users.map(u => ({ id: u.id, email: u.email, role: u.role })));
+  console.log(users.map((u) => ({ id: u.id, email: u.email, role: u.role })));
   console.log('--- MAKERS ---');
   console.log(makers);
   console.log('--- CATEGORIES ---');
@@ -16,7 +16,7 @@ async function main() {
 }
 
 main()
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   })

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Patch, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  UseGuards,
+  Request,
+  ForbiddenException,
+} from '@nestjs/common';
 import { SettlementsService } from './settlements.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateSettlementDto, UpdateSettlementDto } from './dto';
@@ -29,8 +39,8 @@ export class SettlementsController {
   async findOne(@Request() req: any, @Param('id') id: string): Promise<any> {
     const settlement = await this.settlementsService.findOne(id);
     if (settlement.userId !== req.user.id) {
-        // Allow if Admin (TODO)
-        throw new ForbiddenException('접근 권한이 없습니다.');
+      // Allow if Admin (TODO)
+      throw new ForbiddenException('접근 권한이 없습니다.');
     }
     return settlement;
   }
@@ -38,7 +48,7 @@ export class SettlementsController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateSettlementDto: UpdateSettlementDto,
+    @Body() updateSettlementDto: UpdateSettlementDto
   ): Promise<any> {
     // TODO: Verify Admin role
     return this.settlementsService.update(id, updateSettlementDto);

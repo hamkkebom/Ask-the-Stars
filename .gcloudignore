@@ -1,0 +1,44 @@
+# Git files
+.git
+.gitignore
+
+# Dependencies
+node_modules
+**/node_modules
+
+# Build output (we rebuild in Cloud Build)
+dist
+**/dist
+.next
+**/.next
+.turbo
+**/.turbo
+
+# IDE
+.vscode
+.idea
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+build_*.txt
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Frontend (not needed for API)
+apps/web
+
+# Large development files
+*.log
+*.tmp

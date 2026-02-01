@@ -1,4 +1,11 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  Patch,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto, SignupDto } from './dto';
 
@@ -39,7 +46,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async confirmPasswordReset(
     @Body('token') token: string,
-    @Body('newPassword') newPassword: string,
+    @Body('newPassword') newPassword: string
   ) {
     return this.authService.confirmPasswordReset(token, newPassword);
   }

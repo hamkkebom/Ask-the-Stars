@@ -32,11 +32,11 @@ export interface Settlement {
 export type SettlementType = 'first' | 'second' | 'bonus';
 
 export type SettlementStatus =
-  | 'pending'      // 정산 대기
-  | 'processing'   // 처리 중
-  | 'completed'    // 완료
-  | 'failed'       // 실패
-  | 'cancelled';   // 취소
+  | 'pending' // 정산 대기
+  | 'processing' // 처리 중
+  | 'completed' // 완료
+  | 'failed' // 실패
+  | 'cancelled'; // 취소
 
 export interface SettlementSummary {
   total_amount: number;

@@ -1,18 +1,25 @@
-import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsEnum,
+} from 'class-validator';
+import { ResourceCategory } from '@prisma/client';
 
 export class CreateResourceDto {
   @IsString()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsString()
-  category: string; // 'GUIDE' | 'TEMPLATE' | 'DESIGN_ASSET' | 'SOUND_EFFECT' | 'MUSIC' | 'OTHER'
+  @IsEnum(ResourceCategory)
+  category!: ResourceCategory;
 
   @IsString()
-  fileUrl: string;
+  fileUrl!: string;
 
   @IsOptional()
   @IsNumber()

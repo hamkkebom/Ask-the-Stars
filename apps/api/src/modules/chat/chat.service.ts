@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@ask-the-stars/database';
+import { PrismaService } from '../../database/prisma.service';
 
 export interface CreateMessageDto {
   content: string;
@@ -47,12 +47,12 @@ export class ChatService {
       id: message.id,
       content: message.content,
       userId: message.userId,
-      roomId: message.roomId,
+      roomId: message.roomId || undefined,
       createdAt: message.createdAt,
       user: {
         id: message.user.id,
         name: message.user.name,
-        avatar: message.user.profileImage,
+        avatar: message.user.profileImage || undefined,
       },
     };
   }
@@ -78,12 +78,12 @@ export class ChatService {
       id: message.id,
       content: message.content,
       userId: message.userId,
-      roomId: message.roomId,
+      roomId: message.roomId || undefined,
       createdAt: message.createdAt,
       user: {
         id: message.user.id,
         name: message.user.name,
-        avatar: message.user.profileImage,
+        avatar: message.user.profileImage || undefined,
       },
     }));
   }

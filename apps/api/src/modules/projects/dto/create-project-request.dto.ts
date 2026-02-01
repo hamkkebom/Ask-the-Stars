@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, IsArray, IsDateString, IsEnum, IsNumber, IsOptional, Min } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  Min,
+} from 'class-validator';
 import { AssignmentType } from '@prisma/client';
 
 export class CreateProjectRequestDto {

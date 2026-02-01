@@ -57,21 +57,27 @@ export class SettlementsService {
     return settlement;
   }
 
-  async update(id: string, updateSettlementDto: UpdateSettlementDto): Promise<any> {
+  async update(
+    id: string,
+    updateSettlementDto: UpdateSettlementDto
+  ): Promise<any> {
     // Usually only Admin updates status
     const settlement = await this.prisma.settlement.findUnique({
       where: { id },
     });
 
     if (!settlement) {
-        throw new NotFoundException('정산 내역을 찾을 수 없습니다.');
+      throw new NotFoundException('정산 내역을 찾을 수 없습니다.');
     }
 
     const updatedData: any = { ...updateSettlementDto };
 
     // If status is changed to COMPLETED, set processedAt
-    if (updateSettlementDto.status === SettlementStatus.COMPLETED && settlement.status !== SettlementStatus.COMPLETED) {
-        updatedData.processedAt = new Date();
+    if (
+      updateSettlementDto.status === SettlementStatus.COMPLETED &&
+      settlement.status !== SettlementStatus.COMPLETED
+    ) {
+      updatedData.processedAt = new Date();
     }
 
     return this.prisma.settlement.update({

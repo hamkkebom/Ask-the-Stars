@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CreateFeedbackDto, UpdateFeedbackDto } from './dto';
 
@@ -6,7 +10,10 @@ import { CreateFeedbackDto, UpdateFeedbackDto } from './dto';
 export class FeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(userId: string, createFeedbackDto: CreateFeedbackDto): Promise<any> {
+  async create(
+    userId: string,
+    createFeedbackDto: CreateFeedbackDto
+  ): Promise<any> {
     // Verify submission exists
     const submission = await this.prisma.submission.findUnique({
       where: { id: createFeedbackDto.submissionId },
@@ -51,7 +58,11 @@ export class FeedbackService {
     return feedback;
   }
 
-  async update(id: string, userId: string, updateFeedbackDto: UpdateFeedbackDto): Promise<any> {
+  async update(
+    id: string,
+    userId: string,
+    updateFeedbackDto: UpdateFeedbackDto
+  ): Promise<any> {
     const feedback = await this.findOne(id);
 
     // Only allow author to update content/priority

@@ -4,7 +4,6 @@ import { UploadsService } from '../uploads/uploads.service';
 import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 import { AiService } from '../ai/ai.service';
 
-
 export interface CreateVideoDto {
   title: string;
   versionLabel: string;
@@ -21,7 +20,7 @@ export class VideosService {
     private readonly prisma: PrismaService,
     private readonly uploadsService: UploadsService,
     private readonly cloudflareService: CloudflareStreamService,
-    private readonly aiService: AiService,
+    private readonly aiService: AiService
   ) {}
 
   async getVideoByProjectNo(projectNo: number) {
@@ -46,9 +45,9 @@ export class VideosService {
 
     const video = project.videos[0];
     if (!video) {
-        // Fallback: Check if there are ANY videos if no FINAL one exists?
-        // For now, strict adherence to guide: "Only approved videos"
-        return null;
+      // Fallback: Check if there are ANY videos if no FINAL one exists?
+      // For now, strict adherence to guide: "Only approved videos"
+      return null;
     }
 
     return {
@@ -57,7 +56,9 @@ export class VideosService {
       r2Key: video.technicalSpec?.r2Key,
       streamUid: video.technicalSpec?.streamUid,
       thumbnailUrl: video.technicalSpec?.streamUid
-        ? await this.cloudflareService.getSignedThumbnailUrl(video.technicalSpec.streamUid)
+        ? await this.cloudflareService.getSignedThumbnailUrl(
+            video.technicalSpec.streamUid
+          )
         : video.technicalSpec?.thumbnailUrl,
       status: video.status,
     };
@@ -71,7 +72,7 @@ export class VideosService {
         project: true,
         maker: true,
         eventLogs: {
-            orderBy: { occurredAt: 'desc' },
+          orderBy: { occurredAt: 'desc' },
         },
       },
     });
@@ -87,125 +88,149 @@ export class VideosService {
 
     // A. Premium Strategy: Generate Token if streamUid exists
     if (video.technicalSpec?.streamUid) {
-        streamToken = await this.cloudflareService.generateSignedToken(video.technicalSpec.streamUid);
+      streamToken = await this.cloudflareService.generateSignedToken(
+        video.technicalSpec.streamUid
+      );
     }
     // B. Legacy/Hybrid Strategy: Generate R2 Signed URL if no streamUid
     else if (video.technicalSpec?.r2Key) {
-        signedUrl = await this.uploadsService.getPresignedUrl(video.technicalSpec.r2Key);
+      signedUrl = await this.uploadsService.getPresignedUrl(
+        video.technicalSpec.r2Key
+      );
     }
 
     // C. Fetch Analytics (Views)
     let views = 0;
     if (video.technicalSpec?.streamUid) {
-        const analytics = await this.cloudflareService.getVideoAnalytics(video.technicalSpec.streamUid);
-        views = analytics.views;
+      const analytics = await this.cloudflareService.getVideoAnalytics(
+        video.technicalSpec.streamUid
+      );
+      views = analytics.views;
     }
 
     return {
-        ...video,
-        views,
-        streamToken, // Expose token for frontend player
-        downloadUrl: video.technicalSpec?.streamUid ? this.cloudflareService.getDownloadUrl(video.technicalSpec.streamUid) : null,
-        technicalSpec: {
-            ...video.technicalSpec,
-            // If signedUrl exists, we can expose it.
-            // Better to add a 'signedUrl' field.
-            // Expose both for hybrid support
-            videoUrl: signedUrl,
-            streamToken: streamToken,
-            streamUid: video.technicalSpec?.streamUid, // Ensure UID is passed
-            thumbnailUrl: video.technicalSpec?.streamUid
-                ? await this.cloudflareService.getSignedThumbnailUrl(video.technicalSpec.streamUid)
-                : video.technicalSpec?.thumbnailUrl
-        }
+      ...video,
+      views,
+      streamToken, // Expose token for frontend player
+      downloadUrl: video.technicalSpec?.streamUid
+        ? this.cloudflareService.getDownloadUrl(video.technicalSpec.streamUid)
+        : null,
+      technicalSpec: {
+        ...video.technicalSpec,
+        // If signedUrl exists, we can expose it.
+        // Better to add a 'signedUrl' field.
+        // Expose both for hybrid support
+        videoUrl: signedUrl,
+        streamToken: streamToken,
+        streamUid: video.technicalSpec?.streamUid, // Ensure UID is passed
+        thumbnailUrl: video.technicalSpec?.streamUid
+          ? await this.cloudflareService.getSignedThumbnailUrl(
+              video.technicalSpec.streamUid
+            )
+          : video.technicalSpec?.thumbnailUrl,
+      },
     };
   }
 
-  async syncVideoStatus(streamUid: string, status: 'FINAL' | 'PENDING' | 'FAILED', duration?: number) {
-      // Find the Spec with this UID
-      const spec = await this.prisma.videoTechnicalSpec.findFirst({
-          where: { streamUid }
+  async syncVideoStatus(
+    streamUid: string,
+    status: 'FINAL' | 'PENDING' | 'FAILED',
+    duration?: number
+  ) {
+    // Find the Spec with this UID
+    const spec = await this.prisma.videoTechnicalSpec.findFirst({
+      where: { streamUid },
+    });
+
+    if (!spec) {
+      console.warn(`Webhook: No video found for streamUid ${streamUid}`);
+      return;
+    }
+
+    // Update Video Status
+    await this.prisma.video.update({
+      where: { id: spec.video_id },
+      data: { status: status === 'FINAL' ? 'FINAL' : 'DRAFT' }, // Map to Prisma Enum
+    });
+
+    // Update Duration in Spec if provided
+    if (duration) {
+      await this.prisma.videoTechnicalSpec.update({
+        where: { video_id: spec.video_id },
+        data: { duration },
       });
+    }
 
-      if (!spec) {
-          console.warn(`Webhook: No video found for streamUid ${streamUid}`);
-          return;
-      }
-
-      // Update Video Status
-      await this.prisma.video.update({
-          where: { id: spec.video_id },
-          data: { status: status === 'FINAL' ? 'FINAL' : 'DRAFT' } // Map to Prisma Enum
-      });
-
-      // Update Duration in Spec if provided
-      if (duration) {
-          await this.prisma.videoTechnicalSpec.update({
-              where: { video_id: spec.video_id },
-              data: { duration }
-          });
-      }
-
-      console.log(`✅ Synced Video Status: ${spec.video_id} -> ${status}, Duration: ${duration}`);
+    console.log(
+      `✅ Synced Video Status: ${spec.video_id} -> ${status}, Duration: ${duration}`
+    );
   }
 
   async generateCaptions(videoId: string) {
-      const video = await this.getVideoById(videoId);
-      if (!video.technicalSpec?.streamUid) {
-          throw new Error('Video stream not ready');
-      }
-      return this.cloudflareService.generateCaptions(video.technicalSpec.streamUid);
+    const video = await this.getVideoById(videoId);
+    if (!video.technicalSpec?.streamUid) {
+      throw new Error('Video stream not ready');
+    }
+    return this.cloudflareService.generateCaptions(
+      video.technicalSpec.streamUid
+    );
   }
 
   async uploadCaption(videoId: string, language: string, fileBuffer: Buffer) {
-      const video = await this.getVideoById(videoId);
-      if (!video.technicalSpec?.streamUid) {
-          throw new Error('Video stream not ready');
-      }
-      return this.cloudflareService.uploadCaption(video.technicalSpec.streamUid, language, fileBuffer);
+    const video = await this.getVideoById(videoId);
+    if (!video.technicalSpec?.streamUid) {
+      throw new Error('Video stream not ready');
+    }
+    return this.cloudflareService.uploadCaption(
+      video.technicalSpec.streamUid,
+      language,
+      fileBuffer
+    );
   }
 
   async importVideoFromR2(url: string, creator?: string): Promise<string> {
-      return this.cloudflareService.copyFromUrl(url, { creator });
+    return this.cloudflareService.copyFromUrl(url, { creator });
   }
 
   async listVideosByChannel(channelName: string): Promise<any> {
-      return this.prisma.project.findMany({
-          where: {
-              channel: { name: channelName },
-              videos: { some: { status: 'FINAL' } }
-          },
+    return this.prisma.project.findMany({
+      where: {
+        channel: { name: channelName },
+        videos: { some: { status: 'FINAL' } },
+      },
+      select: {
+        title: true,
+        videos: {
+          where: { status: 'FINAL' },
+          take: 1,
           select: {
-              title: true,
-              videos: {
-                  where: { status: 'FINAL' },
-                  take: 1,
-                  select: {
-                      createdAt: true,
-                  }
-              },
-              channel: {
-                  select: { name: true }
-              }
-          }
-      });
+            createdAt: true,
+          },
+        },
+        channel: {
+          select: { name: true },
+        },
+      },
+    });
   }
 
-  async getAllRegisteredSpecs(): Promise<{ r2Key: string; thumbnailUrl: string | null; video_id: string }[]> {
-      const specs = await this.prisma.videoTechnicalSpec.findMany({
-          select: { r2Key: true, thumbnailUrl: true, video_id: true }
-      });
-      return specs;
+  async getAllRegisteredSpecs(): Promise<
+    { r2Key: string; thumbnailUrl: string | null; video_id: string }[]
+  > {
+    const specs = await this.prisma.videoTechnicalSpec.findMany({
+      select: { r2Key: true, thumbnailUrl: true, video_id: true },
+    });
+    return specs;
   }
 
   async getPresignedUrl(videoId: string): Promise<string> {
-      const spec = await this.prisma.videoTechnicalSpec.findUnique({
-          where: { video_id: videoId }
-      });
-      if (!spec || !spec.r2Key) {
-          throw new NotFoundException(`R2 Key for video ${videoId} not found`);
-      }
-      return this.uploadsService.getPresignedUrl(spec.r2Key);
+    const spec = await this.prisma.videoTechnicalSpec.findUnique({
+      where: { video_id: videoId },
+    });
+    if (!spec || !spec.r2Key) {
+      throw new NotFoundException(`R2 Key for video ${videoId} not found`);
+    }
+    return this.uploadsService.getPresignedUrl(spec.r2Key);
   }
 
   // Method to list all final videos for the grid
@@ -225,23 +250,33 @@ export class VideosService {
       const where: any = { status: 'FINAL' };
 
       if (params?.category && params.category !== '전체') {
-        where.project = { ...where.project, category: { name: params.category } };
+        where.project = {
+          ...where.project,
+          category: { name: params.category },
+        };
       }
 
-      if (params?.counselor && params.counselor !== '전체보기' && params.counselor !== 'ALL') {
+      if (
+        params?.counselor &&
+        params.counselor !== '전체보기' &&
+        params.counselor !== 'ALL'
+      ) {
         // Handle specific counselor logic if needed, or simple name match
         // Assuming counselor name is unique enough or ID is passed.
         // Frontend passes "Name" currently.
-        where.project = { ...where.project, counselor: { name: params.counselor } };
+        where.project = {
+          ...where.project,
+          counselor: { name: params.counselor },
+        };
       }
 
       // Creator filter logic (if needed)
       if (params?.creator && params.creator !== '전체보기') {
-         // This might need adjustment based on how creator is linked (Maker vs Owner)
-         // For now, implementing basic support if schema allows.
-         // checking schema: Video -> maker (Maker) OR Video -> project -> owner (User)
-         // Complex logic, omit for now unless critical to keep "ALL" working.
-         // Actually, let's keep it simple for now as requested "Infinite Scroll" priority.
+        // This might need adjustment based on how creator is linked (Maker vs Owner)
+        // For now, implementing basic support if schema allows.
+        // checking schema: Video -> maker (Maker) OR Video -> project -> owner (User)
+        // Complex logic, omit for now unless critical to keep "ALL" working.
+        // Actually, let's keep it simple for now as requested "Infinite Scroll" priority.
       }
 
       const [videos, total] = await Promise.all([
@@ -253,8 +288,8 @@ export class VideosService {
               include: {
                 category: true,
                 counselor: { select: { id: true, name: true } },
-                owner: { select: { id: true, name: true, email: true } }
-              }
+                owner: { select: { id: true, name: true, email: true } },
+              },
             },
             maker: { select: { id: true, name: true } },
           },
@@ -265,28 +300,32 @@ export class VideosService {
         this.prisma.video.count({ where }),
       ]);
 
+      const enrichedVideos = await Promise.all(
+        videos.map(async (video) => {
+          let previewUrl = null;
+          let thumbnailUrl = video.technicalSpec?.thumbnailUrl;
 
-      const enrichedVideos = await Promise.all(videos.map(async (video) => {
-         let previewUrl = null;
-         let thumbnailUrl = video.technicalSpec?.thumbnailUrl;
+          if (video.technicalSpec?.streamUid) {
+            const urls = await this.cloudflareService.getSignedThumbnailUrls(
+              video.technicalSpec.streamUid
+            );
+            previewUrl = urls.gif;
+            // We can optionally override thumbnail with the canonical one if missing
+            if (!thumbnailUrl || thumbnailUrl.includes('videodelivery.net'))
+              thumbnailUrl = urls.jpg;
+          }
 
-         if (video.technicalSpec?.streamUid) {
-             const urls = await this.cloudflareService.getSignedThumbnailUrls(video.technicalSpec.streamUid);
-             previewUrl = urls.gif;
-             // We can optionally override thumbnail with the canonical one if missing
-             if (!thumbnailUrl || thumbnailUrl.includes('videodelivery.net')) thumbnailUrl = urls.jpg;
-         }
-
-         return {
-             ...video,
-             technicalSpec: {
-                 ...video.technicalSpec,
-                 thumbnailUrl,
-                 previewUrl // Add previewUrl to technicalSpec or root
-             },
-             previewUrl // Add to root for convenience
-         };
-      }));
+          return {
+            ...video,
+            technicalSpec: {
+              ...video.technicalSpec,
+              thumbnailUrl,
+              previewUrl, // Add previewUrl to technicalSpec or root
+            },
+            previewUrl, // Add to root for convenience
+          };
+        })
+      );
 
       return {
         data: enrichedVideos,
@@ -294,8 +333,8 @@ export class VideosService {
           total,
           page,
           last_page: Math.ceil(total / limit),
-          has_more: page * limit < total
-        }
+          has_more: page * limit < total,
+        },
       };
     } catch (error) {
       console.error('❌ Error listing videos:', error);
@@ -303,22 +342,23 @@ export class VideosService {
     }
   }
 
-
-
   async syncWithStorage() {
     console.log('🔄 Starting R2 to Supabase sync...');
 
     // 1. Get all files from R2
     const r2Files = await this.uploadsService.listFiles();
-    const videoFiles = r2Files.filter(f =>
-      ['.mp4', '.mov', '.mkv', '.avi'].some(ext => f.key.toLowerCase().endsWith(ext))
+    const videoFiles = r2Files.filter((f) =>
+      ['.mp4', '.mov', '.mkv', '.avi'].some((ext) =>
+        f.key.toLowerCase().endsWith(ext)
+      )
     );
-    const imageFiles = r2Files.filter(f =>
-      ['.jpg', '.jpeg', '.png', '.webp', '.avif'].some(ext => f.key.toLowerCase().endsWith(ext))
+    const imageFiles = r2Files.filter((f) =>
+      ['.jpg', '.jpeg', '.png', '.webp', '.avif'].some((ext) =>
+        f.key.toLowerCase().endsWith(ext)
+      )
     );
 
     // Debug Log
-
 
     // Map base filenames to image keys/urls
     // We map BOTH "exact base name" AND "base name without _thumb" to the URL
@@ -329,19 +369,30 @@ export class VideosService {
     debugLog.push(`R2 Files Count: ${r2Files.length}`);
     debugLog.push(`Video Files: ${videoFiles.length}`);
     debugLog.push(`Image Files: ${imageFiles.length}`);
-    debugLog.push(`Sample Image Keys:\n${imageFiles.slice(0, 5).map(f => f.key).join('\n')}`);
+    debugLog.push(
+      `Sample Image Keys:\n${imageFiles
+        .slice(0, 5)
+        .map((f) => f.key)
+        .join('\n')}`
+    );
 
     // Priority: jpg < png < webp < avif
-    const priority: Record<string, number> = { '.jpg': 1, '.jpeg': 1, '.png': 2, '.webp': 3, '.avif': 4 };
+    const priority: Record<string, number> = {
+      '.jpg': 1,
+      '.jpeg': 1,
+      '.png': 2,
+      '.webp': 3,
+      '.avif': 4,
+    };
 
     // Sort so higher priority comes last (overwrites in Map)
     imageFiles.sort((a, b) => {
-        const extA = a.key.substring(a.key.lastIndexOf('.')).toLowerCase();
-        const extB = b.key.substring(b.key.lastIndexOf('.')).toLowerCase();
-        return (priority[extA] || 0) - (priority[extB] || 0);
+      const extA = a.key.substring(a.key.lastIndexOf('.')).toLowerCase();
+      const extB = b.key.substring(b.key.lastIndexOf('.')).toLowerCase();
+      return (priority[extA] || 0) - (priority[extB] || 0);
     });
 
-    imageFiles.forEach(img => {
+    imageFiles.forEach((img) => {
       // Decode and normalize for consistent matching across platforms
       const decodedKey = decodeURIComponent(img.key).normalize('NFC');
       const extIndex = decodedKey.lastIndexOf('.');
@@ -351,54 +402,63 @@ export class VideosService {
       imageMap.set(baseName, url);
 
       if (baseName.endsWith('_thumb')) {
-          const stripped = baseName.substring(0, baseName.length - 6);
-          imageMap.set(stripped, url);
-          if (imageMap.size < 10) debugLog.push(`Mapped: ${baseName} -> ${stripped}`);
+        const stripped = baseName.substring(0, baseName.length - 6);
+        imageMap.set(stripped, url);
+        if (imageMap.size < 10)
+          debugLog.push(`Mapped: ${baseName} -> ${stripped}`);
       }
     });
 
     // 2. Get all existing specs in DB
     const dbSpecs = await this.getAllRegisteredSpecs();
 
-    debugLog.push(`Sample Video R2 Keys (DB):\n${dbSpecs.slice(0, 5).map(s => s.r2Key).join('\n')}`);
+    debugLog.push(
+      `Sample Video R2 Keys (DB):\n${dbSpecs
+        .slice(0, 5)
+        .map((s) => s.r2Key)
+        .join('\n')}`
+    );
 
     let updatedThumbnailsCount = 0;
 
     // Iterate ALL specs to update better thumbnails
     for (const spec of dbSpecs) {
-         // Decode and normalize DB key for matching
-         const decodedDbKey = decodeURIComponent(spec.r2Key).normalize('NFC');
-         const extIndex = decodedDbKey.lastIndexOf('.');
-         if (extIndex > -1) {
-             const videoBase = decodedDbKey.substring(0, extIndex);
-             const thumbUrl = imageMap.get(videoBase);
+      // Decode and normalize DB key for matching
+      const decodedDbKey = decodeURIComponent(spec.r2Key).normalize('NFC');
+      const extIndex = decodedDbKey.lastIndexOf('.');
+      if (extIndex > -1) {
+        const videoBase = decodedDbKey.substring(0, extIndex);
+        const thumbUrl = imageMap.get(videoBase);
 
-             // Update if found AND (different from current OR current is missing)
-             if (thumbUrl && spec.thumbnailUrl !== thumbUrl) {
-                await this.prisma.videoTechnicalSpec.update({
-                    where: { video_id: spec.video_id },
-                    data: { thumbnailUrl: thumbUrl }
-                });
-                updatedThumbnailsCount++;
-             }
-         }
+        // Update if found AND (different from current OR current is missing)
+        if (thumbUrl && spec.thumbnailUrl !== thumbUrl) {
+          await this.prisma.videoTechnicalSpec.update({
+            where: { video_id: spec.video_id },
+            data: { thumbnailUrl: thumbUrl },
+          });
+          updatedThumbnailsCount++;
+        }
+      }
     }
-    const dbKeySet = new Set(dbSpecs.map(s => s.r2Key));
+    const dbKeySet = new Set(dbSpecs.map((s) => s.r2Key));
 
     // 3. Find missing files (New Videos)
-    const orphans = videoFiles.filter(f => !dbKeySet.has(f.key));
+    const orphans = videoFiles.filter((f) => !dbKeySet.has(f.key));
 
-
-
-    console.log(`📊 Sync Summary: R2 Total: ${r2Files.length}, Videos: ${videoFiles.length}, New: ${orphans.length}, Thumbnails Updated: ${updatedThumbnailsCount}`);
+    console.log(
+      `📊 Sync Summary: R2 Total: ${r2Files.length}, Videos: ${videoFiles.length}, New: ${orphans.length}, Thumbnails Updated: ${updatedThumbnailsCount}`
+    );
 
     // 4. Get a system user (Admin or any existing user) for ownership
-    const systemUser = await this.prisma.user.findFirst({
-      where: { role: 'ADMIN' },
-    }) || await this.prisma.user.findFirst();
+    const systemUser =
+      (await this.prisma.user.findFirst({
+        where: { role: 'ADMIN' },
+      })) || (await this.prisma.user.findFirst());
 
     if (!systemUser && orphans.length > 0) {
-      throw new Error('Cannot sync: No users found in database to assign projects to.');
+      throw new Error(
+        'Cannot sync: No users found in database to assign projects to.'
+      );
     }
 
     let createdCount = 0;
@@ -415,14 +475,14 @@ export class VideosService {
         let categoryName = '기타';
         let startedAt: Date | null = null;
         let counselorName = '일반';
-        let refinedTitle = fileName.replace(/\.[^/.]+$/, "");
+        let refinedTitle = fileName.replace(/\.[^/.]+$/, '');
         let versionLabel = 'v1.0';
 
         if (match) {
           categoryName = match[1];
           const dateStr = match[2];
           counselorName = match[3];
-          const rawTitle = match[4].replace(/\.[^/.]+$/, "");
+          const rawTitle = match[4].replace(/\.[^/.]+$/, '');
 
           const versionMatch = rawTitle.match(/(.+)_([vV]\d+\.\d+)$/);
           if (versionMatch) {
@@ -471,18 +531,25 @@ export class VideosService {
                     filename: fileName,
                     r2Key: orphan.key,
                     fileSize: orphan.size ? BigInt(orphan.size) : null,
-                    format: fileName.split('.').pop()?.toLowerCase() || 'unknown',
+                    format:
+                      fileName.split('.').pop()?.toLowerCase() || 'unknown',
                     // Try to find matching thumbnail by base name
-                    thumbnailUrl: imageMap.get(fileName.substring(0, fileName.lastIndexOf('.'))) || null,
-                  } as any
-                }
-              }
-            }
-          }
+                    thumbnailUrl:
+                      imageMap.get(
+                        fileName.substring(0, fileName.lastIndexOf('.'))
+                      ) || null,
+                  } as any,
+                },
+              },
+            },
+          },
         });
         createdCount++;
       } catch (err: any) {
-        console.error(`❌ Failed metadata refinement for ${orphan.key}:`, err.message);
+        console.error(
+          `❌ Failed metadata refinement for ${orphan.key}:`,
+          err.message
+        );
       }
     }
 
@@ -491,15 +558,24 @@ export class VideosService {
       videoFilesCount: videoFiles.length,
       newSyncedCount: createdCount,
       updatedThumbnailsCount,
-      orphans: orphans.slice(0, 10).map(o => ({ key: o.key, lastModified: o.lastModified })),
-      debugLog
+      orphans: orphans
+        .slice(0, 10)
+        .map((o) => ({ key: o.key, lastModified: o.lastModified })),
+      debugLog,
     };
   }
 
   async createVideoRecord(
-    uploadResult: { key: string; url: string; streamId?: string; size: number; filename: string; mimetype: string },
+    uploadResult: {
+      key: string;
+      url: string;
+      streamId?: string;
+      size: number;
+      filename: string;
+      mimetype: string;
+    },
     meta: CreateVideoDto,
-    userId: string,
+    userId: string
   ) {
     // 1. Find or Create Project
     // If we assume every upload is a NEW project for now (unless projectId is passed, which we might add later)
@@ -522,7 +598,8 @@ export class VideosService {
     }
 
     // Determine format
-    const format = uploadResult.filename.split('.').pop()?.toLowerCase() || 'unknown';
+    const format =
+      uploadResult.filename.split('.').pop()?.toLowerCase() || 'unknown';
 
     const result = await this.prisma.project.create({
       data: {
@@ -547,16 +624,16 @@ export class VideosService {
                 streamUid: uploadResult.streamId,
                 thumbnailUrl: uploadResult.streamId
                   ? `https://customer-${process.env.CLOUDFLARE_ACCOUNT_ID}.cloudflarestream.com/${uploadResult.streamId}/thumbnails/thumbnail.jpg`
-                  : undefined
-              }
-            }
-          }
-        }
+                  : undefined,
+              },
+            },
+          },
+        },
       },
       include: {
-        videos: true
-      }
-        });
+        videos: true,
+      },
+    });
 
     // Generate AI Embedding
     try {
@@ -565,12 +642,14 @@ export class VideosService {
         const embeddingText = `Title: ${meta.title}\nDescription: ${meta.description || ''}\nCategory: ${meta.categoryName || '기타'}\nCounselor: ${meta.counselorName || '대상없음'}`;
 
         // Run in background
-        this.aiService.createVideoEmbedding(video.id, embeddingText).catch(e =>
-          console.error(`AI Embedding failed for ${video.id}:`, e)
-        );
+        this.aiService
+          .createVideoEmbedding(video.id, embeddingText)
+          .catch((e) =>
+            console.error(`AI Embedding failed for ${video.id}:`, e)
+          );
       }
     } catch (e) {
-        console.error('Error triggering AI embedding:', e);
+      console.error('Error triggering AI embedding:', e);
     }
 
     return result;
@@ -583,5 +662,4 @@ export class VideosService {
   async getRecommendations(videoId: string) {
     return this.aiService.searchSimilarVideosById(videoId);
   }
-
 }

@@ -9,14 +9,15 @@ export class RedisIoAdapter extends IoAdapter {
 
   constructor(
     appOrHttpServer: any,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {
     super(appOrHttpServer);
   }
 
   async connectToRedis(): Promise<void> {
     try {
-      const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
+      const redisUrl =
+        this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
 
       const pubClient = new Redis(redisUrl);
 
@@ -27,9 +28,9 @@ export class RedisIoAdapter extends IoAdapter {
 
       // Verification for initial connection
       await new Promise((resolve, reject) => {
-          pubClient.once('connect', resolve);
-          pubClient.once('error', reject);
-          setTimeout(() => reject(new Error('Redis connection timeout')), 5000);
+        pubClient.once('connect', resolve);
+        pubClient.once('error', reject);
+        setTimeout(() => reject(new Error('Redis connection timeout')), 5000);
       });
 
       const subClient = pubClient.duplicate();
@@ -40,7 +41,10 @@ export class RedisIoAdapter extends IoAdapter {
       this.adapterConstructor = createAdapter(pubClient, subClient);
       console.log('✅ Redis Adapter connected');
     } catch (error) {
-      console.error('❌ Redis Adapter connection failed:', (error as any).message);
+      console.error(
+        '❌ Redis Adapter connection failed:',
+        (error as any).message
+      );
       throw error; // Re-throw to be caught in main.ts
     }
   }

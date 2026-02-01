@@ -1,4 +1,3 @@
-
 import { S3Client, PutBucketCorsCommand } from '@aws-sdk/client-s3';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -12,7 +11,9 @@ const secretAccessKey = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
 const bucketName = process.env.CLOUDFLARE_R2_BUCKET_NAME || 'hamkkebom-uploads';
 
 if (!accountId || !accessKeyId || !secretAccessKey) {
-  console.error('❌ Missing Cloudflare R2 credentials in environment variables.');
+  console.error(
+    '❌ Missing Cloudflare R2 credentials in environment variables.'
+  );
   process.exit(1);
 }
 
@@ -40,7 +41,7 @@ async function updateCors() {
             'https://ask-the-stars-api-w3nn3v2ejq-du.a.run.app',
             'https://hamkkebom.com',
             'https://www.hamkkebom.com',
-            'https://ask-the-stars-kappa.vercel.app' // Vercel alias
+            'https://ask-the-stars-kappa.vercel.app', // Vercel alias
           ],
           ExposeHeaders: ['ETag'],
           MaxAgeSeconds: 3600,

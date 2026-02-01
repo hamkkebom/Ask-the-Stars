@@ -15,7 +15,6 @@ import { AppModule } from './app.module';
 // import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
 
 async function bootstrap() {
-
   try {
     console.log('>>> BOOTSTRAP STARTING <<<');
     const app = await NestFactory.create(AppModule);
@@ -38,7 +37,6 @@ async function bootstrap() {
     //   logger.warn('⚠️ REDIS_URL not found. Skipping Redis adapter registration.');
     // }
 
-
     // Global validation pipe
     app.useGlobalPipes(
       new ValidationPipe({
@@ -54,13 +52,21 @@ async function bootstrap() {
     // CORS configuration
     const allowedOrigins = process.env.WS_CORS_ORIGIN
       ? process.env.WS_CORS_ORIGIN.split(',').map((origin) => origin.trim())
-      : ['http://localhost:3000', 'http://localhost:3001', 'https://www.hamkkebom.com', 'https://hamkkebom.com'];
+      : [
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'https://www.hamkkebom.com',
+          'https://hamkkebom.com',
+        ];
 
     app.enableCors({
-      origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      origin: (
+        origin: string | undefined,
+        callback: (err: Error | null, allow?: boolean) => void
+      ) => {
         if (!origin) return callback(null, true);
 
-        const isAllowed = allowedOrigins.some(allowed => {
+        const isAllowed = allowedOrigins.some((allowed) => {
           if (allowed === '*') return true;
           // Exact match or subdomain match if needed
           return allowed === origin;
@@ -87,7 +93,9 @@ async function bootstrap() {
     const port = process.env.PORT || 4000;
     await app.listen(port, '0.0.0.0');
 
-    console.log(`🚀 별들에게 물어봐 API is running on: http://localhost:${port}`);
+    console.log(
+      `🚀 별들에게 물어봐 API is running on: http://localhost:${port}`
+    );
   } catch (err) {
     console.error('❌ FATAL: NestJS bootstrap failed:');
     console.error(err);
@@ -97,6 +105,5 @@ async function bootstrap() {
     process.exit(1);
   }
 }
-
 
 bootstrap();

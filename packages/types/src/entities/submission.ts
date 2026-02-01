@@ -22,10 +22,10 @@ export interface Submission {
 }
 
 export type SubmissionStatus =
-  | 'pending'      // 피드백 대기
-  | 'in_review'    // 검토 중
-  | 'revision'     // 수정 요청
-  | 'approved';    // 승인됨
+  | 'pending' // 피드백 대기
+  | 'in_review' // 검토 중
+  | 'revision' // 수정 요청
+  | 'approved'; // 승인됨
 
 export interface SubmissionWithFeedback extends Submission {
   feedbacks?: {

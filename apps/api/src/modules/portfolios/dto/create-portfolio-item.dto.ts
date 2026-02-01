@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 
 export class CreatePortfolioItemDto {
   @IsString()
-  title: string;
+  title!: string;
 
   @IsOptional()
   @IsString()

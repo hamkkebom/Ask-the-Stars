@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+} from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateFeedbackDto, UpdateFeedbackDto } from './dto';
@@ -9,7 +20,10 @@ export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
   @Post()
-  async create(@Request() req: any, @Body() createFeedbackDto: CreateFeedbackDto): Promise<any> {
+  async create(
+    @Request() req: any,
+    @Body() createFeedbackDto: CreateFeedbackDto
+  ): Promise<any> {
     return this.feedbackService.create(req.user.id, createFeedbackDto);
   }
 
@@ -27,7 +41,7 @@ export class FeedbackController {
   async update(
     @Request() req: any,
     @Param('id') id: string,
-    @Body() updateFeedbackDto: UpdateFeedbackDto,
+    @Body() updateFeedbackDto: UpdateFeedbackDto
   ): Promise<any> {
     return this.feedbackService.update(id, req.user.id, updateFeedbackDto);
   }

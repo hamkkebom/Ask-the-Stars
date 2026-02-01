@@ -1,6 +1,14 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { CreatePortfolioDto, UpdatePortfolioDto, CreatePortfolioItemDto, UpdatePortfolioItemDto } from './dto';
+import {
+  UpdatePortfolioDto,
+  CreatePortfolioItemDto,
+  UpdatePortfolioItemDto,
+} from './dto';
 
 @Injectable()
 export class PortfoliosService {
@@ -37,7 +45,9 @@ export class PortfoliosService {
         items: {
           orderBy: [{ isFeatured: 'desc' }, { order: 'asc' }],
         },
-        user: { select: { id: true, name: true, profileImage: true, bio: true } },
+        user: {
+          select: { id: true, name: true, profileImage: true, bio: true },
+        },
       },
     });
 
@@ -48,7 +58,10 @@ export class PortfoliosService {
     return portfolio;
   }
 
-  async update(userId: string, updatePortfolioDto: UpdatePortfolioDto): Promise<any> {
+  async update(
+    userId: string,
+    updatePortfolioDto: UpdatePortfolioDto
+  ): Promise<any> {
     const portfolio = await this.findOrCreate(userId);
 
     return this.prisma.portfolio.update({
@@ -64,7 +77,10 @@ export class PortfoliosService {
 
   // ==================== Portfolio Item CRUD ====================
 
-  async addItem(userId: string, createItemDto: CreatePortfolioItemDto): Promise<any> {
+  async addItem(
+    userId: string,
+    createItemDto: CreatePortfolioItemDto
+  ): Promise<any> {
     const portfolio = await this.findOrCreate(userId);
 
     // Get max order
@@ -82,7 +98,11 @@ export class PortfoliosService {
     });
   }
 
-  async updateItem(userId: string, itemId: string, updateItemDto: UpdatePortfolioItemDto): Promise<any> {
+  async updateItem(
+    userId: string,
+    itemId: string,
+    updateItemDto: UpdatePortfolioItemDto
+  ): Promise<any> {
     const item = await this.prisma.portfolioItem.findUnique({
       where: { id: itemId },
       include: { portfolio: true },
@@ -130,8 +150,8 @@ export class PortfoliosService {
         this.prisma.portfolioItem.updateMany({
           where: { id, portfolioId: portfolio.id },
           data: { order: index },
-        }),
-      ),
+        })
+      )
     );
 
     return this.findByUserId(userId);

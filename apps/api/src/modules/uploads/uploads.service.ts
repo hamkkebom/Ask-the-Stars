@@ -1,6 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  ListObjectsV2Command,
+} from '@aws-sdk/client-s3';
 // import { getSignedUrl } from '@aws-sdk/s3-request-presigner'; // Removed unused
 import axios from 'axios';
 import FormData from 'form-data';
@@ -13,12 +17,27 @@ export class UploadsService {
   private cloudflareStreamToken: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.cloudflareAccountId = this.configService.get<string>('CLOUDFLARE_ACCOUNT_ID', '');
-    this.cloudflareStreamToken = this.configService.get<string>('CLOUDFLARE_STREAM_TOKEN', '');
-    const accessKeyId = this.configService.get<string>('CLOUDFLARE_R2_ACCESS_KEY_ID', '');
-    const secretAccessKey = this.configService.get<string>('CLOUDFLARE_R2_SECRET_ACCESS_KEY', '');
+    this.cloudflareAccountId = this.configService.get<string>(
+      'CLOUDFLARE_ACCOUNT_ID',
+      ''
+    );
+    this.cloudflareStreamToken = this.configService.get<string>(
+      'CLOUDFLARE_STREAM_TOKEN',
+      ''
+    );
+    const accessKeyId = this.configService.get<string>(
+      'CLOUDFLARE_R2_ACCESS_KEY_ID',
+      ''
+    );
+    const secretAccessKey = this.configService.get<string>(
+      'CLOUDFLARE_R2_SECRET_ACCESS_KEY',
+      ''
+    );
 
-    this.bucketName = this.configService.get<string>('CLOUDFLARE_R2_BUCKET_NAME', 'hamkkebom-uploads');
+    this.bucketName = this.configService.get<string>(
+      'CLOUDFLARE_R2_BUCKET_NAME',
+      'hamkkebom-uploads'
+    );
 
     const endpoint = `https://${this.cloudflareAccountId}.r2.cloudflarestorage.com`;
 
@@ -33,7 +52,10 @@ export class UploadsService {
     });
   }
 
-  async uploadFile(file: any, folder: string = 'misc'): Promise<{ url: string; key: string; streamId?: string }> {
+  async uploadFile(
+    file: any,
+    folder: string = 'misc'
+  ): Promise<{ url: string; key: string; streamId?: string }> {
     try {
       const isVideo = file.mimetype.startsWith('video/');
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -48,14 +70,19 @@ export class UploadsService {
             Key: key,
             Body: file.buffer,
             ContentType: file.mimetype,
-          }),
+          })
         );
       } catch (r2Error) {
-        console.warn('⚠️ R2 Upload failed (Proceeding to Stream):', (r2Error as any).message);
+        console.warn(
+          '⚠️ R2 Upload failed (Proceeding to Stream):',
+          (r2Error as any).message
+        );
       }
 
       const publicUrl = this.configService.get<string>('CLOUDFLARE_PUBLIC_Url');
-      let url = publicUrl ? `${publicUrl}/${key}` : `https://${this.bucketName}.r2.cloudflarestorage.com/${key}`;
+      const url = publicUrl
+        ? `${publicUrl}/${key}`
+        : `https://${this.bucketName}.r2.cloudflarestorage.com/${key}`;
       let streamId: string | undefined;
 
       // 2. 비디오인 경우 Cloudflare Stream 업로드
@@ -83,7 +110,7 @@ export class UploadsService {
           Authorization: `Bearer ${this.cloudflareStreamToken}`,
           ...formData.getHeaders(),
         },
-      },
+      }
     );
 
     if (response.data.success) {
@@ -95,28 +122,30 @@ export class UploadsService {
   async copyFromUrl(url: string, meta?: any): Promise<string> {
     console.log(`☁️ requesting copy to stream: ${url}`);
     try {
-        const response = await axios.post(
+      const response = await axios.post(
         `https://api.cloudflare.com/client/v4/accounts/${this.cloudflareAccountId}/stream/copy`,
         {
-            url: url,
-            meta: meta || {},
-            requireSignedURLs: false
+          url: url,
+          meta: meta || {},
+          requireSignedURLs: false,
         },
         {
-            headers: {
-                Authorization: `Bearer ${this.cloudflareStreamToken}`,
-                'Content-Type': 'application/json'
-            },
+          headers: {
+            Authorization: `Bearer ${this.cloudflareStreamToken}`,
+            'Content-Type': 'application/json',
+          },
         }
-        );
+      );
 
-        if (response.data.success) {
-            return response.data.result.uid;
-        }
-        throw new Error('Cloudflare Stream copy failed: ' + JSON.stringify(response.data.errors));
+      if (response.data.success) {
+        return response.data.result.uid;
+      }
+      throw new Error(
+        'Cloudflare Stream copy failed: ' + JSON.stringify(response.data.errors)
+      );
     } catch (e: any) {
-        console.error('Stream Copy API Error:', e.response?.data || e.message);
-        throw e;
+      console.error('Stream Copy API Error:', e.response?.data || e.message);
+      throw e;
     }
   }
 
@@ -126,42 +155,42 @@ export class UploadsService {
   }
 
   async getPresignedUrl(key: string): Promise<string> {
-      try {
-          // Import GetObjectCommand here to avoid circular dependencies or import issues if not top-level
-          const { GetObjectCommand } = await import('@aws-sdk/client-s3');
-          const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+    try {
+      // Import GetObjectCommand here to avoid circular dependencies or import issues if not top-level
+      const { GetObjectCommand } = await import('@aws-sdk/client-s3');
+      const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
-          const command = new GetObjectCommand({
-              Bucket: this.bucketName,
-              Key: key,
-          });
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
 
-          // Sign for 1 hour
-          return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
-      } catch (e) {
-          console.error('Failed to sign URL for key:', key, e);
-          return '';
-      }
+      // Sign for 1 hour
+      return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+    } catch (e) {
+      console.error('Failed to sign URL for key:', key, e);
+      return '';
+    }
   }
 
   async getPresignedPutUrl(key: string, contentType: string): Promise<string> {
-      try {
-          const { PutObjectCommand } = await import('@aws-sdk/client-s3');
-          const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
+    try {
+      const { PutObjectCommand } = await import('@aws-sdk/client-s3');
+      const { getSignedUrl } = await import('@aws-sdk/s3-request-presigner');
 
-          const command = new PutObjectCommand({
-              Bucket: this.bucketName,
-              Key: key,
-              ContentType: contentType,
-              // ACL: 'public-read' // R2 doesn't support ACLs the same way, usually strictly private or public bucket
-          });
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+        ContentType: contentType,
+        // ACL: 'public-read' // R2 doesn't support ACLs the same way, usually strictly private or public bucket
+      });
 
-          // Sign for 1 hour
-          return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
-      } catch (e) {
-          console.error('Failed to sign PUT URL for key:', key, e);
-          throw new InternalServerErrorException('Failed to generate upload URL');
-      }
+      // Sign for 1 hour
+      return await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
+    } catch (e) {
+      console.error('Failed to sign PUT URL for key:', key, e);
+      throw new InternalServerErrorException('Failed to generate upload URL');
+    }
   }
 
   async listFiles(prefix?: string): Promise<any[]> {

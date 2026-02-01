@@ -10,11 +10,13 @@ export class AiService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly prisma: PrismaService,
+    private readonly prisma: PrismaService
   ) {
     const apiKey = this.configService.get<string>('OPENAI_API_KEY');
     if (!apiKey) {
-      this.logger.warn('OPENAI_API_KEY is not set. AI features will be disabled.');
+      this.logger.warn(
+        'OPENAI_API_KEY is not set. AI features will be disabled.'
+      );
     }
     this.openai = new OpenAI({
       apiKey: apiKey || 'dummy-key', // Prevent crash if key is missing, handle errors at runtime

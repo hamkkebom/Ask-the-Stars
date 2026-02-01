@@ -1,4 +1,16 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Request, Query, Put, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Body,
+  Request,
+  Query,
+  Put,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { VideosService } from './videos.service';
 import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
@@ -8,7 +20,7 @@ import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service
 export class VideosController {
   constructor(
     private readonly videosService: VideosService,
-    private readonly cloudflareService: CloudflareStreamService,
+    private readonly cloudflareService: CloudflareStreamService
   ) {}
 
   @Get()
@@ -18,7 +30,7 @@ export class VideosController {
     @Query('category') category?: string,
     @Query('counselor') counselor?: string,
     @Query('creator') creator?: string,
-    @Query('sort') sort?: 'latest' | 'popular',
+    @Query('sort') sort?: 'latest' | 'popular'
   ): Promise<any> {
     return this.videosService.listAllFinalVideos({
       page: Number(page),
@@ -26,12 +38,14 @@ export class VideosController {
       category,
       counselor,
       creator,
-      sort
+      sort,
     });
   }
 
   @Get('project/:projectNo')
-  async getProjectVideo(@Param('projectNo', ParseIntPipe) projectNo: number): Promise<any> {
+  async getProjectVideo(
+    @Param('projectNo', ParseIntPipe) projectNo: number
+  ): Promise<any> {
     return this.videosService.getVideoByProjectNo(projectNo);
   }
 
@@ -42,33 +56,39 @@ export class VideosController {
 
   @Get('channel/:name')
   async getChannelVideos(@Param('name') name: string): Promise<any> {
-      return this.videosService.listVideosByChannel(name);
+    return this.videosService.listVideosByChannel(name);
   }
 
   @Get(':id/preview')
-  async getVideoPreview(@Param('id') id: string): Promise<{ videoUrl: string }> {
-      const videoUrl = await this.videosService.getPresignedUrl(id);
-      return { videoUrl };
+  async getVideoPreview(
+    @Param('id') id: string
+  ): Promise<{ videoUrl: string }> {
+    const videoUrl = await this.videosService.getPresignedUrl(id);
+    return { videoUrl };
   }
 
   @Post(':id/captions')
   async triggerCaptions(@Param('id') id: string) {
-      const success = await this.videosService.generateCaptions(id);
-      return { success };
+    const success = await this.videosService.generateCaptions(id);
+    return { success };
   }
 
   @Put(':id/captions/:language')
   @UseInterceptors(FileInterceptor('file'))
   async uploadCaption(
-      @Param('id') id: string,
-      @Param('language') language: string,
-      @UploadedFile() file: any // Avoid Multer type error
+    @Param('id') id: string,
+    @Param('language') language: string,
+    @UploadedFile() file: any // Avoid Multer type error
   ) {
-      if (!file) {
-          throw new Error('File is required');
-      }
-      const success = await this.videosService.uploadCaption(id, language, file.buffer);
-      return { success };
+    if (!file) {
+      throw new Error('File is required');
+    }
+    const success = await this.videosService.uploadCaption(
+      id,
+      language,
+      file.buffer
+    );
+    return { success };
   }
 
   @Get('search')
@@ -83,19 +103,22 @@ export class VideosController {
 
   @Post('import-stream')
   async importFromUrl(@Body() body: { url: string; creator?: string }) {
-      // Logic: Call Cloudflare Stream "Copy"
-      // TODO: Move this logic to VideosService properly
-      // For now calling service directly via cloudflareService on service
-      // Better to add method to VideosService: importVideoFromUrl(url, creator)
-      // I will add it to VideosService first
-      const uid = await this.videosService.importVideoFromR2(body.url, body.creator);
-      return { uid };
+    // Logic: Call Cloudflare Stream "Copy"
+    // TODO: Move this logic to VideosService properly
+    // For now calling service directly via cloudflareService on service
+    // Better to add method to VideosService: importVideoFromUrl(url, creator)
+    // I will add it to VideosService first
+    const uid = await this.videosService.importVideoFromR2(
+      body.url,
+      body.creator
+    );
+    return { uid };
   }
 
   @Get('database/keys')
   async getAllVideoKeys(): Promise<string[]> {
-      const specs = await this.videosService.getAllRegisteredSpecs();
-      return specs.map(s => s.r2Key);
+    const specs = await this.videosService.getAllRegisteredSpecs();
+    return specs.map((s) => s.r2Key);
   }
 
   @Post('sync')
@@ -105,12 +128,19 @@ export class VideosController {
 
   // @UseGuards(JwtAuthGuard) // Protect this endpoint
   @Post('upload-url')
-  async getDirectUploadUrl(@Body() body: { uploadLength: number; metadata?: any }, @Request() req: any): Promise<{ uploadUrl: string }> {
-      // Logic:
-      // 1. Get User ID from Auth (req.user.id) - Mocking for now if Auth not fully setup in this context
-      const userId = req.user?.id || 'system_test_user';
+  async getDirectUploadUrl(
+    @Body() body: { uploadLength: number; metadata?: any },
+    @Request() req: any
+  ): Promise<{ uploadUrl: string }> {
+    // Logic:
+    // 1. Get User ID from Auth (req.user.id) - Mocking for now if Auth not fully setup in this context
+    const userId = req.user?.id || 'system_test_user';
 
-      const url = await this.cloudflareService.getDirectUploadUrl(userId, body.uploadLength, body.metadata);
-      return { uploadUrl: url };
+    const url = await this.cloudflareService.getDirectUploadUrl(
+      userId,
+      body.uploadLength,
+      body.metadata
+    );
+    return { uploadUrl: url };
   }
 }

@@ -1,12 +1,12 @@
 export enum ProjectStatus {
-  DRAFT = 'DRAFT',           // 초안
-  PENDING = 'PENDING',       // 의뢰 대기
-  MATCHING = 'MATCHING',     // 프리랜서 매칭 중
+  DRAFT = 'DRAFT', // 초안
+  PENDING = 'PENDING', // 의뢰 대기
+  MATCHING = 'MATCHING', // 프리랜서 매칭 중
   IN_PROGRESS = 'IN_PROGRESS', // 작업 중
-  REVIEW = 'REVIEW',         // 검토 중
-  REVISION = 'REVISION',     // 수정 요청
-  COMPLETED = 'COMPLETED',   // 완료
-  CANCELLED = 'CANCELLED',   // 취소됨
+  REVIEW = 'REVIEW', // 검토 중
+  REVISION = 'REVISION', // 수정 요청
+  COMPLETED = 'COMPLETED', // 완료
+  CANCELLED = 'CANCELLED', // 취소됨
 }
 
 export const ProjectStatusLabels: Record<ProjectStatus, string> = {

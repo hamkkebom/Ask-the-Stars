@@ -11,7 +11,10 @@ export class MailService {
   }
 
   async sendPasswordResetEmail(to: string, token: string) {
-    const appUrl = process.env.WEB_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const appUrl =
+      process.env.WEB_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      'http://localhost:3000';
     const resetLink = `${appUrl}/auth/reset-password?token=${token}`;
     const mailFrom = process.env.MAIL_FROM || 'onboarding@resend.dev';
 

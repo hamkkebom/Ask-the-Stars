@@ -11,7 +11,11 @@ import {
 } from '@nestjs/common';
 import { PortfoliosService } from './portfolios.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { CreatePortfolioItemDto, UpdatePortfolioDto, UpdatePortfolioItemDto } from './dto';
+import {
+  CreatePortfolioItemDto,
+  UpdatePortfolioDto,
+  UpdatePortfolioItemDto,
+} from './dto';
 
 @Controller('portfolios')
 export class PortfoliosController {
@@ -36,7 +40,7 @@ export class PortfoliosController {
   @Patch('me')
   async updateMyPortfolio(
     @Request() req: any,
-    @Body() updatePortfolioDto: UpdatePortfolioDto,
+    @Body() updatePortfolioDto: UpdatePortfolioDto
   ): Promise<any> {
     return this.portfoliosService.update(req.user.id, updatePortfolioDto);
   }
@@ -47,7 +51,7 @@ export class PortfoliosController {
   @Post('me/items')
   async addItem(
     @Request() req: any,
-    @Body() createItemDto: CreatePortfolioItemDto,
+    @Body() createItemDto: CreatePortfolioItemDto
   ): Promise<any> {
     return this.portfoliosService.addItem(req.user.id, createItemDto);
   }
@@ -57,16 +61,20 @@ export class PortfoliosController {
   async updateItem(
     @Request() req: any,
     @Param('itemId') itemId: string,
-    @Body() updateItemDto: UpdatePortfolioItemDto,
+    @Body() updateItemDto: UpdatePortfolioItemDto
   ): Promise<any> {
-    return this.portfoliosService.updateItem(req.user.id, itemId, updateItemDto);
+    return this.portfoliosService.updateItem(
+      req.user.id,
+      itemId,
+      updateItemDto
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('me/items/:itemId')
   async removeItem(
     @Request() req: any,
-    @Param('itemId') itemId: string,
+    @Param('itemId') itemId: string
   ): Promise<any> {
     return this.portfoliosService.removeItem(req.user.id, itemId);
   }
@@ -75,7 +83,7 @@ export class PortfoliosController {
   @Patch('me/items/reorder')
   async reorderItems(
     @Request() req: any,
-    @Body() body: { itemIds: string[] },
+    @Body() body: { itemIds: string[] }
   ): Promise<any> {
     return this.portfoliosService.reorderItems(req.user.id, body.itemIds);
   }

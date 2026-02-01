@@ -127,7 +127,7 @@ const MOCK_VIDEOS: VideoDetails[] = [
 ];
 
 // Set this to false when real DB data is available
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 // Supabase-based video API
 export interface VideoDetails {

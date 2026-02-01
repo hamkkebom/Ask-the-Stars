@@ -1,6 +1,7 @@
 name: Deploy Web (Vercel)
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -8,6 +9,7 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - 'turbo.json'
+      - '.github/workflows/cd-web.yml'
 
 jobs:
   deploy:

@@ -5,50 +5,62 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { getOptimizedImageUrl } from '@/utils/image';
-import { useState, memo, useEffect } from 'react';
+import { useState, memo, useEffect, useCallback } from 'react';
 import { videosApi } from '@/lib/api/videos';
 
 export interface VideoProps {
-    id: string;
-    title: string;
-    thumbnailUrl: string;
-    description?: string;
-    currentYear?: string;
-    counselor?: {
-        name: string;
-        avatarUrl?: string; // Optional
-    };
-    creator?: {
-        name: string;
-        avatarUrl?: string;
-    };
-    category: string;
-    tags: string[];
-    views?: number;
-    likes?: number;  // 👍 좋아요 수
-    isAdApproved?: boolean;  // ✓ 광고 승인 여부
-    isVertical?: boolean;  // 세로 영상 여부
-    createdAt?: string; // "25/01/17"
-    duration?: string;
-    videoUrl?: string; // Add videoUrl property
-    onHoverChange?: (isHovered: boolean) => void;
-    matchScore?: number;
-    isNew?: boolean;
-    streamUid?: string; // Add streamUid property
-    previewUrl?: string; // Animated GIF
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  description?: string;
+  currentYear?: string;
+  counselor?: {
+    name: string;
+    avatarUrl?: string; // Optional
+  };
+  creator?: {
+    name: string;
+    avatarUrl?: string;
+  };
+  category: string;
+  tags: string[];
+  views?: number;
+  likes?: number; // 👍 좋아요 수
+  isAdApproved?: boolean; // ✓ 광고 승인 여부
+  isVertical?: boolean; // 세로 영상 여부
+  createdAt?: string; // "25/01/17"
+  duration?: string;
+  videoUrl?: string; // Add videoUrl property
+  onHoverChange?: (isHovered: boolean) => void;
+  matchScore?: number;
+  isNew?: boolean;
+  streamUid?: string; // Add streamUid property
+  previewUrl?: string; // Animated GIF
 }
 
 function CompactVideoCardImpl({
-    id, title, thumbnailUrl, videoUrl: initialVideoUrl, streamUid, previewUrl,
-    counselor = { name: "상담사" },
-    creator = { name: "제작자" },
-    category, tags, createdAt = "25/01/17",
-    views = 0, likes = 0, isAdApproved = false, isVertical = false,
-    onHoverChange
+  id,
+  title,
+  thumbnailUrl,
+  videoUrl: initialVideoUrl,
+  streamUid,
+  previewUrl,
+  counselor = { name: '상담사' },
+  creator = { name: '제작자' },
+  category,
+  tags,
+  createdAt = '25/01/17',
+  views = 0,
+  likes = 0,
+  isAdApproved = false,
+  isVertical = false,
+  onHoverChange,
 }: VideoProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const [dynamicVideoUrl, setDynamicVideoUrl] = useState<string | null>(initialVideoUrl || null);
+  const [dynamicVideoUrl, setDynamicVideoUrl] = useState<string | null>(
+    initialVideoUrl || null
+  );
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [shouldPlay, setShouldPlay] = useState(false);
@@ -64,7 +76,8 @@ function CompactVideoCardImpl({
   // So: Only show video thumbnail if videoUrl is NOT an S3 link (contains signature or is public) OR we are hovered.
   // Actually, simpler: showVideoThumbnail is ONLY for "Video as Thumbnail" feature.
   // If imgError, we want to show PLACEHOLDER image, not broken video.
-  const showVideoThumbnail = (!thumbnailUrl || thumbnailUrl === "/placeholder.jpg") && videoUrl;
+  const showVideoThumbnail =
+    (!thumbnailUrl || thumbnailUrl === '/placeholder.jpg') && videoUrl;
 
   // If image errors, we set imgError state, which force renders the Image component with placeholder src?
   // No, currently imgError was part of showVideoThumbnail condition. I am removing it.
@@ -76,7 +89,6 @@ function CompactVideoCardImpl({
   // But src prop doesn't change unless we change it based on imgError?
   // Let's modify the Image src logic too.
 
-
   // Device Detection
   useEffect(() => {
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
@@ -86,20 +98,36 @@ function CompactVideoCardImpl({
   useEffect(() => {
     if (!isMobile) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        setIsIntersecting(entry.isIntersecting);
-      });
-    }, { threshold: 0.8 }); // Trigger when 80% visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsIntersecting(entry.isIntersecting);
+        });
+      },
+      { threshold: 0.8 }
+    ); // Trigger when 80% visible
 
     const el = document.getElementById(`card-${id}`);
     if (el) observer.observe(el);
     return () => observer.disconnect();
   }, [id, isMobile]);
 
+  const handleTriggerPreview = useCallback(async () => {
+    if (isLoadingPreview || dynamicVideoUrl || streamUid) return;
+    setIsLoadingPreview(true);
+    try {
+      const url = await videosApi.getVideoPreviewUrl(id);
+      setDynamicVideoUrl(url);
+    } catch (error) {
+      console.error('Failed to fetch preview URL:', error);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  }, [id, isLoadingPreview, dynamicVideoUrl, streamUid]);
+
   // Handle 1s Delay for Mobile Autoplay (Intersection)
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
 
     // Strict: Only use intersection autoplay on mobile
     if (isMobile && isIntersecting && !isHovered) {
@@ -113,20 +141,7 @@ function CompactVideoCardImpl({
     }
 
     return () => clearTimeout(timer);
-  }, [isIntersecting, isHovered, id, isMobile]);
-
-  const handleTriggerPreview = async () => {
-    if (isLoadingPreview || dynamicVideoUrl || streamUid) return;
-    setIsLoadingPreview(true);
-    try {
-        const url = await videosApi.getVideoPreviewUrl(id);
-        setDynamicVideoUrl(url);
-    } catch (error) {
-        console.error('Failed to fetch preview URL:', error);
-    } finally {
-        setIsLoadingPreview(false);
-    }
-  };
+  }, [isIntersecting, isHovered, isMobile, handleTriggerPreview]);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -151,97 +166,124 @@ function CompactVideoCardImpl({
       >
         {/* --- Thumbnail Container --- */}
         <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-900 border border-white/5 shadow-lg group-hover:shadow-2xl transition-all duration-300 z-0 group-hover:z-10 text-decoration-slice">
-
           {/* Main Image */}
-          <div className={cn("absolute inset-0 transition-transform duration-700 ease-out", isActuallyPlaying ? "scale-[1.1]" : "scale-100")}>
-              {showVideoThumbnail ? (
-                  <video
-                      src={videoUrl || undefined}
-                      className={cn("object-cover w-full h-full transition-opacity duration-300", isActuallyPlaying ? "opacity-0" : "opacity-90")}
-                      muted
-                      playsInline
-                      loop
-                      onLoadedMetadata={(e) => (e.target as HTMLVideoElement).currentTime = 0.1}
-                  />
-              ) : (
-                  <Image
-                      src={imgError ? "/placeholder.jpg" : getOptimizedImageUrl(thumbnailUrl || "/placeholder.jpg", { width: 400 })}
-                      alt={title}
-                      fill
-                      className={cn("object-cover transition-opacity duration-300", isActuallyPlaying ? "opacity-0" : "opacity-90")}
-                      unoptimized
-                      onError={() => setImgError(true)}
-                  />
-              )}
-              {/* Subtle Gradient Overlay for Depth */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60" />
+          <div
+            className={cn(
+              'absolute inset-0 transition-transform duration-700 ease-out',
+              isActuallyPlaying ? 'scale-[1.1]' : 'scale-100'
+            )}
+          >
+            {showVideoThumbnail ? (
+              <video
+                src={videoUrl || undefined}
+                className={cn(
+                  'object-cover w-full h-full transition-opacity duration-300',
+                  isActuallyPlaying ? 'opacity-0' : 'opacity-90'
+                )}
+                muted
+                playsInline
+                loop
+                onLoadedMetadata={(e) =>
+                  ((e.target as HTMLVideoElement).currentTime = 0.1)
+                }
+              />
+            ) : (
+              <Image
+                src={
+                  imgError
+                    ? '/placeholder.jpg'
+                    : getOptimizedImageUrl(thumbnailUrl || '/placeholder.jpg', {
+                        width: 400,
+                      })
+                }
+                alt={title}
+                fill
+                className={cn(
+                  'object-cover transition-opacity duration-300',
+                  isActuallyPlaying ? 'opacity-0' : 'opacity-90'
+                )}
+                unoptimized
+                onError={() => setImgError(true)}
+              />
+            )}
+            {/* Subtle Gradient Overlay for Depth */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60" />
           </div>
-
 
           {/* Animated GIF Preview on Hover */}
           {isActuallyPlaying && (previewUrl || videoUrl) && (
             <div className="absolute inset-0 w-full h-full">
-                {/* Use standard img for GIF to avoid Next.js optimization issues with animated images */}
-                <img
-                    src={previewUrl || videoUrl}
-                    alt={title}
-                    className="w-full h-full object-cover scale-[1.1] transition-transform duration-700"
-                />
+              {/* Use Image component for consistency - unoptimized for GIF support */}
+              <Image
+                src={previewUrl || videoUrl || ''}
+                alt={title}
+                fill
+                className="w-full h-full object-cover scale-[1.1] transition-transform duration-700"
+                unoptimized
+              />
             </div>
           )}
 
           {/* --- Overlays --- */}
           {/* Top Left: Creator Name (glassmorphism badge) */}
           <div className="absolute top-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
-              <span className="text-[11px] text-white/90 font-medium tracking-tight">{creator?.name}</span>
+            <span className="text-[11px] text-white/90 font-medium tracking-tight">
+              {creator?.name}
+            </span>
           </div>
 
           {/* Top Right: Badges (Ad Approved + Likes) */}
           <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 items-end pointer-events-none z-20">
-              {isAdApproved && (
-                  <div className="px-2 py-0.5 bg-blue-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
-                      <span className="text-[10px] text-white font-bold">광고 ✓</span>
-                  </div>
-              )}
-              {likes > 0 && (
-                  <div className="px-2 py-0.5 bg-rose-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
-                      <span className="text-[10px] text-white font-medium">👍 {likes}</span>
-                  </div>
-              )}
+            {isAdApproved && (
+              <div className="px-2 py-0.5 bg-blue-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
+                <span className="text-[10px] text-white font-bold">광고 ✓</span>
+              </div>
+            )}
+            {likes > 0 && (
+              <div className="px-2 py-0.5 bg-rose-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
+                <span className="text-[10px] text-white font-medium">
+                  👍 {likes}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Bottom Left: Counselor Name */}
           <div className="absolute bottom-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
-              <span className="text-[11px] text-white/90 font-medium tracking-tight">{counselor?.name}</span>
+            <span className="text-[11px] text-white/90 font-medium tracking-tight">
+              {counselor?.name}
+            </span>
           </div>
 
           {/* Bottom Right: Views Count */}
           {views > 0 && (
-              <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded-full flex items-center gap-1 pointer-events-none z-20">
-                  <span className="text-[10px] text-white/80 font-medium">👁 {views.toLocaleString()}</span>
-              </div>
+            <div className="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded-full flex items-center gap-1 pointer-events-none z-20">
+              <span className="text-[10px] text-white/80 font-medium">
+                👁 {views.toLocaleString()}
+              </span>
+            </div>
           )}
         </div>
 
         {/* --- Detailed Info (Below: Title, Category, Worry, Date) --- */}
         <div className="flex flex-col gap-1.5 px-0.5">
-            {/* Title */}
-            <h3 className="text-white font-medium text-[15px] leading-snug line-clamp-2 group-hover:text-vibrant-cyan transition-colors">
-                {title}
-            </h3>
+          {/* Title */}
+          <h3 className="text-white font-medium text-[15px] leading-snug line-clamp-2 group-hover:text-vibrant-cyan transition-colors">
+            {title}
+          </h3>
 
-            {/* Metadata: Category • Worry (Tag) • Date */}
-            <div className="flex items-center gap-2 text-[12px] text-neutral-400 font-normal">
-                <span className="text-vibrant-cyan">{category || '영상'}</span>
-                {tags && tags.length > 0 && tags[0] && (
-                  <>
-                    <span className="text-neutral-600">•</span>
-                    <span className="text-neutral-300">{tags[0]}</span>
-                  </>
-                )}
+          {/* Metadata: Category • Worry (Tag) • Date */}
+          <div className="flex items-center gap-2 text-[12px] text-neutral-400 font-normal">
+            <span className="text-vibrant-cyan">{category || '영상'}</span>
+            {tags && tags.length > 0 && tags[0] && (
+              <>
                 <span className="text-neutral-600">•</span>
-                <span>{createdAt}</span>
-            </div>
+                <span className="text-neutral-300">{tags[0]}</span>
+              </>
+            )}
+            <span className="text-neutral-600">•</span>
+            <span>{createdAt}</span>
+          </div>
         </div>
       </div>
     </Link>
@@ -249,19 +291,18 @@ function CompactVideoCardImpl({
 }
 
 const CompactVideoCard = memo(CompactVideoCardImpl, (prev, next) => {
-    return (
-        prev.id === next.id &&
-        prev.title === next.title &&
-        prev.thumbnailUrl === next.thumbnailUrl &&
-        prev.views === next.views &&
-        prev.matchScore === next.matchScore &&
-        prev.isNew === next.isNew &&
-        prev.counselor?.name === next.counselor?.name &&
-        prev.creator?.name === next.creator?.name
-    );
+  return (
+    prev.id === next.id &&
+    prev.title === next.title &&
+    prev.thumbnailUrl === next.thumbnailUrl &&
+    prev.views === next.views &&
+    prev.matchScore === next.matchScore &&
+    prev.isNew === next.isNew &&
+    prev.counselor?.name === next.counselor?.name &&
+    prev.creator?.name === next.creator?.name
+  );
 });
 
 // Support both named and default import
 export { CompactVideoCard };
 export default CompactVideoCard;
-

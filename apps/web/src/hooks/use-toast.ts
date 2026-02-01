@@ -24,13 +24,21 @@ const notify = () => {
 };
 
 export const toast = {
-  success: (message: string, duration?: number) => addToast(message, 'success', duration),
-  error: (message: string, duration?: number) => addToast(message, 'error', duration),
-  info: (message: string, duration?: number) => addToast(message, 'info', duration),
-  warning: (message: string, duration?: number) => addToast(message, 'warning', duration),
+  success: (message: string, duration?: number) =>
+    addToast(message, 'success', duration),
+  error: (message: string, duration?: number) =>
+    addToast(message, 'error', duration),
+  info: (message: string, duration?: number) =>
+    addToast(message, 'info', duration),
+  warning: (message: string, duration?: number) =>
+    addToast(message, 'warning', duration),
 };
 
-function addToast(message: string, type: ToastType = 'info', duration: number = 3000) {
+function addToast(
+  message: string,
+  type: ToastType = 'info',
+  duration: number = 3000
+) {
   const id = Math.random().toString(36).substring(2, 9);
   const newToast = { id, message, type, duration };
   toasts = [...toasts, newToast];
@@ -60,6 +68,6 @@ export function useToast() {
 
   return {
     toasts: state,
-    removeToast
+    removeToast,
   };
 }

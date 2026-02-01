@@ -3,7 +3,7 @@
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getQueryClient } from '../lib/react-query';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // NOTE: getQueryClient() allows us to share the client across components
@@ -12,9 +12,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LazyMotion features={domAnimation}>
-        {children}
-      </LazyMotion>
+      <LazyMotion features={domAnimation}>{children}</LazyMotion>
     </QueryClientProvider>
   );
 }

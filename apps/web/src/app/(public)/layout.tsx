@@ -1,6 +1,7 @@
-import { SimpleHeader } from "@/components/layout/simple-header";
-import { MainFooter } from "@/components/layout/main-footer";
-import { FloatingCTA } from "@/components/ui/floating-cta";
+import React from 'react';
+import { SimpleHeader } from '@/components/layout/simple-header';
+import { MainFooter } from '@/components/layout/main-footer';
+import { FloatingCTA } from '@/components/ui/floating-cta';
 
 export default function PublicLayout({
   children,
@@ -10,12 +11,9 @@ export default function PublicLayout({
   return (
     <>
       <SimpleHeader />
-      <main className="min-h-screen bg-black text-white pt-16">
-        {children}
-      </main>
+      <main className="min-h-screen bg-black text-white pt-16">{children}</main>
       <MainFooter />
       <FloatingCTA />
     </>
   );
 }
-

@@ -14,7 +14,8 @@ export default function NotFound() {
       </h1>
       <h2 className="text-3xl font-bold mb-4">우주 미아가 되셨나요?</h2>
       <p className="text-gray-400 text-center max-w-md mb-8 leading-relaxed">
-        요청하신 페이지가 블랙홀로 빨려들어갔거나,<br />
+        요청하신 페이지가 블랙홀로 빨려들어갔거나,
+        <br />
         아직 발견되지 않은 미지의 행성입니다.
       </p>
 

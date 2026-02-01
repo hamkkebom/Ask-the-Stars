@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Providers from './providers';
@@ -8,8 +9,17 @@ export const metadata: Metadata = {
     default: '별들에게 물어봐 | Ask the Stars',
     template: '%s | 별들에게 물어봐',
   },
-  description: '사주천궁 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
-  keywords: ['사주천궁', '영상제작', '협업', '프리랜서', '운세', '타로', '영상편집'],
+  description:
+    '사주천궁 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
+  keywords: [
+    '사주천궁',
+    '영상제작',
+    '협업',
+    '프리랜서',
+    '운세',
+    '타로',
+    '영상편집',
+  ],
   authors: [{ name: '별들에게 물어봐' }],
   creator: '별들에게 물어봐',
   publisher: '별들에게 물어봐',
@@ -27,7 +37,8 @@ export const metadata: Metadata = {
     url: 'https://ask-the-stars.vercel.app',
     siteName: '별들에게 물어봐',
     title: '별들에게 물어봐 | Ask the Stars',
-    description: '사주천궁 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
+    description:
+      '사주천궁 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
     images: [
       {
         url: '/og-image.png',
@@ -56,7 +67,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
 };
-
 
 import { Toaster } from '@/components/ui/toast';
 
@@ -89,9 +99,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground" suppressHydrationWarning>
+      <body
+        className="min-h-screen bg-background font-sans antialiased text-foreground selection:bg-primary selection:text-primary-foreground"
+        suppressHydrationWarning
+      >
         <Providers>
-            {children}
+          {children}
           <Toaster />
         </Providers>
       </body>

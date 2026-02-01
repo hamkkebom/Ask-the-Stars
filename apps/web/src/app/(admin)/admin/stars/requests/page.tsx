@@ -1,15 +1,46 @@
 'use client';
 
 import { GlassCard } from '@/components/ui/glass-card';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import Link from 'next/link';
-import { FileText, Clock, CheckCircle, AlertCircle, Search, Filter } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
+import {
+  FileText,
+  Search,
+  Filter,
+} from 'lucide-react';
 
 const requests = [
-  { id: '1', title: '신년 운세 숏폼', client: '타로TV', budget: 350000, deadline: '2026-01-20', status: 'pending' },
-  { id: '2', title: '봄맞이 타로 시리즈', client: '운세마스터', budget: 1200000, deadline: '2026-02-01', status: 'assigned' },
-  { id: '3', title: '연애운 특집', client: '러브타로', budget: 450000, deadline: '2026-01-25', status: 'pending' },
-  { id: '4', title: '재물운 분석', client: '금전운닷컴', budget: 280000, deadline: '2026-01-22', status: 'completed' },
+  {
+    id: '1',
+    title: '신년 운세 숏폼',
+    client: '타로TV',
+    budget: 350000,
+    deadline: '2026-01-20',
+    status: 'pending',
+  },
+  {
+    id: '2',
+    title: '봄맞이 타로 시리즈',
+    client: '운세마스터',
+    budget: 1200000,
+    deadline: '2026-02-01',
+    status: 'assigned',
+  },
+  {
+    id: '3',
+    title: '연애운 특집',
+    client: '러브타로',
+    budget: 450000,
+    deadline: '2026-01-25',
+    status: 'pending',
+  },
+  {
+    id: '4',
+    title: '재물운 분석',
+    client: '금전운닷컴',
+    budget: 280000,
+    deadline: '2026-01-22',
+    status: 'completed',
+  },
 ];
 
 const statusMap: Record<string, { label: string; color: string }> = {
@@ -27,7 +58,9 @@ export default function RequestsPage() {
             <FileText className="w-6 h-6 text-primary" />
             제작요청 관리
           </h1>
-          <p className="text-gray-400 text-sm mt-1">모든 제작 요청을 확인하고 배정합니다</p>
+          <p className="text-gray-400 text-sm mt-1">
+            모든 제작 요청을 확인하고 배정합니다
+          </p>
         </div>
         <div className="flex gap-2">
           <div className="relative">
@@ -75,14 +108,23 @@ export default function RequestsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {requests.map(req => (
-              <tr key={req.id} className="hover:bg-white/5 cursor-pointer group">
-                <td className="px-6 py-4 text-white font-medium group-hover:text-primary">{req.title}</td>
+            {requests.map((req) => (
+              <tr
+                key={req.id}
+                className="hover:bg-white/5 cursor-pointer group"
+              >
+                <td className="px-6 py-4 text-white font-medium group-hover:text-primary">
+                  {req.title}
+                </td>
                 <td className="px-6 py-4 text-gray-400">{req.client}</td>
-                <td className="px-6 py-4 text-primary">{formatCurrency(req.budget)}</td>
+                <td className="px-6 py-4 text-primary">
+                  {formatCurrency(req.budget)}
+                </td>
                 <td className="px-6 py-4 text-gray-400">{req.deadline}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${statusMap[req.status].color}`}>
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-medium ${statusMap[req.status].color}`}
+                  >
                     {statusMap[req.status].label}
                   </span>
                 </td>

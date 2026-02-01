@@ -3,7 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { m } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft, FileText, Shield, AlertCircle, Scale, Clock, List } from 'lucide-react';
+import {
+  ArrowLeft,
+  FileText,
+  Shield,
+  AlertCircle,
+  Scale,
+  Clock,
+  List,
+} from 'lucide-react';
 
 export default function TermsPage() {
   const effectiveDate = '2026년 1월 20일';
@@ -34,10 +42,12 @@ export default function TermsPage() {
       icon: <Scale className="w-5 h-5 text-blue-600" />,
       content: (
         <p className="m-0">
-          이 약관은 한깨봄(이하 &quot;회사&quot;)이 운영하는 &quot;별들에게 물어봐&quot; 플랫폼(이하 &quot;서비스&quot;)의 이용과 관련하여
-          회사와 이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
+          이 약관은 한깨봄(이하 &quot;회사&quot;)이 운영하는 &quot;별들에게
+          물어봐&quot; 플랫폼(이하 &quot;서비스&quot;)의 이용과 관련하여 회사와
+          이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을
+          목적으로 합니다.
         </p>
-      )
+      ),
     },
     {
       id: 'article-2',
@@ -45,13 +55,28 @@ export default function TermsPage() {
       icon: <FileText className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li><strong>&quot;서비스&quot;</strong>란 회사가 제공하는 AI 영상 제작 협업 플랫폼을 의미합니다.</li>
-          <li><strong>&quot;이용자&quot;</strong>란 서비스에 접속하여 이 약관에 따라 서비스를 이용하는 회원 및 비회원을 말합니다.</li>
-          <li><strong>&quot;회원&quot;</strong>이란 서비스에 가입하여 아이디(ID)를 부여받은 자를 말합니다.</li>
-          <li><strong>&quot;프리랜서&quot;</strong>란 서비스를 통해 영상 제작 서비스를 제공하는 회원을 말합니다.</li>
-          <li><strong>&quot;클라이언트&quot;</strong>란 서비스를 통해 영상 제작을 의뢰하는 회원을 말합니다.</li>
+          <li>
+            <strong>&quot;서비스&quot;</strong>란 회사가 제공하는 AI 영상 제작
+            협업 플랫폼을 의미합니다.
+          </li>
+          <li>
+            <strong>&quot;이용자&quot;</strong>란 서비스에 접속하여 이 약관에
+            따라 서비스를 이용하는 회원 및 비회원을 말합니다.
+          </li>
+          <li>
+            <strong>&quot;회원&quot;</strong>이란 서비스에 가입하여 아이디(ID)를
+            부여받은 자를 말합니다.
+          </li>
+          <li>
+            <strong>&quot;프리랜서&quot;</strong>란 서비스를 통해 영상 제작
+            서비스를 제공하는 회원을 말합니다.
+          </li>
+          <li>
+            <strong>&quot;클라이언트&quot;</strong>란 서비스를 통해 영상 제작을
+            의뢰하는 회원을 말합니다.
+          </li>
         </ol>
-      )
+      ),
     },
     {
       id: 'article-3',
@@ -59,11 +84,20 @@ export default function TermsPage() {
       icon: <Shield className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li>이 약관은 서비스 화면에 게시하거나 기타의 방법으로 이용자에게 공지함으로써 효력이 발생합니다.</li>
-          <li>회사는 관련 법령을 위배하지 않는 범위에서 이 약관을 변경할 수 있습니다.</li>
-          <li>변경된 약관은 적용일자 및 변경 사유를 명시하여 최소 7일 전에 공지합니다.</li>
+          <li>
+            이 약관은 서비스 화면에 게시하거나 기타의 방법으로 이용자에게
+            공지함으로써 효력이 발생합니다.
+          </li>
+          <li>
+            회사는 관련 법령을 위배하지 않는 범위에서 이 약관을 변경할 수
+            있습니다.
+          </li>
+          <li>
+            변경된 약관은 적용일자 및 변경 사유를 명시하여 최소 7일 전에
+            공지합니다.
+          </li>
         </ol>
-      )
+      ),
     },
     {
       id: 'article-4',
@@ -82,7 +116,7 @@ export default function TermsPage() {
             <li>기타 회사가 정하는 서비스</li>
           </ul>
         </>
-      )
+      ),
     },
     {
       id: 'article-5',
@@ -90,17 +124,23 @@ export default function TermsPage() {
       icon: <AlertCircle className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li>회원 가입은 이 약관에 동의한 후 회원 가입 신청을 하고, 회사가 이를 승낙함으로써 성립됩니다.</li>
-          <li>회사는 다음 각 호에 해당하는 경우 회원 가입을 거절할 수 있습니다:
+          <li>
+            회원 가입은 이 약관에 동의한 후 회원 가입 신청을 하고, 회사가 이를
+            승낙함으로써 성립됩니다.
+          </li>
+          <li>
+            회사는 다음 각 호에 해당하는 경우 회원 가입을 거절할 수 있습니다:
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>실명이 아닌 경우</li>
               <li>다른 사람의 명의를 사용한 경우</li>
               <li>가입 신청 시 허위 정보를 기재한 경우</li>
-              <li>기타 회원으로 등록하는 것이 서비스 운영에 지장이 있는 경우</li>
+              <li>
+                기타 회원으로 등록하는 것이 서비스 운영에 지장이 있는 경우
+              </li>
             </ul>
           </li>
         </ol>
-      )
+      ),
     },
     {
       id: 'article-6',
@@ -108,8 +148,11 @@ export default function TermsPage() {
       icon: <Shield className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li>회원은 관계 법령, 이 약관, 서비스 이용 안내 등을 준수해야 합니다.</li>
-          <li>회원은 다음 행위를 해서는 안 됩니다:
+          <li>
+            회원은 관계 법령, 이 약관, 서비스 이용 안내 등을 준수해야 합니다.
+          </li>
+          <li>
+            회원은 다음 행위를 해서는 안 됩니다:
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>타인의 정보 도용</li>
               <li>회사가 게시한 정보의 무단 변경</li>
@@ -121,7 +164,7 @@ export default function TermsPage() {
             </ul>
           </li>
         </ol>
-      )
+      ),
     },
     {
       id: 'article-7',
@@ -129,12 +172,18 @@ export default function TermsPage() {
       icon: <Scale className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li>프리랜서의 정산은 1차 정산(제작비)과 2차 정산(인센티브)으로 구분됩니다.</li>
-          <li>1차 정산은 매월 1일, 2차 정산은 분기별(3/31, 6/30, 9/30, 12/31)로 진행됩니다.</li>
+          <li>
+            프리랜서의 정산은 1차 정산(제작비)과 2차 정산(인센티브)으로
+            구분됩니다.
+          </li>
+          <li>
+            1차 정산은 매월 1일, 2차 정산은 분기별(3/31, 6/30, 9/30, 12/31)로
+            진행됩니다.
+          </li>
           <li>회사는 정산금에서 플랫폼 이용 수수료를 공제할 수 있습니다.</li>
           <li>세금 관련 사항은 관련 법령에 따릅니다.</li>
         </ol>
-      )
+      ),
     },
     {
       id: 'article-8',
@@ -142,11 +191,20 @@ export default function TermsPage() {
       icon: <AlertCircle className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li>회사는 천재지변, 전쟁, 기간통신사업자의 서비스 중지 등 불가항력으로 인해 서비스를 제공할 수 없는 경우 책임이 면제됩니다.</li>
-          <li>회사는 회원의 귀책 사유로 인한 서비스 이용 장애에 대해 책임지지 않습니다.</li>
-          <li>회사는 회원이 게시한 정보, 자료의 신뢰성, 정확성 등에 대해 책임지지 않습니다.</li>
+          <li>
+            회사는 천재지변, 전쟁, 기간통신사업자의 서비스 중지 등 불가항력으로
+            인해 서비스를 제공할 수 없는 경우 책임이 면제됩니다.
+          </li>
+          <li>
+            회사는 회원의 귀책 사유로 인한 서비스 이용 장애에 대해 책임지지
+            않습니다.
+          </li>
+          <li>
+            회사는 회원이 게시한 정보, 자료의 신뢰성, 정확성 등에 대해 책임지지
+            않습니다.
+          </li>
         </ol>
-      )
+      ),
     },
     {
       id: 'article-9',
@@ -154,12 +212,20 @@ export default function TermsPage() {
       icon: <Scale className="w-5 h-5 text-blue-600" />,
       content: (
         <ol className="list-decimal pl-5 space-y-3 m-0">
-          <li>이 약관에 명시되지 않은 사항은 관계 법령 및 상관례에 따릅니다.</li>
-          <li>서비스 이용과 관련하여 분쟁이 발생한 경우, 회사와 회원은 원만한 해결을 위해 성실히 협의합니다.</li>
-          <li>협의가 이루어지지 않을 경우 관할 법원은 회사 소재지 관할 법원으로 합니다.</li>
+          <li>
+            이 약관에 명시되지 않은 사항은 관계 법령 및 상관례에 따릅니다.
+          </li>
+          <li>
+            서비스 이용과 관련하여 분쟁이 발생한 경우, 회사와 회원은 원만한
+            해결을 위해 성실히 협의합니다.
+          </li>
+          <li>
+            협의가 이루어지지 않을 경우 관할 법원은 회사 소재지 관할 법원으로
+            합니다.
+          </li>
         </ol>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -225,29 +291,31 @@ export default function TermsPage() {
           {/* Table of Contents - Desktop */}
           <aside className="hidden lg:block relative">
             <div className="sticky top-24 space-y-4">
-               <h3 className="font-bold text-gray-900 mb-4 px-4 flex items-center gap-2">
-                 <List className="w-4 h-4" /> 목차
-               </h3>
-               <nav className="space-y-1">
-                 {termsSections.map((section) => (
-                   <a
-                     key={section.id}
-                     href={`#${section.id}`}
-                     className={`block px-4 py-2 text-sm rounded-lg transition-colors ${
-                       activeSection === section.id
-                         ? 'bg-blue-50 text-blue-700 font-medium'
-                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                     }`}
-                     onClick={(e) => {
-                       e.preventDefault();
-                       document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' });
-                       setActiveSection(section.id);
-                     }}
-                   >
-                     {section.title}
-                   </a>
-                 ))}
-               </nav>
+              <h3 className="font-bold text-gray-900 mb-4 px-4 flex items-center gap-2">
+                <List className="w-4 h-4" /> 목차
+              </h3>
+              <nav className="space-y-1">
+                {termsSections.map((section) => (
+                  <a
+                    key={section.id}
+                    href={`#${section.id}`}
+                    className={`block px-4 py-2 text-sm rounded-lg transition-colors ${
+                      activeSection === section.id
+                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .getElementById(section.id)
+                        ?.scrollIntoView({ behavior: 'smooth' });
+                      setActiveSection(section.id);
+                    }}
+                  >
+                    {section.title}
+                  </a>
+                ))}
+              </nav>
             </div>
           </aside>
 
@@ -260,15 +328,21 @@ export default function TermsPage() {
               className="prose prose-lg max-w-none"
             >
               {termsSections.map((section) => (
-                <section key={section.id} id={section.id} className="mb-12 scroll-mt-24">
+                <section
+                  key={section.id}
+                  id={section.id}
+                  className="mb-12 scroll-mt-24"
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-blue-100 rounded-lg">
                       {section.icon}
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900 m-0">{section.title}</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 m-0">
+                      {section.title}
+                    </h2>
                   </div>
                   <div className="bg-gray-50 rounded-2xl p-6 text-gray-700 space-y-4">
-                     {section.content}
+                    {section.content}
                   </div>
                 </section>
               ))}

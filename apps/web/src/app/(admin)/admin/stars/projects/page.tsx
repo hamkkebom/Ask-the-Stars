@@ -1,14 +1,41 @@
 'use client';
 
 import { GlassCard } from '@/components/ui/glass-card';
-import { formatCurrency } from '@/lib/utils';
-import { FolderKanban, Clock, CheckCircle, Search } from 'lucide-react';
+import { FolderKanban, Clock, CheckCircle } from 'lucide-react';
 
 const projects = [
-  { id: '1', title: '신년 운세 시리즈', freelancer: '홍길동', progress: 75, deadline: '2026-01-22', status: 'in_progress' },
-  { id: '2', title: '타로 마스터클래스', freelancer: '김영희', progress: 100, deadline: '2026-01-15', status: 'review' },
-  { id: '3', title: '사주 해설 영상', freelancer: '이철수', progress: 40, deadline: '2026-01-28', status: 'in_progress' },
-  { id: '4', title: '운세 인트로 모션', freelancer: '박지민', progress: 100, deadline: '2026-01-10', status: 'completed' },
+  {
+    id: '1',
+    title: '신년 운세 시리즈',
+    freelancer: '홍길동',
+    progress: 75,
+    deadline: '2026-01-22',
+    status: 'in_progress',
+  },
+  {
+    id: '2',
+    title: '타로 마스터클래스',
+    freelancer: '김영희',
+    progress: 100,
+    deadline: '2026-01-15',
+    status: 'review',
+  },
+  {
+    id: '3',
+    title: '사주 해설 영상',
+    freelancer: '이철수',
+    progress: 40,
+    deadline: '2026-01-28',
+    status: 'in_progress',
+  },
+  {
+    id: '4',
+    title: '운세 인트로 모션',
+    freelancer: '박지민',
+    progress: 100,
+    deadline: '2026-01-10',
+    status: 'completed',
+  },
 ];
 
 const statusColors: Record<string, string> = {
@@ -26,7 +53,9 @@ export default function ProjectsPage() {
             <FolderKanban className="w-6 h-6 text-blue-400" />
             프로젝트 관리
           </h1>
-          <p className="text-gray-400 text-sm mt-1">진행 중인 프로젝트를 모니터링합니다</p>
+          <p className="text-gray-400 text-sm mt-1">
+            진행 중인 프로젝트를 모니터링합니다
+          </p>
         </div>
       </div>
 
@@ -61,12 +90,19 @@ export default function ProjectsPage() {
       </div>
 
       <div className="grid gap-4">
-        {projects.map(project => (
-          <GlassCard key={project.id} className="p-5 hover:bg-white/10 transition-colors cursor-pointer">
+        {projects.map((project) => (
+          <GlassCard
+            key={project.id}
+            className="p-5 hover:bg-white/10 transition-colors cursor-pointer"
+          >
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-white font-medium">{project.title}</h3>
               <span className={`text-sm ${statusColors[project.status]}`}>
-                {project.status === 'in_progress' ? '진행중' : project.status === 'review' ? '검수대기' : '완료'}
+                {project.status === 'in_progress'
+                  ? '진행중'
+                  : project.status === 'review'
+                    ? '검수대기'
+                    : '완료'}
               </span>
             </div>
             <div className="flex items-center justify-between text-sm text-gray-400 mb-3">
@@ -79,7 +115,9 @@ export default function ProjectsPage() {
                 style={{ width: `${project.progress}%` }}
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1 text-right">{project.progress}%</p>
+            <p className="text-xs text-gray-500 mt-1 text-right">
+              {project.progress}%
+            </p>
           </GlassCard>
         ))}
       </div>

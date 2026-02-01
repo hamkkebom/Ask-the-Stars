@@ -22,7 +22,8 @@ export function Breadcrumb({ className }: BreadcrumbProps) {
   // 각 세그먼트에 대한 경로와 라벨 생성
   const crumbs = segments.map((segment, index) => {
     const path = '/' + segments.slice(0, index + 1).join('/');
-    const label = pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+    const label =
+      pathLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
     const isLast = index === segments.length - 1;
 
     return { path, label, segment, isLast };
@@ -31,7 +32,7 @@ export function Breadcrumb({ className }: BreadcrumbProps) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className={cn("flex items-center gap-1.5 text-sm", className)}
+      className={cn('flex items-center gap-1.5 text-sm', className)}
     >
       {/* 홈 링크 */}
       <Link
@@ -44,12 +45,12 @@ export function Breadcrumb({ className }: BreadcrumbProps) {
 
       {crumbs.map((crumb) => (
         <span key={crumb.path} className="flex items-center gap-1.5">
-          <ChevronRight className="w-3.5 h-3.5 text-gray-600" aria-hidden="true" />
+          <ChevronRight
+            className="w-3.5 h-3.5 text-gray-600"
+            aria-hidden="true"
+          />
           {crumb.isLast ? (
-            <span
-              className="text-white font-medium"
-              aria-current="page"
-            >
+            <span className="text-white font-medium" aria-current="page">
               {crumb.label}
             </span>
           ) : (

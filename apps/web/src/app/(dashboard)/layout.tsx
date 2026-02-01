@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { StudioSidebar } from '@/components/studio/StudioSidebar';
 import { StudioHeader } from '@/components/studio/StudioHeader';
@@ -52,12 +52,8 @@ export default function StarsLayout({
       />
 
       {/* Main Content */}
-      <main
-        className="pt-14 pl-[240px] min-h-screen transition-all duration-300"
-      >
-        <div className="p-6">
-          {children}
-        </div>
+      <main className="pt-14 pl-[240px] min-h-screen transition-all duration-300">
+        <div className="p-6">{children}</div>
       </main>
     </div>
   );

@@ -31,7 +31,11 @@ export interface FeedbackPanelProps {
   /** Called when user clicks on a timestamp */
   onTimestampClick?: (timestamp: number) => void;
   /** Called when new feedback is submitted */
-  onSubmit?: (data: { content: string; timestamp: number; priority: string }) => void;
+  onSubmit?: (data: {
+    content: string;
+    timestamp: number;
+    priority: string;
+  }) => void;
   /** Called when feedback status changes */
   onStatusChange?: (id: string, status: FeedbackItem['status']) => void;
   /** Enable/disable adding new feedback */
@@ -85,7 +89,9 @@ export function FeedbackPanel({
     }
   }, [newContent, currentTime, newPriority, onSubmit]);
 
-  const sortedFeedbacks = [...feedbacks].sort((a, b) => a.timestamp - b.timestamp);
+  const sortedFeedbacks = [...feedbacks].sort(
+    (a, b) => a.timestamp - b.timestamp
+  );
 
   return (
     <div className={`feedback-panel flex flex-col h-full ${className}`}>
@@ -93,7 +99,8 @@ export function FeedbackPanel({
       <div className="p-4 border-b">
         <h3 className="text-lg font-semibold">피드백</h3>
         <p className="text-sm text-gray-500">
-          총 {feedbacks.length}개 · 미해결 {feedbacks.filter(f => f.status === 'pending').length}개
+          총 {feedbacks.length}개 · 미해결{' '}
+          {feedbacks.filter((f) => f.status === 'pending').length}개
         </p>
       </div>
 
@@ -192,14 +199,21 @@ function FeedbackItemCard({
           className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+              clipRule="evenodd"
+            />
           </svg>
           {formatTimestamp(feedback.timestamp)}
-          {feedback.endTimestamp && ` - ${formatTimestamp(feedback.endTimestamp)}`}
+          {feedback.endTimestamp &&
+            ` - ${formatTimestamp(feedback.endTimestamp)}`}
         </button>
 
         <div className="flex items-center gap-1">
-          <span className={`text-xs px-2 py-0.5 rounded ${priorityColors[feedback.priority]}`}>
+          <span
+            className={`text-xs px-2 py-0.5 rounded ${priorityColors[feedback.priority]}`}
+          >
             {feedback.priority === 'low' && '낮음'}
             {feedback.priority === 'medium' && '보통'}
             {feedback.priority === 'high' && '높음'}
@@ -214,7 +228,8 @@ function FeedbackItemCard({
       {/* Coordinate indicator */}
       {feedback.coordinates && (
         <div className="text-xs text-gray-400 mb-2">
-          📍 화면 좌표: ({Math.round(feedback.coordinates.x * 100)}%, {Math.round(feedback.coordinates.y * 100)}%)
+          📍 화면 좌표: ({Math.round(feedback.coordinates.x * 100)}%,{' '}
+          {Math.round(feedback.coordinates.y * 100)}%)
         </div>
       )}
 
@@ -225,7 +240,12 @@ function FeedbackItemCard({
         {onStatusChange && (
           <select
             value={feedback.status}
-            onChange={(e) => onStatusChange(feedback.id, e.target.value as FeedbackItem['status'])}
+            onChange={(e) =>
+              onStatusChange(
+                feedback.id,
+                e.target.value as FeedbackItem['status']
+              )
+            }
             className={`px-2 py-0.5 rounded border-0 text-xs ${statusColors[feedback.status]}`}
           >
             <option value="pending">대기 중</option>

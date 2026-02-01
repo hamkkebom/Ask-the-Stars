@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -22,11 +22,14 @@ export default function StarsSignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -76,13 +79,11 @@ export default function StarsSignupPage() {
         </div>
         <h2 className="text-xl font-bold text-white mb-2">가입 완료!</h2>
         <p className="text-[#aaa] mb-6">
-          입력하신 이메일로 인증 링크를 발송했습니다.<br />
+          입력하신 이메일로 인증 링크를 발송했습니다.
+          <br />
           이메일을 확인해주세요.
         </p>
-        <Link
-          href="/auth/login"
-          className="text-yellow-500 hover:underline"
-        >
+        <Link href="/auth/login" className="text-yellow-500 hover:underline">
           로그인 페이지로 이동
         </Link>
       </div>
@@ -103,14 +104,15 @@ export default function StarsSignupPage() {
       <h1 className="text-2xl font-bold text-white text-center mb-2">
         프리랜서 가입
       </h1>
-      <p className="text-[#aaa] text-center mb-8">
-        영상 제작자로 시작하세요
-      </p>
+      <p className="text-[#aaa] text-center mb-8">영상 제작자로 시작하세요</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             이름 *
           </label>
           <input
@@ -126,7 +128,10 @@ export default function StarsSignupPage() {
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             이메일 *
           </label>
           <input
@@ -142,7 +147,10 @@ export default function StarsSignupPage() {
 
         {/* Specialty */}
         <div>
-          <label htmlFor="specialty" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="specialty"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             전문 분야
           </label>
           <select
@@ -164,7 +172,10 @@ export default function StarsSignupPage() {
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             비밀번호 *
           </label>
           <div className="relative">
@@ -182,14 +193,21 @@ export default function StarsSignupPage() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors"
             >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
 
         {/* Confirm Password */}
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             비밀번호 확인 *
           </label>
           <input
@@ -213,9 +231,13 @@ export default function StarsSignupPage() {
             className="mt-1 w-4 h-4 rounded border-[#3f3f3f]"
           />
           <span className="text-sm text-[#aaa]">
-            <Link href="/terms" className="text-yellow-500 hover:underline">이용약관</Link>
-            {' '}및{' '}
-            <Link href="/privacy" className="text-yellow-500 hover:underline">개인정보처리방침</Link>
+            <Link href="/terms" className="text-yellow-500 hover:underline">
+              이용약관
+            </Link>{' '}
+            및{' '}
+            <Link href="/privacy" className="text-yellow-500 hover:underline">
+              개인정보처리방침
+            </Link>
             에 동의합니다
           </span>
         </label>

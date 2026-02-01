@@ -1,4 +1,3 @@
-
 import { axiosInstance } from './axios';
 
 export interface Submission {
@@ -15,18 +14,18 @@ export interface Submission {
   version: number;
   signedToken?: string;
   user?: {
-      id: string;
-      name: string;
-      profileImage?: string;
-      email?: string;
+    id: string;
+    name: string;
+    profileImage?: string;
+    email?: string;
   };
   assignment?: {
-      request: {
-          title: string;
-      };
+    request: {
+      title: string;
+    };
   };
   project?: {
-      title: string;
+    title: string;
   };
 }
 
@@ -44,7 +43,7 @@ export const submissionsApi = {
 
   getAll: async (projectId?: string) => {
     const response = await axiosInstance.get<Submission[]>('/submissions', {
-      params: { projectId }
+      params: { projectId },
     });
     return response.data;
   },
@@ -54,8 +53,15 @@ export const submissionsApi = {
     return response.data;
   },
 
-  updateStatus: async (id: string, status: Submission['status'], notes?: string) => {
-    const response = await axiosInstance.patch(`/submissions/${id}`, { status, notes });
+  updateStatus: async (
+    id: string,
+    status: Submission['status'],
+    notes?: string
+  ) => {
+    const response = await axiosInstance.patch(`/submissions/${id}`, {
+      status,
+      notes,
+    });
     return response.data;
   },
 
@@ -66,5 +72,5 @@ export const submissionsApi = {
   generateUploadUrl: async (data: { uploadLength: number; metadata?: any }) => {
     const response = await axiosInstance.post('/submissions/upload-url', data);
     return response.data;
-  }
+  },
 };

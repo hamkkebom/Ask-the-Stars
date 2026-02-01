@@ -22,25 +22,21 @@ export default function Error({
         <div className="mx-auto w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-6">
           <AlertTriangle className="w-8 h-8 text-red-500" />
         </div>
-
         <h1 className="text-3xl font-bold text-foreground mb-2">
           오류가 발생했습니다
         </h1>
-
-          페이지를 불러오는 중 문제가 발생했습니다.
-          <br />
-          <span className="text-red-400 font-mono text-xs block mt-2 bg-black/50 p-2 rounded">
-            {error.message}
-          </span>
-          <br />
-          잠시 후 다시 시도해주세요.
-
+        페이지를 불러오는 중 문제가 발생했습니다.
+        <br />
+        <span className="text-red-400 font-mono text-xs block mt-2 bg-black/50 p-2 rounded">
+          {error.message}
+        </span>
+        <br />
+        잠시 후 다시 시도해주세요.
         {error.digest && (
           <p className="text-xs text-muted-foreground/60 mb-6 font-mono">
             오류 코드: {error.digest}
           </p>
         )}
-
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}

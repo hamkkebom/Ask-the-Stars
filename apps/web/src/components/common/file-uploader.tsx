@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { UploadCloud, X, File as FileIcon, Loader2 } from 'lucide-react';
 import { uploadsApi } from '@/lib/api/uploads';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface FileUploaderProps {
   onUploadComplete: (url: string) => void;
@@ -59,8 +60,8 @@ export function FileUploader({
     }
     // Basic type check based on accept prop
     if (accept.includes('image') && !selectedFile.type.startsWith('image/')) {
-        alert('Images only please');
-        return;
+      alert('Images only please');
+      return;
     }
 
     setFile(selectedFile);
@@ -72,7 +73,7 @@ export function FileUploader({
       };
       reader.readAsDataURL(selectedFile);
     } else {
-        setPreview(null);
+      setPreview(null);
     }
   };
 
@@ -94,11 +95,11 @@ export function FileUploader({
       // Fake progress interval
       const interval = setInterval(() => {
         setProgress((prev) => {
-            if (prev >= 90) {
-                clearInterval(interval);
-                return 90;
-            }
-            return prev + 10;
+          if (prev >= 90) {
+            clearInterval(interval);
+            return 90;
+          }
+          return prev + 10;
         });
       }, 200);
 
@@ -111,11 +112,10 @@ export function FileUploader({
 
       // Reset after success
       setTimeout(() => {
-          setUploading(false);
-          setProgress(0);
-          handleRemove();
+        setUploading(false);
+        setProgress(0);
+        handleRemove();
       }, 500);
-
     } catch (error) {
       console.error('Upload failed', error);
       alert('Upload failed. Please try again.');
@@ -140,10 +140,12 @@ export function FileUploader({
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             <UploadCloud className="w-10 h-10 mb-3 text-gray-400" />
             <p className="mb-2 text-sm text-gray-500">
-              <span className="font-semibold">Click to upload</span> or drag and drop
+              <span className="font-semibold">Click to upload</span> or drag and
+              drop
             </p>
             <p className="text-xs text-gray-500">
-              {accept === 'image/*' ? 'PNG, JPG, GIF' : 'Files'} up to {maxSizeMB}MB
+              {accept === 'image/*' ? 'PNG, JPG, GIF' : 'Files'} up to{' '}
+              {maxSizeMB}MB
             </p>
           </div>
           <input
@@ -158,15 +160,18 @@ export function FileUploader({
         <div className="relative w-full rounded-lg border p-4 bg-white shadow-sm">
           <div className="flex items-center space-x-4">
             {preview ? (
-              <img
+              <Image
                 src={preview}
                 alt="Preview"
+                width={64}
+                height={64}
                 className="w-16 h-16 object-cover rounded-md"
+                unoptimized
               />
             ) : (
-                <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center">
-                    <FileIcon className="w-8 h-8 text-gray-400" />
-                </div>
+              <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center">
+                <FileIcon className="w-8 h-8 text-gray-400" />
+              </div>
             )}
 
             <div className="flex-1 min-w-0">
@@ -177,26 +182,29 @@ export function FileUploader({
                 {(file.size / 1024 / 1024).toFixed(2)} MB
               </p>
               {uploading && (
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                    <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%`, transition: 'width 0.2s' }}></div>
-                  </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    style={{ width: `${progress}%`, transition: 'width 0.2s' }}
+                  ></div>
+                </div>
               )}
             </div>
 
             <div className="flex items-center space-x-2">
-                {!uploading && (
-                    <Button variant="ghost" size="icon" onClick={handleRemove}>
-                        <X className="w-4 h-4" />
-                    </Button>
-                )}
+              {!uploading && (
+                <Button variant="ghost" size="icon" onClick={handleRemove}>
+                  <X className="w-4 h-4" />
+                </Button>
+              )}
             </div>
           </div>
 
           {!uploading && (
-              <div className="mt-4 flex justify-end">
-                <Button onClick={handleUpload} disabled={uploading}>
-                    Upload
-                </Button>
+            <div className="mt-4 flex justify-end">
+              <Button onClick={handleUpload} disabled={uploading}>
+                Upload
+              </Button>
             </div>
           )}
         </div>

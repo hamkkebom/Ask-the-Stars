@@ -26,7 +26,9 @@ export const settlementsApi = {
   },
 
   getSummary: async (): Promise<SettlementSummary> => {
-    const response = await axiosInstance.get<SettlementSummary>('/settlements/summary');
+    const response = await axiosInstance.get<SettlementSummary>(
+      '/settlements/summary'
+    );
     return response.data;
   },
 
@@ -37,7 +39,9 @@ export const settlementsApi = {
 
   // Admin only
   process: async (id: string): Promise<Settlement> => {
-    const response = await axiosInstance.post<Settlement>(`/settlements/${id}/process`);
+    const response = await axiosInstance.post<Settlement>(
+      `/settlements/${id}/process`
+    );
     return response.data;
   },
 };

@@ -16,12 +16,9 @@ export default function EarningsLoading() {
         {[
           'border-blue-500/30',
           'border-green-500/30',
-          'border-purple-500/30'
+          'border-purple-500/30',
         ].map((border, i) => (
-          <div
-            key={i}
-            className={`rounded-xl border ${border} bg-white/5 p-6`}
-          >
+          <div key={i} className={`rounded-xl border ${border} bg-white/5 p-6`}>
             <div className="flex items-center gap-3 mb-4">
               <Skeleton className="w-9 h-9 rounded-lg" />
               <Skeleton className="h-4 w-20" />

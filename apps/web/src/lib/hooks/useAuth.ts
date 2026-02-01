@@ -23,7 +23,10 @@ export function useAuth() {
     // 초기 세션 가져오기
     const getInitialSession = async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
         setState({ user, loading: false, error });
       } catch (error) {
         setState({ user: null, loading: false, error: error as AuthError });
@@ -33,77 +36,89 @@ export function useAuth() {
     getInitialSession();
 
     // 인증 상태 변화 구독
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setState({
-          user: session?.user ?? null,
-          loading: false,
-          error: null,
-        });
-      }
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setState({
+        user: session?.user ?? null,
+        loading: false,
+        error: null,
+      });
+    });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      setState(prev => ({ ...prev, loading: false, error }));
-      return { error };
-    }
-    return { data };
-  }, []);
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        setState((prev) => ({ ...prev, loading: false, error }));
+        return { error };
+      }
+      return { data };
+    },
+    [supabase]
+  );
 
-  const signUp = useCallback(async (
-    email: string,
-    password: string,
-    metadata?: { role?: 'STAR' | 'CLIENT'; name?: string }
-  ) => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: metadata,
-        emailRedirectTo: `${window.location.origin}/auth/verify-email`,
-      },
-    });
-    if (error) {
-      setState(prev => ({ ...prev, loading: false, error }));
-      return { error };
-    }
-    return { data };
-  }, []);
+  const signUp = useCallback(
+    async (
+      email: string,
+      password: string,
+      metadata?: { role?: 'STAR' | 'CLIENT'; name?: string }
+    ) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: metadata,
+          emailRedirectTo: `${window.location.origin}/auth/verify-email`,
+        },
+      });
+      if (error) {
+        setState((prev) => ({ ...prev, loading: false, error }));
+        return { error };
+      }
+      return { data };
+    },
+    [supabase]
+  );
 
   const signOut = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true }));
+    setState((prev) => ({ ...prev, loading: true }));
     const { error } = await supabase.auth.signOut();
     if (error) {
-      setState(prev => ({ ...prev, loading: false, error }));
+      setState((prev) => ({ ...prev, loading: false, error }));
       return { error };
     }
     setState({ user: null, loading: false, error: null });
     return {};
-  }, []);
+  }, [supabase]);
 
-  const resetPassword = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
-    });
-    return { error };
-  }, []);
+  const resetPassword = useCallback(
+    async (email: string) => {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+      return { error };
+    },
+    [supabase]
+  );
 
-  const updatePassword = useCallback(async (newPassword: string) => {
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-    return { error };
-  }, []);
+  const updatePassword = useCallback(
+    async (newPassword: string) => {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      return { error };
+    },
+    [supabase]
+  );
 
   return {
     user: state.user,

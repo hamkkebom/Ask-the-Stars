@@ -19,7 +19,7 @@ import {
   Users,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
 } from 'lucide-react';
 
 import { ProjectRequest } from '@/lib/api/projects';
@@ -27,11 +27,11 @@ import { ProjectRequest } from '@/lib/api/projects';
 // Mock Data Removed
 
 const categoryColors: Record<string, string> = {
-  '신년운세': 'bg-red-500/20 text-red-200 border-red-500/30',
-  '타로': 'bg-purple-500/20 text-purple-200 border-purple-500/30',
-  '사주': 'bg-blue-500/20 text-blue-200 border-blue-500/30',
-  '신점': 'bg-orange-500/20 text-orange-200 border-orange-500/30',
-  'default': 'bg-gray-500/20 text-gray-200 border-gray-500/30',
+  신년운세: 'bg-red-500/20 text-red-200 border-red-500/30',
+  타로: 'bg-purple-500/20 text-purple-200 border-purple-500/30',
+  사주: 'bg-blue-500/20 text-blue-200 border-blue-500/30',
+  신점: 'bg-orange-500/20 text-orange-200 border-orange-500/30',
+  default: 'bg-gray-500/20 text-gray-200 border-gray-500/30',
 };
 
 function getCategoryStyle(cat: string) {
@@ -60,16 +60,31 @@ function StatusBadge({ status }: { status: ProjectRequest['status'] }) {
   };
 
   return (
-    <span className={cn("px-2 py-0.5 rounded text-xs font-medium border", styles[status] || styles.OPEN)}>
+    <span
+      className={cn(
+        'px-2 py-0.5 rounded text-xs font-medium border',
+        styles[status] || styles.OPEN
+      )}
+    >
       {labels[status] || status}
     </span>
   );
 }
 
-function StatsCard({ title, value, icon: Icon, color }: { title: string, value: string, icon: any, color: string }) {
+function StatsCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+}: {
+  title: string;
+  value: string;
+  icon: any;
+  color: string;
+}) {
   return (
     <GlassCard className="flex items-center p-6 gap-4">
-      <div className={cn("p-3 rounded-full bg-white/5", color)}>
+      <div className={cn('p-3 rounded-full bg-white/5', color)}>
         <Icon className="w-6 h-6" />
       </div>
       <div>
@@ -84,25 +99,29 @@ export default function ProjectBoardPage() {
   const { data: requests = [], isLoading: loading } = useQuery({
     queryKey: ['project-requests'],
     queryFn: projectsApi.getProjectRequests,
-    initialData: []
+    initialData: [],
   });
 
   const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Stats calculation
-  const totalOpen = requests.filter(r => r.status === 'OPEN').length;
-  const totalBudget = requests.reduce((acc, curr) => acc + (curr.estimatedBudget || 0), 0);
+  const totalOpen = requests.filter((r) => r.status === 'OPEN').length;
+  const totalBudget = requests.reduce(
+    (acc, curr) => acc + (curr.estimatedBudget || 0),
+    0
+  );
 
-  const filteredRequests = requests.filter(r =>
-    r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    r.categories.some(c => c.includes(searchQuery))
+  const filteredRequests = requests.filter(
+    (r) =>
+      r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.categories.some((c) => c.includes(searchQuery))
   );
 
   const columns = {
-    OPEN: filteredRequests.filter(r => r.status === 'OPEN'),
-    FULL: filteredRequests.filter(r => r.status === 'FULL'),
-    CLOSED: filteredRequests.filter(r => r.status === 'CLOSED'),
+    OPEN: filteredRequests.filter((r) => r.status === 'OPEN'),
+    FULL: filteredRequests.filter((r) => r.status === 'FULL'),
+    CLOSED: filteredRequests.filter((r) => r.status === 'CLOSED'),
   };
 
   return (
@@ -111,39 +130,69 @@ export default function ProjectBoardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white">프로젝트 보드</h1>
-          <p className="text-gray-400 mt-1">실시간 영상 제작 요청을 확인하고 참여하세요</p>
+          <p className="text-gray-400 mt-1">
+            실시간 영상 제작 요청을 확인하고 참여하세요
+          </p>
         </div>
         <div className="flex items-center gap-2">
-           <div className="bg-white/5 border border-white/10 rounded-lg p-1 flex">
-             <button
-               onClick={() => setViewMode('board')}
-               className={cn("p-2 rounded transition-all", viewMode === 'board' ? "bg-white/10 text-white shadow-sm" : "text-gray-400 hover:text-white")}
-             >
-               <LayoutGrid className="w-5 h-5" />
-             </button>
-             <button
-               onClick={() => setViewMode('list')}
-               className={cn("p-2 rounded transition-all", viewMode === 'list' ? "bg-white/10 text-white shadow-sm" : "text-gray-400 hover:text-white")}
-             >
-               <ListIcon className="w-5 h-5" />
-             </button>
-           </div>
-            <Link href="/stars/requests/create">
-              <button
-                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-              >
-                <Plus className="w-4 h-4" /> 새 요청 등록
-              </button>
-            </Link>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-1 flex">
+            <button
+              onClick={() => setViewMode('board')}
+              className={cn(
+                'p-2 rounded transition-all',
+                viewMode === 'board'
+                  ? 'bg-white/10 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              )}
+            >
+              <LayoutGrid className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={cn(
+                'p-2 rounded transition-all',
+                viewMode === 'list'
+                  ? 'bg-white/10 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              )}
+            >
+              <ListIcon className="w-5 h-5" />
+            </button>
+          </div>
+          <Link href="/stars/requests/create">
+            <button className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              <Plus className="w-4 h-4" /> 새 요청 등록
+            </button>
+          </Link>
         </div>
       </div>
 
       {/* Dashboard Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard title="모집 중인 프로젝트" value={`${totalOpen}건`} icon={AlertCircle} color="text-green-400" />
-        <StatsCard title="총 예산 규모" value={formatCurrency(totalBudget)} icon={CheckCircle2} color="text-yellow-400" />
-        <StatsCard title="참여중인 상담사" value="12명" icon={Users} color="text-blue-400" />
-        <StatsCard title="이번 주 마감" value="3건" icon={Clock} color="text-red-400" />
+        <StatsCard
+          title="모집 중인 프로젝트"
+          value={`${totalOpen}건`}
+          icon={AlertCircle}
+          color="text-green-400"
+        />
+        <StatsCard
+          title="총 예산 규모"
+          value={formatCurrency(totalBudget)}
+          icon={CheckCircle2}
+          color="text-yellow-400"
+        />
+        <StatsCard
+          title="참여중인 상담사"
+          value="12명"
+          icon={Users}
+          color="text-blue-400"
+        />
+        <StatsCard
+          title="이번 주 마감"
+          value="3건"
+          icon={Clock}
+          color="text-red-400"
+        />
       </div>
 
       {/* Filter Bar */}
@@ -167,89 +216,126 @@ export default function ProjectBoardPage() {
       {viewMode === 'board' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4">
           {Object.entries(columns).map(([status, items]) => (
-            <div key={status} className="flex flex-col gap-4 min-w-[300px] md:min-w-0">
+            <div
+              key={status}
+              className="flex flex-col gap-4 min-w-[300px] md:min-w-0"
+            >
               <div className="flex items-center justify-between px-2">
                 <h3 className="font-semibold text-gray-300 flex items-center gap-2">
-                  <span className={cn("w-2 h-2 rounded-full",
-                    status === 'OPEN' ? 'bg-green-500' :
-                    status === 'FULL' ? 'bg-yellow-500' : 'bg-gray-500'
-                  )} />
-                  {status === 'OPEN' ? '모집 중' : status === 'FULL' ? '진행 중/마감' : '완료됨'}
-                  <span className="bg-white/10 text-xs px-2 py-0.5 rounded-full text-gray-400">{items.length}</span>
+                  <span
+                    className={cn(
+                      'w-2 h-2 rounded-full',
+                      status === 'OPEN'
+                        ? 'bg-green-500'
+                        : status === 'FULL'
+                          ? 'bg-yellow-500'
+                          : 'bg-gray-500'
+                    )}
+                  />
+                  {status === 'OPEN'
+                    ? '모집 중'
+                    : status === 'FULL'
+                      ? '진행 중/마감'
+                      : '완료됨'}
+                  <span className="bg-white/10 text-xs px-2 py-0.5 rounded-full text-gray-400">
+                    {items.length}
+                  </span>
                 </h3>
               </div>
 
               <div className="flex flex-col gap-3">
-                {loading ? (
-                  // Skeleton Loading State
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="p-5 rounded-xl border border-white/5 bg-white/5 space-y-3">
-                       <div className="flex justify-between">
-                         <Skeleton className="h-5 w-16" />
-                         <Skeleton className="h-5 w-12" />
-                       </div>
-                       <Skeleton className="h-6 w-3/4" />
-                       <div className="flex gap-2">
-                         <Skeleton className="h-4 w-12" />
-                         <Skeleton className="h-4 w-12" />
-                       </div>
-                       <div className="pt-2 border-t border-white/5 flex justify-between">
-                         <Skeleton className="h-4 w-20" />
-                         <Skeleton className="h-4 w-16" />
-                       </div>
-                    </div>
-                  ))
-                ) : (
-                  // Actual Content
-                  items.map(item => (
-                    <Link key={item.id} href={`/stars/request-detail/${item.id}`}>
-                      <GlassCard
-                        className="p-5 hover:bg-white/10 border-white/5 hover:border-white/20 transition-all cursor-pointer group"
-                        hoverEffect={true}
+                {loading
+                  ? // Skeleton Loading State
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="p-5 rounded-xl border border-white/5 bg-white/5 space-y-3"
                       >
-                        <div className="flex justify-between items-start mb-3">
-                          <StatusBadge status={item.status} />
-                          {item.assignmentType === 'MULTIPLE' && (
-                            <span className="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded border border-blue-400/20">
-                              중복가능
-                            </span>
-                          )}
+                        <div className="flex justify-between">
+                          <Skeleton className="h-5 w-16" />
+                          <Skeleton className="h-5 w-12" />
                         </div>
-
-                        <h4 className="font-bold text-white mb-2 group-hover:text-primary transition-colors">{item.title}</h4>
-
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {item.categories.slice(0, 3).map(cat => (
-                            <span key={cat} className={cn("text-[10px] px-1.5 py-0.5 rounded border", getCategoryStyle(cat))}>
-                              {cat}
-                            </span>
-                          ))}
+                        <Skeleton className="h-6 w-3/4" />
+                        <div className="flex gap-2">
+                          <Skeleton className="h-4 w-12" />
+                          <Skeleton className="h-4 w-12" />
                         </div>
-
-                        <div className="space-y-2 text-xs text-gray-400">
-                          <div className="flex items-center justify-between">
-                            <span>예산</span>
-                            <span className="text-white font-medium">{formatCurrency(item.estimatedBudget ?? 0)}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span>마감일</span>
-                            <span className={cn(
-                              item.deadline && new Date(item.deadline) < new Date() ? "text-red-400" : "text-gray-300"
-                            )}>
-                              {item.deadline ? formatDate(item.deadline) : '-'}
-                            </span>
-                          </div>
-                          <div className="pt-2 border-t border-white/5 flex items-center justify-between mt-2">
-                             <span className="flex items-center gap-1">
-                               <Users className="w-3 h-3" /> {item.currentAssignees}/{item.maxAssignees}명
-                             </span>
-                             <span>{item.createdBy?.name}</span>
-                          </div>
+                        <div className="pt-2 border-t border-white/5 flex justify-between">
+                          <Skeleton className="h-4 w-20" />
+                          <Skeleton className="h-4 w-16" />
                         </div>
-                      </GlassCard>
-                    </Link>
-                  ))
-                )}
+                      </div>
+                    ))
+                  : // Actual Content
+                    items.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={`/stars/request-detail/${item.id}`}
+                      >
+                        <GlassCard
+                          className="p-5 hover:bg-white/10 border-white/5 hover:border-white/20 transition-all cursor-pointer group"
+                          hoverEffect={true}
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <StatusBadge status={item.status} />
+                            {item.assignmentType === 'MULTIPLE' && (
+                              <span className="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded border border-blue-400/20">
+                                중복가능
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 className="font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                            {item.title}
+                          </h4>
+
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {item.categories.slice(0, 3).map((cat) => (
+                              <span
+                                key={cat}
+                                className={cn(
+                                  'text-[10px] px-1.5 py-0.5 rounded border',
+                                  getCategoryStyle(cat)
+                                )}
+                              >
+                                {cat}
+                              </span>
+                            ))}
+                          </div>
+
+                          <div className="space-y-2 text-xs text-gray-400">
+                            <div className="flex items-center justify-between">
+                              <span>예산</span>
+                              <span className="text-white font-medium">
+                                {formatCurrency(item.estimatedBudget ?? 0)}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span>마감일</span>
+                              <span
+                                className={cn(
+                                  item.deadline &&
+                                    new Date(item.deadline) < new Date()
+                                    ? 'text-red-400'
+                                    : 'text-gray-300'
+                                )}
+                              >
+                                {item.deadline
+                                  ? formatDate(item.deadline)
+                                  : '-'}
+                              </span>
+                            </div>
+                            <div className="pt-2 border-t border-white/5 flex items-center justify-between mt-2">
+                              <span className="flex items-center gap-1">
+                                <Users className="w-3 h-3" />{' '}
+                                {item.currentAssignees}/{item.maxAssignees}명
+                              </span>
+                              <span>{item.createdBy?.name}</span>
+                            </div>
+                          </div>
+                        </GlassCard>
+                      </Link>
+                    ))}
               </div>
             </div>
           ))}
@@ -259,23 +345,30 @@ export default function ProjectBoardPage() {
       {/* List View (Simplified) */}
       {viewMode === 'list' && (
         <div className="space-y-3">
-           {filteredRequests.map(item => (
-             <GlassCard key={item.id} className="p-4 flex items-center gap-4 hover:bg-white/10 cursor-pointer">
-                <StatusBadge status={item.status} />
-                <div className="flex-1">
-                  <h4 className="font-bold text-white mb-1">{item.title}</h4>
-                  <div className="flex items-center gap-2 text-xs text-gray-400">
-                    <span>{formatDate(item.createdAt)}</span>
-                    <span>•</span>
-                    <span>{item.createdBy?.name}</span>
-                  </div>
+          {filteredRequests.map((item) => (
+            <GlassCard
+              key={item.id}
+              className="p-4 flex items-center gap-4 hover:bg-white/10 cursor-pointer"
+            >
+              <StatusBadge status={item.status} />
+              <div className="flex-1">
+                <h4 className="font-bold text-white mb-1">{item.title}</h4>
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <span>{formatDate(item.createdAt)}</span>
+                  <span>•</span>
+                  <span>{item.createdBy?.name}</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-white font-bold">{formatCurrency(item.estimatedBudget ?? 0)}</p>
-                  <p className="text-xs text-gray-400">{item.deadline ? formatDate(item.deadline) : '-'} 까지</p>
-                </div>
-             </GlassCard>
-           ))}
+              </div>
+              <div className="text-right">
+                <p className="text-white font-bold">
+                  {formatCurrency(item.estimatedBudget ?? 0)}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {item.deadline ? formatDate(item.deadline) : '-'} 까지
+                </p>
+              </div>
+            </GlassCard>
+          ))}
         </div>
       )}
     </div>

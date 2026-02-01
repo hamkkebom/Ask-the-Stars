@@ -33,12 +33,30 @@ export function StudioHeader({
 
   // Mock notifications
   const notifications = [
-    { id: 1, title: '피드백 도착', desc: '브랜드 영상에 수정 요청', time: '5분 전', unread: true },
-    { id: 2, title: '정산 완료', desc: '₩320,000 입금 완료', time: '1시간 전', unread: false },
-    { id: 3, title: '새 프로젝트', desc: '기업 홍보 영상 의뢰', time: '3시간 전', unread: false },
+    {
+      id: 1,
+      title: '피드백 도착',
+      desc: '브랜드 영상에 수정 요청',
+      time: '5분 전',
+      unread: true,
+    },
+    {
+      id: 2,
+      title: '정산 완료',
+      desc: '₩320,000 입금 완료',
+      time: '1시간 전',
+      unread: false,
+    },
+    {
+      id: 3,
+      title: '새 프로젝트',
+      desc: '기업 홍보 영상 의뢰',
+      time: '3시간 전',
+      unread: false,
+    },
   ];
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <header
@@ -60,7 +78,10 @@ export function StudioHeader({
           <div key={index} className="flex items-center gap-2">
             <span className="text-[#3f3f3f]">/</span>
             {crumb.href ? (
-              <Link href={crumb.href} className="text-[#aaa] hover:text-white transition-colors">
+              <Link
+                href={crumb.href}
+                className="text-[#aaa] hover:text-white transition-colors"
+              >
                 {crumb.label}
               </Link>
             ) : (
@@ -140,7 +161,7 @@ export function StudioHeader({
                 <h3 className="text-white font-medium">알림</h3>
               </div>
               <div className="max-h-80 overflow-y-auto">
-                {notifications.map(notification => (
+                {notifications.map((notification) => (
                   <div
                     key={notification.id}
                     className={cn(
@@ -153,9 +174,15 @@ export function StudioHeader({
                         <div className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-white text-sm font-medium">{notification.title}</p>
-                        <p className="text-[#aaa] text-xs truncate">{notification.desc}</p>
-                        <p className="text-[#666] text-xs mt-1">{notification.time}</p>
+                        <p className="text-white text-sm font-medium">
+                          {notification.title}
+                        </p>
+                        <p className="text-[#aaa] text-xs truncate">
+                          {notification.desc}
+                        </p>
+                        <p className="text-[#666] text-xs mt-1">
+                          {notification.time}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -194,14 +221,18 @@ export function StudioHeader({
               </div>
               <div className="py-1">
                 <Link
-                  href={variant === 'stars' ? '/stars/profile' : '/admin/settings'}
+                  href={
+                    variant === 'stars' ? '/stars/profile' : '/admin/settings'
+                  }
                   className="flex items-center gap-3 px-4 py-2 text-[#aaa] hover:bg-[#3f3f3f] hover:text-white transition-colors"
                 >
                   <User className="w-4 h-4" />
                   <span className="text-sm">프로필</span>
                 </Link>
                 <Link
-                  href={variant === 'stars' ? '/stars/settings' : '/admin/settings'}
+                  href={
+                    variant === 'stars' ? '/stars/settings' : '/admin/settings'
+                  }
                   className="flex items-center gap-3 px-4 py-2 text-[#aaa] hover:bg-[#3f3f3f] hover:text-white transition-colors"
                 >
                   <Settings className="w-4 h-4" />

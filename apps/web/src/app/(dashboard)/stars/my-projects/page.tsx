@@ -19,7 +19,7 @@ import {
   FolderOpen,
   ArrowRight,
   ChevronLeft,
-  ChevronRight as ChevronRightIcon
+  ChevronRight as ChevronRightIcon,
 } from 'lucide-react';
 
 // Types and Mock Data remain same...
@@ -64,16 +64,31 @@ function StatusBadge({ status }: { status: MyProject['status'] }) {
   };
 
   return (
-    <span className={cn("px-2 py-0.5 rounded text-xs font-medium border", styles[status])}>
+    <span
+      className={cn(
+        'px-2 py-0.5 rounded text-xs font-medium border',
+        styles[status]
+      )}
+    >
       {labels[status]}
     </span>
   );
 }
 
-function StatsCard({ title, value, icon: Icon, color }: { title: string; value: string; icon: any; color: string }) {
+function StatsCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+}: {
+  title: string;
+  value: string;
+  icon: any;
+  color: string;
+}) {
   return (
     <GlassCard className="flex items-center p-6 gap-4">
-      <div className={cn("p-3 rounded-full bg-white/5", color)}>
+      <div className={cn('p-3 rounded-full bg-white/5', color)}>
         <Icon className="w-6 h-6" />
       </div>
       <div>
@@ -87,29 +102,64 @@ function StatsCard({ title, value, icon: Icon, color }: { title: string; value: 
 function CalendarView({ projects }: { projects: MyProject[] }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+  const daysInMonth = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0
+  ).getDate();
+  const firstDay = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1
+  ).getDay();
 
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const blanks = Array.from({ length: firstDay }, (_, i) => i);
 
   const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-  const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+  const months = [
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월',
+  ];
 
   const getProjectsForDay = (day: number) => {
-    return projects.filter(p => {
+    return projects.filter((p) => {
       const date = new Date(p.deadline);
-      return date.getDate() === day && date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear();
+      return (
+        date.getDate() === day &&
+        date.getMonth() === currentDate.getMonth() &&
+        date.getFullYear() === currentDate.getFullYear()
+      );
     });
   };
 
   const isToday = (day: number) => {
     const today = new Date();
-    return day === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
+    return (
+      day === today.getDate() &&
+      currentDate.getMonth() === today.getMonth() &&
+      currentDate.getFullYear() === today.getFullYear()
+    );
   };
 
-  const goToPrevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  const goToNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  const goToPrevMonth = () =>
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    );
+  const goToNextMonth = () =>
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    );
   const goToToday = () => setCurrentDate(new Date());
 
   return (
@@ -120,16 +170,34 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
           {currentDate.getFullYear()}년 {months[currentDate.getMonth()]}
         </h2>
         <div className="flex items-center gap-2">
-          <button onClick={goToToday} className="px-3 py-1.5 text-sm text-vibrant-cyan hover:bg-vibrant-cyan/10 rounded-lg transition-colors">오늘</button>
-          <button onClick={goToPrevMonth} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">←</button>
-          <button onClick={goToNextMonth} className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white">→</button>
+          <button
+            onClick={goToToday}
+            className="px-3 py-1.5 text-sm text-vibrant-cyan hover:bg-vibrant-cyan/10 rounded-lg transition-colors"
+          >
+            오늘
+          </button>
+          <button
+            onClick={goToPrevMonth}
+            className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white"
+          >
+            ←
+          </button>
+          <button
+            onClick={goToNextMonth}
+            className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white"
+          >
+            →
+          </button>
         </div>
       </div>
 
       {/* Weekdays */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {weekdays.map((day, i) => (
-          <div key={day} className={`text-center py-2 text-sm font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}>
+          <div
+            key={day}
+            className={`text-center py-2 text-sm font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-gray-400'}`}
+          >
             {day}
           </div>
         ))}
@@ -137,8 +205,10 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1">
-        {blanks.map((_, i) => <div key={`blank-${i}`} className="aspect-square" />)}
-        {days.map(day => {
+        {blanks.map((_, i) => (
+          <div key={`blank-${i}`} className="aspect-square" />
+        ))}
+        {days.map((day) => {
           const dayProjects = getProjectsForDay(day);
           const hasDeadline = dayProjects.length > 0;
           const dayOfWeek = (firstDay + day - 1) % 7;
@@ -146,24 +216,37 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
             <div
               key={day}
               className={`aspect-square p-1 rounded-lg border transition-all cursor-pointer group relative ${
-                isToday(day) ? 'bg-vibrant-cyan/20 border-vibrant-cyan/50' :
-                hasDeadline ? 'bg-orange-500/10 border-orange-500/30 hover:border-orange-500/50' :
-                'border-transparent hover:bg-white/5'
+                isToday(day)
+                  ? 'bg-vibrant-cyan/20 border-vibrant-cyan/50'
+                  : hasDeadline
+                    ? 'bg-orange-500/10 border-orange-500/30 hover:border-orange-500/50'
+                    : 'border-transparent hover:bg-white/5'
               }`}
             >
-              <span className={`text-sm font-medium ${isToday(day) ? 'text-vibrant-cyan' : dayOfWeek === 0 ? 'text-red-400' : dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-300'}`}>
+              <span
+                className={`text-sm font-medium ${isToday(day) ? 'text-vibrant-cyan' : dayOfWeek === 0 ? 'text-red-400' : dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-300'}`}
+              >
                 {day}
               </span>
               {hasDeadline && (
                 <div className="absolute bottom-1 left-1 right-1 flex gap-0.5">
-                  {dayProjects.slice(0, 3).map((_, i) => <div key={i} className="flex-1 h-1 rounded-full bg-orange-500" />)}
+                  {dayProjects.slice(0, 3).map((_, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 h-1 rounded-full bg-orange-500"
+                    />
+                  ))}
                 </div>
               )}
               {hasDeadline && (
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10 min-w-[150px]">
                   <div className="bg-neutral-800 border border-white/10 rounded-lg p-2 shadow-xl">
                     <p className="text-xs text-gray-400 mb-1">마감 예정</p>
-                    {dayProjects.map((p, i) => <p key={i} className="text-sm text-white truncate">{p.title}</p>)}
+                    {dayProjects.map((p, i) => (
+                      <p key={i} className="text-sm text-white truncate">
+                        {p.title}
+                      </p>
+                    ))}
                   </div>
                 </div>
               )}
@@ -174,13 +257,18 @@ function CalendarView({ projects }: { projects: MyProject[] }) {
 
       {/* Legend */}
       <div className="flex items-center gap-6 mt-6 pt-4 border-t border-white/5">
-        <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-vibrant-cyan/50" /><span className="text-xs text-gray-400">오늘</span></div>
-        <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-orange-500" /><span className="text-xs text-gray-400">마감일</span></div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-vibrant-cyan/50" />
+          <span className="text-xs text-gray-400">오늘</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-orange-500" />
+          <span className="text-xs text-gray-400">마감일</span>
+        </div>
       </div>
     </GlassCard>
   );
 }
-
 
 function MyProjectsContent() {
   const searchParams = useSearchParams();
@@ -192,41 +280,51 @@ function MyProjectsContent() {
     queryFn: async () => {
       const response = await axiosInstance.get('/projects/my-assignments');
       return response.data;
-    }
+    },
   });
 
-  const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>('all');
+  const [filter, setFilter] = useState<'all' | 'in_progress' | 'completed'>(
+    'all'
+  );
 
   // Transform API data to UI model
   const projects: MyProject[] = assignments.map((a: any) => ({
-      ...a,
-      title: a.request.title,
-      description: a.request.description,
-      deadline: a.request.deadline,
-      budget: a.request.estimatedBudget || 0,
-      targetCounselor: a.request.createdBy, // Showing Request Creator as target for now
-      versionsCount: 5, // Max
-      approvedVersions: a.submissions?.filter((s:any) => s.status === 'APPROVED').length || 0,
-      pendingFeedbacks: 0, // Need feedback count from API
-      requestId: a.requestId
+    ...a,
+    title: a.request.title,
+    description: a.request.description,
+    deadline: a.request.deadline,
+    budget: a.request.estimatedBudget || 0,
+    targetCounselor: a.request.createdBy, // Showing Request Creator as target for now
+    versionsCount: 5, // Max
+    approvedVersions:
+      a.submissions?.filter((s: any) => s.status === 'APPROVED').length || 0,
+    pendingFeedbacks: 0, // Need feedback count from API
+    requestId: a.requestId,
   }));
 
-  const filteredProjects = projects.filter(p => {
+  const filteredProjects = projects.filter((p) => {
     if (filter === 'all') return true;
-    if (filter === 'in_progress') return ['ACCEPTED', 'IN_PROGRESS', 'SUBMITTED'].includes(p.status);
+    if (filter === 'in_progress')
+      return ['ACCEPTED', 'IN_PROGRESS', 'SUBMITTED'].includes(p.status);
     if (filter === 'completed') return p.status === 'COMPLETED';
     return true;
   });
 
   const stats = {
-    inProgress: projects.filter(p => ['ACCEPTED', 'IN_PROGRESS'].includes(p.status)).length,
-    submitted: projects.filter(p => p.status === 'SUBMITTED').length,
-    completed: projects.filter(p => p.status === 'COMPLETED').length,
-    totalEarnings: projects.filter(p => p.status === 'COMPLETED').reduce((acc, p) => acc + (p.budget || 0), 0),
+    inProgress: projects.filter((p) =>
+      ['ACCEPTED', 'IN_PROGRESS'].includes(p.status)
+    ).length,
+    submitted: projects.filter((p) => p.status === 'SUBMITTED').length,
+    completed: projects.filter((p) => p.status === 'COMPLETED').length,
+    totalEarnings: projects
+      .filter((p) => p.status === 'COMPLETED')
+      .reduce((acc, p) => acc + (p.budget || 0), 0),
   };
 
   const getDaysLeft = (deadline: string) => {
-    const days = Math.ceil((new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(
+      (new Date(deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    );
     return days;
   };
 
@@ -244,21 +342,33 @@ function MyProjectsContent() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-white">내 프로젝트</h1>
-          <p className="text-gray-400 mt-1">수락한 프로젝트를 관리하고 진행 상황을 확인하세요</p>
+          <p className="text-gray-400 mt-1">
+            수락한 프로젝트를 관리하고 진행 상황을 확인하세요
+          </p>
         </div>
         <div className="flex gap-2">
-           <Link
-             href="/stars/my-projects?view=list"
-             className={cn("p-2 rounded-lg transition-colors", view !== 'calendar' ? "bg-white/10 text-white" : "text-gray-400 hover:text-white")}
-           >
-             <FolderOpen className="w-5 h-5" />
-           </Link>
-           <Link
-             href="/stars/my-projects?view=calendar"
-             className={cn("p-2 rounded-lg transition-colors", view === 'calendar' ? "bg-white/10 text-white" : "text-gray-400 hover:text-white")}
-           >
-             <Calendar className="w-5 h-5" />
-           </Link>
+          <Link
+            href="/stars/my-projects?view=list"
+            className={cn(
+              'p-2 rounded-lg transition-colors',
+              view !== 'calendar'
+                ? 'bg-white/10 text-white'
+                : 'text-gray-400 hover:text-white'
+            )}
+          >
+            <FolderOpen className="w-5 h-5" />
+          </Link>
+          <Link
+            href="/stars/my-projects?view=calendar"
+            className={cn(
+              'p-2 rounded-lg transition-colors',
+              view === 'calendar'
+                ? 'bg-white/10 text-white'
+                : 'text-gray-400 hover:text-white'
+            )}
+          >
+            <Calendar className="w-5 h-5" />
+          </Link>
         </div>
       </div>
 
@@ -268,10 +378,30 @@ function MyProjectsContent() {
         <>
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatsCard title="진행중" value={`${stats.inProgress}건`} icon={Play} color="text-blue-400" />
-            <StatsCard title="검수중" value={`${stats.submitted}건`} icon={Clock} color="text-yellow-400" />
-            <StatsCard title="완료" value={`${stats.completed}건`} icon={CheckCircle2} color="text-green-400" />
-            <StatsCard title="총 수익" value={formatCurrency(stats.totalEarnings)} icon={DollarSign} color="text-primary" />
+            <StatsCard
+              title="진행중"
+              value={`${stats.inProgress}건`}
+              icon={Play}
+              color="text-blue-400"
+            />
+            <StatsCard
+              title="검수중"
+              value={`${stats.submitted}건`}
+              icon={Clock}
+              color="text-yellow-400"
+            />
+            <StatsCard
+              title="완료"
+              value={`${stats.completed}건`}
+              icon={CheckCircle2}
+              color="text-green-400"
+            />
+            <StatsCard
+              title="총 수익"
+              value={formatCurrency(stats.totalEarnings)}
+              icon={DollarSign}
+              color="text-primary"
+            />
           </div>
 
           {/* Filter Tabs */}
@@ -280,15 +410,15 @@ function MyProjectsContent() {
               { key: 'all', label: '전체' },
               { key: 'in_progress', label: '진행중' },
               { key: 'completed', label: '완료' },
-            ].map(tab => (
+            ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setFilter(tab.key as any)}
                 className={cn(
-                  "px-4 py-2 rounded-lg font-medium transition-colors",
+                  'px-4 py-2 rounded-lg font-medium transition-colors',
                   filter === tab.key
-                    ? "bg-primary text-white"
-                    : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                    ? 'bg-primary text-white'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                 )}
               >
                 {tab.label}
@@ -301,7 +431,9 @@ function MyProjectsContent() {
             {filteredProjects.length === 0 ? (
               <GlassCard className="p-12 text-center">
                 <FolderOpen className="w-16 h-16 mx-auto text-gray-500 mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">프로젝트가 없습니다</h3>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  프로젝트가 없습니다
+                </h3>
                 <p className="text-gray-400 mb-4">
                   프로젝트 보드에서 제작 요청을 확인하고 수락해보세요
                 </p>
@@ -355,14 +487,21 @@ function MyProjectsContent() {
                               <span className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
                                 {formatDate(project.deadline)}
-                                {daysLeft > 0 && project.status !== 'COMPLETED' && (
-                                  <span className={cn(
-                                    "ml-1",
-                                    daysLeft <= 3 ? "text-red-400" : daysLeft <= 7 ? "text-yellow-400" : "text-gray-400"
-                                  )}>
-                                    ({daysLeft}일 남음)
-                                  </span>
-                                )}
+                                {daysLeft > 0 &&
+                                  project.status !== 'COMPLETED' && (
+                                    <span
+                                      className={cn(
+                                        'ml-1',
+                                        daysLeft <= 3
+                                          ? 'text-red-400'
+                                          : daysLeft <= 7
+                                            ? 'text-yellow-400'
+                                            : 'text-gray-400'
+                                      )}
+                                    >
+                                      ({daysLeft}일 남음)
+                                    </span>
+                                  )}
                               </span>
                             </div>
                           </div>
@@ -372,7 +511,8 @@ function MyProjectsContent() {
                             <div className="text-center">
                               <p className="text-xs text-gray-400">버전</p>
                               <p className="text-lg font-bold text-white">
-                                {project.approvedVersions}/{project.versionsCount}
+                                {project.approvedVersions}/
+                                {project.versionsCount}
                               </p>
                             </div>
                             <div className="text-right">
@@ -399,9 +539,10 @@ function MyProjectsContent() {
 
 export default function MyProjectsPage() {
   return (
-    <Suspense fallback={<div className="text-white p-8 text-center">Loading...</div>}>
+    <Suspense
+      fallback={<div className="text-white p-8 text-center">Loading...</div>}
+    >
       <MyProjectsContent />
     </Suspense>
   );
 }
-

@@ -1,19 +1,33 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { LogIn, ArrowUpRight, Menu, X, ChevronRight, ChevronDown, User, LayoutDashboard, FolderKanban, Wallet, Settings, LogOut, Star } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import {
+  LogIn,
+  ArrowUpRight,
+  Menu,
+  X,
+  ChevronRight,
+  ChevronDown,
+  User,
+  LayoutDashboard,
+  FolderKanban,
+  Wallet,
+  Settings,
+  LogOut,
+  Star,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Mock auth state - replace with actual auth
 const useMockAuth = () => {
   const [isLoggedIn] = useState(true); // Set to true to test user menu
   const [user] = useState({
-    name: "별님",
-    email: "star@example.com",
-    role: "freelancer", // freelancer | counselor | admin
+    name: '별님',
+    email: 'star@example.com',
+    role: 'freelancer', // freelancer | counselor | admin
     avatar: null,
   });
   return { isLoggedIn, user };
@@ -21,7 +35,7 @@ const useMockAuth = () => {
 
 export function AwardHeader() {
   const pathname = usePathname();
-  const isCompanySite = pathname.startsWith("/about");
+  const isCompanySite = pathname.startsWith('/about');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -33,8 +47,8 @@ export function AwardHeader() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Close menus on route change
@@ -47,39 +61,56 @@ export function AwardHeader() {
   useEffect(() => {
     const handleClick = () => setIsUserMenuOpen(false);
     if (isUserMenuOpen) {
-      document.addEventListener("click", handleClick);
-      return () => document.removeEventListener("click", handleClick);
+      document.addEventListener('click', handleClick);
+      return () => document.removeEventListener('click', handleClick);
     }
   }, [isUserMenuOpen]);
 
   const serviceMenuItems = [
-    { label: "서비스 소개", href: "/intro" },
-    { label: "영상 둘러보기", href: "/videos" },
-    { label: "상담사 연결", href: "/counselors" },
-    { label: "커뮤니티", href: "/community" },
-    { label: "공지사항", href: "/notice" },
+    { label: '서비스 소개', href: '/intro' },
+    { label: '영상 둘러보기', href: '/videos' },
+    { label: '상담사 연결', href: '/counselors' },
+    { label: '커뮤니티', href: '/community' },
+    { label: '공지사항', href: '/notice' },
   ];
 
   const companyMenuItems = [
-    { label: "회사소개", href: "/about" },
-    { label: "비전", href: "/about/vision" },
-    { label: "연혁", href: "/about/history" },
-    { label: "문화", href: "/about/culture" },
-    { label: "문의하기", href: "/about/contact" },
+    { label: '회사소개', href: '/about' },
+    { label: '비전', href: '/about/vision' },
+    { label: '연혁', href: '/about/history' },
+    { label: '문화', href: '/about/culture' },
+    { label: '문의하기', href: '/about/contact' },
   ];
 
-  const userMenuItems = user.role === "freelancer" ? [
-    { label: "내 대시보드", href: "/stars/dashboard", icon: LayoutDashboard },
-    { label: "내 프로젝트", href: "/stars/my-projects", icon: FolderKanban },
-    { label: "수입 관리", href: "/stars/earnings", icon: Wallet },
-    { label: "설정", href: "/settings/profile", icon: Settings },
-  ] : user.role === "admin" ? [
-    { label: "관리자 패널", href: "/admin", icon: LayoutDashboard },
-    { label: "설정", href: "/settings/profile", icon: Settings },
-  ] : [
-    { label: "내 대시보드", href: "/counselor/dashboard", icon: LayoutDashboard },
-    { label: "설정", href: "/settings/profile", icon: Settings },
-  ];
+  const userMenuItems =
+    user.role === 'freelancer'
+      ? [
+          {
+            label: '내 대시보드',
+            href: '/stars/dashboard',
+            icon: LayoutDashboard,
+          },
+          {
+            label: '내 프로젝트',
+            href: '/stars/my-projects',
+            icon: FolderKanban,
+          },
+          { label: '수입 관리', href: '/stars/earnings', icon: Wallet },
+          { label: '설정', href: '/settings/profile', icon: Settings },
+        ]
+      : user.role === 'admin'
+        ? [
+            { label: '관리자 패널', href: '/admin', icon: LayoutDashboard },
+            { label: '설정', href: '/settings/profile', icon: Settings },
+          ]
+        : [
+            {
+              label: '내 대시보드',
+              href: '/counselor/dashboard',
+              icon: LayoutDashboard,
+            },
+            { label: '설정', href: '/settings/profile', icon: Settings },
+          ];
 
   const menuItems = isCompanySite ? companyMenuItems : serviceMenuItems;
 
@@ -87,28 +118,29 @@ export function AwardHeader() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-300",
+          'sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-300',
           isCompanySite
-            ? "bg-white/90 border-gray-200 text-black"
-            : "bg-black/80 border-white/10 text-white",
-          isScrolled && "shadow-lg",
-          isScrolled && isCompanySite && "bg-white/95",
-          isScrolled && !isCompanySite && "bg-black/95"
+            ? 'bg-white/90 border-gray-200 text-black'
+            : 'bg-black/80 border-white/10 text-white',
+          isScrolled && 'shadow-lg',
+          isScrolled && isCompanySite && 'bg-white/95',
+          isScrolled && !isCompanySite && 'bg-black/95'
         )}
       >
-        <div className={cn(
-          "container relative flex max-w-screen-2xl items-center justify-between px-4 sm:px-8 transition-all duration-300",
-          isScrolled ? "h-14" : "h-16"
-        )}>
-
+        <div
+          className={cn(
+            'container relative flex max-w-screen-2xl items-center justify-between px-4 sm:px-8 transition-all duration-300',
+            isScrolled ? 'h-14' : 'h-16'
+          )}
+        >
           {/* Left Side: Logo + Mobile Menu Button */}
           <div className="flex items-center gap-3 z-10">
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={cn(
-                "md:hidden p-2 -ml-2 rounded-lg transition-colors",
-                isCompanySite ? "hover:bg-gray-100" : "hover:bg-white/10"
+                'md:hidden p-2 -ml-2 rounded-lg transition-colors',
+                isCompanySite ? 'hover:bg-gray-100' : 'hover:bg-white/10'
               )}
               aria-label="메뉴 열기"
             >
@@ -119,32 +151,37 @@ export function AwardHeader() {
               )}
             </button>
 
-            <Link href={isCompanySite ? "/about" : "/"} className={cn(
-              "font-bold text-xl tracking-tighter hover:opacity-80 transition-opacity",
-              isCompanySite ? "text-black" : "text-white"
-            )}>
-              {isCompanySite ? "한깨봄" : "별들에게 물어봐"}
+            <Link
+              href={isCompanySite ? '/about' : '/'}
+              className={cn(
+                'font-bold text-xl tracking-tighter hover:opacity-80 transition-opacity',
+                isCompanySite ? 'text-black' : 'text-white'
+              )}
+            >
+              {isCompanySite ? '한깨봄' : '별들에게 물어봐'}
             </Link>
           </div>
 
           {/* Center: Navigation Menu - Desktop Only */}
           <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center gap-8 text-sm font-medium">
             {menuItems.map((item) => {
-              const isActive = isCompanySite && (
-                item.href === "/about"
-                  ? pathname === "/about"
-                  : pathname.startsWith(item.href)
-              );
+              const isActive =
+                isCompanySite &&
+                (item.href === '/about'
+                  ? pathname === '/about'
+                  : pathname.startsWith(item.href));
 
               return (
                 <Link
                   key={item.label}
                   href={item.href}
                   className={cn(
-                    "transition-colors relative",
+                    'transition-colors relative',
                     isCompanySite
-                      ? (isActive ? "text-primary font-bold" : "text-gray-400 hover:text-white")
-                      : "text-white/70 hover:text-white hover:font-bold"
+                      ? isActive
+                        ? 'text-primary font-bold'
+                        : 'text-gray-400 hover:text-white'
+                      : 'text-white/70 hover:text-white hover:font-bold'
                   )}
                 >
                   {item.label}
@@ -182,11 +219,15 @@ export function AwardHeader() {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-black font-bold text-sm">
                     {user.name[0]}
                   </div>
-                  <span className="hidden sm:inline text-sm font-medium text-white">{user.name}</span>
-                  <ChevronDown className={cn(
-                    "w-4 h-4 text-white/70 transition-transform",
-                    isUserMenuOpen && "rotate-180"
-                  )} />
+                  <span className="hidden sm:inline text-sm font-medium text-white">
+                    {user.name}
+                  </span>
+                  <ChevronDown
+                    className={cn(
+                      'w-4 h-4 text-white/70 transition-transform',
+                      isUserMenuOpen && 'rotate-180'
+                    )}
+                  />
                 </button>
 
                 <AnimatePresence>
@@ -204,7 +245,9 @@ export function AwardHeader() {
                         <p className="text-sm text-gray-400">{user.email}</p>
                         <div className="mt-2 flex items-center gap-1.5">
                           <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                          <span className="text-xs text-yellow-400 font-medium">프리랜서</span>
+                          <span className="text-xs text-yellow-400 font-medium">
+                            프리랜서
+                          </span>
                         </div>
                       </div>
 
@@ -236,11 +279,17 @@ export function AwardHeader() {
             ) : (
               /* Login/Signup (Not Logged In) */
               <>
-                <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white flex items-center gap-2 transition-colors">
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-white/70 hover:text-white flex items-center gap-2 transition-colors"
+                >
                   <LogIn className="w-4 h-4" />
                   <span className="hidden sm:inline">로그인</span>
                 </Link>
-                <Link href="/signup" className="hidden sm:flex text-sm font-bold px-5 py-2.5 bg-white text-black rounded-full hover:bg-white/90 transition-colors shadow-lg shadow-white/5">
+                <Link
+                  href="/signup"
+                  className="hidden sm:flex text-sm font-bold px-5 py-2.5 bg-white text-black rounded-full hover:bg-white/90 transition-colors shadow-lg shadow-white/5"
+                >
                   회원가입
                 </Link>
               </>
@@ -269,22 +318,33 @@ export function AwardHeader() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
               className={cn(
-                "fixed top-[56px] left-0 right-0 z-40 md:hidden border-b shadow-2xl",
-                isCompanySite ? "bg-white border-gray-200" : "bg-gray-900 border-gray-800"
+                'fixed top-[56px] left-0 right-0 z-40 md:hidden border-b shadow-2xl',
+                isCompanySite
+                  ? 'bg-white border-gray-200'
+                  : 'bg-gray-900 border-gray-800'
               )}
             >
               <nav className="container max-w-screen-2xl px-4 py-4">
                 {/* User Info (Mobile) */}
                 {isLoggedIn && (
-                  <div className={cn(
-                    "mb-4 pb-4 border-b flex items-center gap-3",
-                    isCompanySite ? "border-gray-200" : "border-gray-700"
-                  )}>
+                  <div
+                    className={cn(
+                      'mb-4 pb-4 border-b flex items-center gap-3',
+                      isCompanySite ? 'border-gray-200' : 'border-gray-700'
+                    )}
+                  >
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-black font-bold">
                       {user.name[0]}
                     </div>
                     <div>
-                      <p className={cn("font-bold", isCompanySite ? "text-black" : "text-white")}>{user.name}</p>
+                      <p
+                        className={cn(
+                          'font-bold',
+                          isCompanySite ? 'text-black' : 'text-white'
+                        )}
+                      >
+                        {user.name}
+                      </p>
                       <Link
                         href="/stars/dashboard"
                         onClick={() => setIsMobileMenuOpen(false)}
@@ -298,11 +358,11 @@ export function AwardHeader() {
 
                 <ul className="space-y-1">
                   {menuItems.map((item, idx) => {
-                    const isActive = isCompanySite && (
-                      item.href === "/about"
-                        ? pathname === "/about"
-                        : pathname.startsWith(item.href)
-                    );
+                    const isActive =
+                      isCompanySite &&
+                      (item.href === '/about'
+                        ? pathname === '/about'
+                        : pathname.startsWith(item.href));
 
                     return (
                       <motion.li
@@ -315,21 +375,23 @@ export function AwardHeader() {
                           href={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className={cn(
-                            "flex items-center justify-between py-4 px-4 rounded-xl transition-colors",
+                            'flex items-center justify-between py-4 px-4 rounded-xl transition-colors',
                             isCompanySite
                               ? isActive
-                                ? "bg-[#FF3366]/10 text-[#FF3366] font-bold"
-                                : "text-gray-700 hover:bg-gray-100"
+                                ? 'bg-[#FF3366]/10 text-[#FF3366] font-bold'
+                                : 'text-gray-700 hover:bg-gray-100'
                               : isActive
-                                ? "bg-white/10 text-white font-bold"
-                                : "text-gray-300 hover:bg-white/5"
+                                ? 'bg-white/10 text-white font-bold'
+                                : 'text-gray-300 hover:bg-white/5'
                           )}
                         >
                           <span className="text-lg">{item.label}</span>
-                          <ChevronRight className={cn(
-                            "w-5 h-5",
-                            isActive ? "opacity-100" : "opacity-40"
-                          )} />
+                          <ChevronRight
+                            className={cn(
+                              'w-5 h-5',
+                              isActive ? 'opacity-100' : 'opacity-40'
+                            )}
+                          />
                         </Link>
                       </motion.li>
                     );
@@ -358,8 +420,7 @@ export function AwardHeader() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
                     >
-                      <LayoutDashboard className="w-5 h-5" />
-                      내 대시보드로 이동
+                      <LayoutDashboard className="w-5 h-5" />내 대시보드로 이동
                     </Link>
                   ) : (
                     <div className="flex gap-3">
@@ -388,4 +449,3 @@ export function AwardHeader() {
     </>
   );
 }
-

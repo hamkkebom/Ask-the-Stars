@@ -3,16 +3,35 @@
 import Link from 'next/link';
 import { m } from 'framer-motion';
 import {
-  ArrowRight, Star, Video, Megaphone, GraduationCap,
-  Users, Briefcase, Award, Sparkles
+  ArrowRight,
+  Star,
+  Video,
+  Megaphone,
+  GraduationCap,
+  Users,
+  Briefcase,
+  Award,
+  Sparkles,
 } from 'lucide-react';
 import { SimpleHeader } from '@/components/layout/simple-header';
 import { MainFooter } from '@/components/layout/main-footer';
 
 const stats = [
-  { label: '프로젝트', value: '1,200+', icon: <Briefcase className="w-5 h-5" aria-hidden="true" /> },
-  { label: '프리랜서', value: '150+', icon: <Users className="w-5 h-5" aria-hidden="true" /> },
-  { label: '만족도', value: '98%', icon: <Award className="w-5 h-5" aria-hidden="true" /> },
+  {
+    label: '프로젝트',
+    value: '1,200+',
+    icon: <Briefcase className="w-5 h-5" aria-hidden="true" />,
+  },
+  {
+    label: '프리랜서',
+    value: '150+',
+    icon: <Users className="w-5 h-5" aria-hidden="true" />,
+  },
+  {
+    label: '만족도',
+    value: '98%',
+    icon: <Award className="w-5 h-5" aria-hidden="true" />,
+  },
 ];
 
 const services = [
@@ -35,7 +54,8 @@ const services = [
   {
     title: 'Stars',
     subtitle: '전문가 매칭',
-    description: '검증된 영상 제작 전문가와 협업하세요. 프로젝트 매칭부터 정산까지.',
+    description:
+      '검증된 영상 제작 전문가와 협업하세요. 프로젝트 매칭부터 정산까지.',
     icon: <Star className="w-8 h-8" />,
     href: '/stars',
     gradient: 'from-blue-700 to-indigo-600',
@@ -95,25 +115,26 @@ export default function HomePage() {
               transition={{ delay: 0.1 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-8"
             >
-              <Sparkles className="w-4 h-4 text-yellow-400" aria-hidden="true" />
+              <Sparkles
+                className="w-4 h-4 text-yellow-400"
+                aria-hidden="true"
+              />
               <span className="text-sm">AI 기반 영상 제작 생태계</span>
             </m.div>
 
             {/* Title */}
-              <m.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-5xl md:text-8xl font-black mb-8 tracking-tighter"
-              >
-                <span className="text-white">
-                  함께봄
-                </span>
-                <br />
-                <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent italic">
-                  Partnership
-                </span>
-              </m.h1>
+            <m.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-5xl md:text-8xl font-black mb-8 tracking-tighter"
+            >
+              <span className="text-white">함께봄</span>
+              <br />
+              <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent italic">
+                Partnership
+              </span>
+            </m.h1>
 
             {/* Description */}
             <m.p
@@ -140,7 +161,10 @@ export default function HomePage() {
                 aria-label="무료 회원가입 및 서비스 시작하기"
               >
                 무료로 시작하기
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                <ArrowRight
+                  className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                  aria-hidden="true"
+                />
               </Link>
               <Link
                 href="/about"
@@ -161,7 +185,9 @@ export default function HomePage() {
                 <div key={stat.label} className="text-center">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <span className="text-primary">{stat.icon}</span>
-                    <span className="text-3xl md:text-4xl font-bold">{stat.value}</span>
+                    <span className="text-3xl md:text-4xl font-bold">
+                      {stat.value}
+                    </span>
                   </div>
                   <span className="text-gray-400">{stat.label}</span>
                 </div>
@@ -217,7 +243,9 @@ export default function HomePage() {
                 <Link href={service.href} className="block group">
                   <div className="relative p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all hover:bg-white/10 h-full">
                     {/* Icon */}
-                    <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${service.gradient} mb-4`}>
+                    <div
+                      className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${service.gradient} mb-4`}
+                    >
                       {service.icon}
                     </div>
 
@@ -225,13 +253,20 @@ export default function HomePage() {
                     <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-sm text-primary mb-3">{service.subtitle}</p>
-                    <p className="text-gray-400 text-sm">{service.description}</p>
+                    <p className="text-sm text-primary mb-3">
+                      {service.subtitle}
+                    </p>
+                    <p className="text-gray-400 text-sm">
+                      {service.description}
+                    </p>
 
                     {/* Arrow */}
                     <div className="mt-4 flex items-center gap-2 text-sm text-gray-500 group-hover:text-primary transition-colors">
                       자세히 보기
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                      <ArrowRight
+                        className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                        aria-hidden="true"
+                      />
                     </div>
                   </div>
                 </Link>
@@ -295,7 +330,8 @@ export default function HomePage() {
                 지금 함께 하세요
               </h2>
               <p className="text-xl text-slate-400 mb-10 max-w-xl mx-auto">
-                기업 영상 제작의 표준, 함께봄과 함께 새로운 가능성을 경험해보세요.
+                기업 영상 제작의 표준, 함께봄과 함께 새로운 가능성을
+                경험해보세요.
               </p>
               <Link
                 href="/auth/signup"

@@ -30,7 +30,9 @@ export default function StreamPlayer({
   if (!videoUid) return null;
 
   return (
-    <div className={`relative bg-black rounded-lg overflow-hidden ${className}`}>
+    <div
+      className={`relative bg-black rounded-lg overflow-hidden ${className}`}
+    >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center text-white/50 z-0">
           <Loader2 className="w-8 h-8 animate-spin" />

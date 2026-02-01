@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent } from 'react';
 // @ts-ignore - types might be missing
-import * as tus from "tus-js-client";
-import { Upload } from "lucide-react";
+import * as tus from 'tus-js-client';
+import { Upload } from 'lucide-react';
 
 interface StreamUploaderProps {
   onSuccess?: (streamUid: string) => void;
@@ -11,7 +11,11 @@ interface StreamUploaderProps {
   userId?: string; // Optional user context
 }
 
-export function StreamUploader({ onSuccess, onError, userId }: StreamUploaderProps) {
+export function StreamUploader({
+  onSuccess,
+  onError,
+  userId,
+}: StreamUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -33,24 +37,27 @@ export function StreamUploader({ onSuccess, onError, userId }: StreamUploaderPro
     try {
       // 1. Get Direct Upload URL from our Backend
       // This ensures we don't expose Cloudflare Tokens to the client directly
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/videos/upload-url`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Add Authorization header here if needed
-        },
-        body: JSON.stringify({
-          uploadLength: file.size,
-          metadata: {
-            filename: file.name,
-            filetype: file.type,
-            // userId is handled by backend token generation usually, but can be passed
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/videos/upload-url`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Add Authorization header here if needed
           },
-        }),
-      });
+          body: JSON.stringify({
+            uploadLength: file.size,
+            metadata: {
+              filename: file.name,
+              filetype: file.type,
+              // userId is handled by backend token generation usually, but can be passed
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to get upload URL");
+        throw new Error('Failed to get upload URL');
       }
 
       const { uploadUrl } = await response.json();
@@ -73,7 +80,7 @@ export function StreamUploader({ onSuccess, onError, userId }: StreamUploaderPro
           filetype: file.type,
         },
         onError: (error: any) => {
-          console.error("Upload Failed:", error);
+          console.error('Upload Failed:', error);
           setIsUploading(false);
           if (onError) onError(error);
         },
@@ -82,7 +89,9 @@ export function StreamUploader({ onSuccess, onError, userId }: StreamUploaderPro
           setProgress(parseFloat(percentage));
         },
         onSuccess: () => {
-          console.log("Upload Finished:", upload.url);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Upload Finished:', upload.url);
+          }
           setIsUploading(false);
           setIsProcessing(true);
 
@@ -95,73 +104,88 @@ export function StreamUploader({ onSuccess, onError, userId }: StreamUploaderPro
           const uid = uidPart?.split('?')[0];
 
           if (uid && onSuccess) {
-             onSuccess(uid);
+            onSuccess(uid);
           } else {
-             // Fallback or wait for webhook?
-             // Usually the client gets the UID immediately.
-             if (onSuccess) onSuccess("PENDING_WEBHOOK");
+            // Fallback or wait for webhook?
+            // Usually the client gets the UID immediately.
+            if (onSuccess) onSuccess('PENDING_WEBHOOK');
           }
         },
       });
 
       uploadRef.current = upload;
       upload.start();
-
     } catch (error: any) {
-      console.error("Setup Failed:", error);
+      console.error('Setup Failed:', error);
       setIsUploading(false);
       if (onError) onError(error);
     }
   };
 
   const cancelUpload = () => {
-      if(uploadRef.current) {
-          uploadRef.current.abort();
-          setIsUploading(false);
-      }
+    if (uploadRef.current) {
+      uploadRef.current.abort();
+      setIsUploading(false);
+    }
   };
 
   return (
     <div className="w-full max-w-md p-6 bg-neutral-900 border border-neutral-800 rounded-xl">
       <div className="flex flex-col gap-4">
         <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-neutral-700 border-dashed rounded-lg cursor-pointer hover:bg-neutral-800 hover:border-neutral-500 transition-colors">
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-8 h-8 mb-2 text-neutral-400" />
-                <p className="text-sm text-neutral-400">Click to upload video</p>
-                <p className="text-xs text-neutral-500">(MP4, MOV, MKV)</p>
-            </div>
-            <input type="file" className="hidden" accept="video/*" onChange={handleFileChange} disabled={isUploading} />
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            <Upload className="w-8 h-8 mb-2 text-neutral-400" />
+            <p className="text-sm text-neutral-400">Click to upload video</p>
+            <p className="text-xs text-neutral-500">(MP4, MOV, MKV)</p>
+          </div>
+          <input
+            type="file"
+            className="hidden"
+            accept="video/*"
+            onChange={handleFileChange}
+            disabled={isUploading}
+          />
         </label>
 
         {file && (
-            <div className="text-sm text-white truncate">
-                Validating: {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
-            </div>
+          <div className="text-sm text-white truncate">
+            Validating: {file.name} ({(file.size / (1024 * 1024)).toFixed(2)}{' '}
+            MB)
+          </div>
         )}
 
         {isUploading && (
-            <div className="w-full bg-neutral-700 rounded-full h-2.5">
-                <div className="bg-vibrant-cyan h-2.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
-                <p className="text-right text-xs text-neutral-400 mt-1">{progress}%</p>
-            </div>
+          <div className="w-full bg-neutral-700 rounded-full h-2.5">
+            <div
+              className="bg-vibrant-cyan h-2.5 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+            <p className="text-right text-xs text-neutral-400 mt-1">
+              {progress}%
+            </p>
+          </div>
         )}
 
         <div className="flex gap-2">
+          <button
+            onClick={startUpload}
+            disabled={!file || isUploading || isProcessing}
+            className="flex-1 px-4 py-2 bg-vibrant-cyan text-black font-bold rounded-lg hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isProcessing
+              ? 'Processing...'
+              : isUploading
+                ? 'Uploading...'
+                : 'Start Upload'}
+          </button>
+          {isUploading && (
             <button
-                onClick={startUpload}
-                disabled={!file || isUploading || isProcessing}
-                className="flex-1 px-4 py-2 bg-vibrant-cyan text-black font-bold rounded-lg hover:bg-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              onClick={cancelUpload}
+              className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30"
             >
-                {isProcessing ? "Processing..." : isUploading ? "Uploading..." : "Start Upload"}
+              Cancel
             </button>
-            {isUploading && (
-                <button
-                    onClick={cancelUpload}
-                    className="px-4 py-2 bg-red-500/20 text-red-500 rounded-lg hover:bg-red-500/30"
-                >
-                    Cancel
-                </button>
-            )}
+          )}
         </div>
       </div>
     </div>

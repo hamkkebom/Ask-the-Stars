@@ -66,7 +66,13 @@ export function useVideos(options: UseVideosOptions = {}) {
     } finally {
       setLoading(false);
     }
-  }, [options.status, options.category, options.freelancerId, options.limit]);
+  }, [
+    supabase,
+    options.status,
+    options.category,
+    options.freelancerId,
+    options.limit,
+  ]);
 
   useEffect(() => {
     fetchVideos();
@@ -82,33 +88,35 @@ export function useVideo(id: string) {
 
   const supabase = createClient();
 
+  const fetchVideo = useCallback(async () => {
+    if (!id) return;
+
+    setLoading(true);
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('videos')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+      setVideo(data);
+
+      // 조회수 증가
+      await supabase
+        .from('videos')
+        .update({ views: (data?.views || 0) + 1 })
+        .eq('id', id);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id, supabase]);
+
   useEffect(() => {
-    const fetchVideo = async () => {
-      setLoading(true);
-      try {
-        const { data, error: fetchError } = await supabase
-          .from('videos')
-          .select('*')
-          .eq('id', id)
-          .single();
-
-        if (fetchError) throw fetchError;
-        setVideo(data);
-
-        // 조회수 증가
-        await supabase
-          .from('videos')
-          .update({ views: (data?.views || 0) + 1 })
-          .eq('id', id);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) fetchVideo();
-  }, [id]);
+    fetchVideo();
+  }, [fetchVideo]);
 
   return { video, loading, error };
 }
@@ -117,56 +125,62 @@ export function useVideoMutations() {
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
 
-  const createVideo = async (data: Partial<Video>) => {
-    setLoading(true);
-    try {
-      const { data: video, error } = await supabase
-        .from('videos')
-        .insert(data)
-        .select()
-        .single();
-      if (error) throw error;
-      return { video, error: null };
-    } catch (err) {
-      return { video: null, error: err as Error };
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createVideo = useCallback(
+    async (data: Partial<Video>) => {
+      setLoading(true);
+      try {
+        const { data: video, error } = await supabase
+          .from('videos')
+          .insert(data)
+          .select()
+          .single();
+        if (error) throw error;
+        return { video, error: null };
+      } catch (err) {
+        return { video: null, error: err as Error };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase]
+  );
 
-  const updateVideo = async (id: string, data: Partial<Video>) => {
-    setLoading(true);
-    try {
-      const { data: video, error } = await supabase
-        .from('videos')
-        .update(data)
-        .eq('id', id)
-        .select()
-        .single();
-      if (error) throw error;
-      return { video, error: null };
-    } catch (err) {
-      return { video: null, error: err as Error };
-    } finally {
-      setLoading(false);
-    }
-  };
+  const updateVideo = useCallback(
+    async (id: string, data: Partial<Video>) => {
+      setLoading(true);
+      try {
+        const { data: video, error } = await supabase
+          .from('videos')
+          .update(data)
+          .eq('id', id)
+          .select()
+          .single();
+        if (error) throw error;
+        return { video, error: null };
+      } catch (err) {
+        return { video: null, error: err as Error };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase]
+  );
 
-  const deleteVideo = async (id: string) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('videos')
-        .delete()
-        .eq('id', id);
-      if (error) throw error;
-      return { error: null };
-    } catch (err) {
-      return { error: err as Error };
-    } finally {
-      setLoading(false);
-    }
-  };
+  const deleteVideo = useCallback(
+    async (id: string) => {
+      setLoading(true);
+      try {
+        const { error } = await supabase.from('videos').delete().eq('id', id);
+        if (error) throw error;
+        return { error: null };
+      } catch (err) {
+        return { error: err as Error };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase]
+  );
 
   return { createVideo, updateVideo, deleteVideo, loading };
 }

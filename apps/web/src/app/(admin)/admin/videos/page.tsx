@@ -64,9 +64,21 @@ const mockVideos = [
 
 const statusTabs = [
   { id: 'all', label: '전체', count: mockVideos.length },
-  { id: 'public', label: '공개', count: mockVideos.filter(v => v.status === 'public').length },
-  { id: 'private', label: '비공개', count: mockVideos.filter(v => v.status === 'private').length },
-  { id: 'reviewing', label: '검수중', count: mockVideos.filter(v => v.status === 'reviewing').length },
+  {
+    id: 'public',
+    label: '공개',
+    count: mockVideos.filter((v) => v.status === 'public').length,
+  },
+  {
+    id: 'private',
+    label: '비공개',
+    count: mockVideos.filter((v) => v.status === 'private').length,
+  },
+  {
+    id: 'reviewing',
+    label: '검수중',
+    count: mockVideos.filter((v) => v.status === 'reviewing').length,
+  },
 ];
 
 function getStatusIcon(status: string) {
@@ -85,11 +97,14 @@ function getStatusIcon(status: string) {
 export default function AdminVideosPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedVideos, setSelectedVideos] = useState<string[]>([]);
 
-  const filteredVideos = mockVideos.filter(video => {
+  const filteredVideos = mockVideos.filter((video) => {
     if (activeTab !== 'all' && video.status !== activeTab) return false;
-    if (searchQuery && !video.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (
+      searchQuery &&
+      !video.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
     return true;
   });
 
@@ -192,7 +207,10 @@ export default function AdminVideosPage() {
                 />
               </div>
 
-              <Link href={`/admin/videos/${video.id}`} className="flex items-center gap-3 group">
+              <Link
+                href={`/admin/videos/${video.id}`}
+                className="flex items-center gap-3 group"
+              >
                 <div className="w-28 h-16 bg-[#3f3f3f] rounded-lg flex items-center justify-center shrink-0">
                   <Play className="w-5 h-5 text-[#666]" />
                 </div>
@@ -224,9 +242,7 @@ export default function AdminVideosPage() {
                 {video.freelancer}
               </div>
 
-              <div className="text-[#aaa] text-sm">
-                {video.uploadedAt}
-              </div>
+              <div className="text-[#aaa] text-sm">{video.uploadedAt}</div>
 
               <div>
                 <button className="p-1 hover:bg-[#272727] rounded transition-colors">

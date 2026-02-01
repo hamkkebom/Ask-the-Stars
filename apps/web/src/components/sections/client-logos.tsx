@@ -5,12 +5,12 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 const clients = [
-  { name: "삼성전자", logo: "/images/clients/samsung.svg" },
-  { name: "LG", logo: "/images/clients/lg.svg" },
-  { name: "현대", logo: "/images/clients/hyundai.svg" },
-  { name: "SK", logo: "/images/clients/sk.svg" },
-  { name: "네이버", logo: "/images/clients/naver.svg" },
-  { name: "카카오", logo: "/images/clients/kakao.svg" },
+  { name: '삼성전자', logo: '/images/clients/samsung.svg' },
+  { name: 'LG', logo: '/images/clients/lg.svg' },
+  { name: '현대', logo: '/images/clients/hyundai.svg' },
+  { name: 'SK', logo: '/images/clients/sk.svg' },
+  { name: '네이버', logo: '/images/clients/naver.svg' },
+  { name: '카카오', logo: '/images/clients/kakao.svg' },
 ];
 
 export function ClientLogos() {
@@ -50,8 +50,12 @@ export function ClientLogos() {
 
       <style jsx>{`
         @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
         }
         .animate-scroll {
           animation: scroll 20s linear infinite;

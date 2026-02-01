@@ -139,8 +139,8 @@ export interface VideoDetails {
   stream_url: string | null;
   thumbnail_url: string | null;
   views: number;
-  likes?: number;  // 👍 좋아요 수
-  isAdApproved?: boolean;  // ✓ 광고 승인 여부
+  likes?: number; // 👍 좋아요 수
+  isAdApproved?: boolean; // ✓ 광고 승인 여부
   duration: number | null;
   freelancer_id: string;
   project_id: string | null;
@@ -149,7 +149,7 @@ export interface VideoDetails {
   approved_at: string | null;
   // Joined relations
   freelancer?: { id: string; name: string };
-  counselor?: { name: string };  // 상담사 정보
+  counselor?: { name: string }; // 상담사 정보
   project?: { id: string; title: string; client?: { name: string } };
 }
 
@@ -164,7 +164,9 @@ export const videosApi = {
       .single();
 
     if (error) {
-      console.error('getVideoById error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getVideoById error:', error);
+      }
       return null;
     }
     return data;
@@ -186,7 +188,7 @@ export const videosApi = {
       let filtered = [...MOCK_VIDEOS];
 
       if (params?.category && params.category !== '전체') {
-        filtered = filtered.filter(v => v.category === params.category);
+        filtered = filtered.filter((v) => v.category === params.category);
       }
 
       if (params?.sort === 'popular') {
@@ -195,7 +197,7 @@ export const videosApi = {
 
       return {
         data: filtered.slice(0, limit),
-        meta: { total: filtered.length, page, lastPage: 1, has_more: false }
+        meta: { total: filtered.length, page, lastPage: 1, has_more: false },
       };
     }
 
@@ -219,11 +221,19 @@ export const videosApi = {
       query = query.order('created_at', { ascending: false });
     }
 
-    const { data, count, error } = await query.range(offset, offset + limit - 1);
+    const { data, count, error } = await query.range(
+      offset,
+      offset + limit - 1
+    );
 
     if (error) {
-      console.error('listAllFinalVideos error:', error);
-      return { data: [], meta: { total: 0, page, lastPage: 1, has_more: false } };
+      if (process.env.NODE_ENV === 'development') {
+        console.error('listAllFinalVideos error:', error);
+      }
+      return {
+        data: [],
+        meta: { total: 0, page, lastPage: 1, has_more: false },
+      };
     }
 
     const total = count || 0;
@@ -241,7 +251,7 @@ export const videosApi = {
       if (category === '인기') {
         filtered.sort((a, b) => b.views - a.views);
       } else if (category !== '전체') {
-        filtered = filtered.filter(v => v.category === category);
+        filtered = filtered.filter((v) => v.category === category);
       }
       return { data: filtered.slice(0, limit) };
     }
@@ -270,7 +280,9 @@ export const videosApi = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('listVideosByCategory error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('listVideosByCategory error:', error);
+      }
       return { data: [] };
     }
 
@@ -281,7 +293,9 @@ export const videosApi = {
   getFeaturedVideos: async () => {
     // 🎬 Return mock data for testing
     if (USE_MOCK_DATA) {
-      return { data: [...MOCK_VIDEOS].sort((a, b) => b.views - a.views).slice(0, 5) };
+      return {
+        data: [...MOCK_VIDEOS].sort((a, b) => b.views - a.views).slice(0, 5),
+      };
     }
 
     const supabase = createClient();
@@ -293,7 +307,9 @@ export const videosApi = {
       .limit(5);
 
     if (error) {
-      console.error('getFeaturedVideos error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getFeaturedVideos error:', error);
+      }
       return { data: [] };
     }
 
@@ -312,7 +328,9 @@ export const videosApi = {
       .limit(20);
 
     if (error) {
-      console.error('search error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('search error:', error);
+      }
       return [];
     }
 
@@ -323,7 +341,11 @@ export const videosApi = {
   incrementViews: async (id: string) => {
     const supabase = createClient();
     const { error } = await supabase.rpc('increment_views', { video_id: id });
-    if (error) console.error('incrementViews error:', error);
+    if (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('incrementViews error:', error);
+      }
+    }
   },
 
   // 프리랜서의 영상 목록
@@ -342,7 +364,9 @@ export const videosApi = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('getMyVideos error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getMyVideos error:', error);
+      }
       return [];
     }
 
@@ -379,10 +403,7 @@ export const videosApi = {
   // 영상 삭제
   deleteVideo: async (id: string) => {
     const supabase = createClient();
-    const { error } = await supabase
-      .from('videos')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('videos').delete().eq('id', id);
 
     if (error) throw error;
   },
@@ -429,14 +450,16 @@ export const videosApi = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('getRecommendations error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getRecommendations error:', error);
+      }
       return [];
     }
 
     // Add distance score (mock for now - would use embeddings in production)
     return (data || []).map((video: any, index: number) => ({
       ...video,
-      distance: index * 0.1 // Mock distance - lower is better match
+      distance: index * 0.1, // Mock distance - lower is better match
     }));
   },
 };

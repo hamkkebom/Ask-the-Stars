@@ -22,10 +22,12 @@ const Modal = ({ open, onClose, children, title, className }: ModalProps) => {
         onClick={onClose}
       />
       {/* Content */}
-      <div className={cn(
-        'relative z-10 w-full max-w-lg mx-4 bg-neutral-900 border border-white/10 rounded-xl p-6 shadow-2xl',
-        className
-      )}>
+      <div
+        className={cn(
+          'relative z-10 w-full max-w-lg mx-4 bg-neutral-900 border border-white/10 rounded-xl p-6 shadow-2xl',
+          className
+        )}
+      >
         {title && (
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-bold text-white">{title}</h2>

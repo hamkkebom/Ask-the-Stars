@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
-import { m, HTMLMotionProps } from "framer-motion";
+import { cn } from '@/lib/utils';
+import { m, HTMLMotionProps } from 'framer-motion';
 
-interface GlassCardProps extends HTMLMotionProps<"div"> {
+interface GlassCardProps extends HTMLMotionProps<'div'> {
   gradient?: boolean;
   hoverEffect?: boolean;
 }
@@ -16,9 +16,9 @@ export const GlassCard = ({
   return (
     <m.div
       className={cn(
-        "glass rounded-xl p-6 transition-colors duration-300",
-        gradient && "bg-gradient-to-br from-white/5 to-transparent",
-        hoverEffect && "glass-hover cursor-pointer",
+        'glass rounded-xl p-6 transition-colors duration-300',
+        gradient && 'bg-gradient-to-br from-white/5 to-transparent',
+        hoverEffect && 'glass-hover cursor-pointer',
         className
       )}
       initial={{ opacity: 0, y: 20 }}

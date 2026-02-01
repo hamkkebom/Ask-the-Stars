@@ -65,49 +65,11 @@ export function useProjects(options: UseProjectsOptions = {}) {
     } finally {
       setLoading(false);
     }
-  }, [options.status, options.clientId, options.limit]);
+  }, [supabase, options.status, options.clientId, options.limit]);
 
   useEffect(() => {
     fetchProjects();
   }, [fetchProjects]);
-
-  return { projects, loading, error, refetch: fetchProjects };
-}
-
-export function useMyProjects(freelancerId: string) {
-  const [projects, setProjects] = useState<(Project & { assignment: ProjectAssignment })[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const supabase = createClient();
-
-  useEffect(() => {
-    const fetchMyProjects = async () => {
-      setLoading(true);
-      try {
-        const { data: assignments, error: assignError } = await supabase
-          .from('project_assignments')
-          .select('*, projects(*)')
-          .eq('freelancer_id', freelancerId)
-          .in('status', ['ACCEPTED', 'COMPLETED']);
-
-        if (assignError) throw assignError;
-
-        const enriched = (assignments || []).map((a: any) => ({
-          ...a.projects,
-          assignment: { id: a.id, project_id: a.project_id, freelancer_id: a.freelancer_id, status: a.status, assigned_at: a.assigned_at },
-        }));
-
-        setProjects(enriched);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (freelancerId) fetchMyProjects();
-  }, [freelancerId]);
 
   return { projects, loading, error };
 }
@@ -116,37 +78,43 @@ export function useProjectMutations() {
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
 
-  const acceptProject = async (assignmentId: string) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('project_assignments')
-        .update({ status: 'ACCEPTED' })
-        .eq('id', assignmentId);
-      if (error) throw error;
-      return { error: null };
-    } catch (err) {
-      return { error: err as Error };
-    } finally {
-      setLoading(false);
-    }
-  };
+  const acceptProject = useCallback(
+    async (assignmentId: string) => {
+      setLoading(true);
+      try {
+        const { error } = await supabase
+          .from('project_assignments')
+          .update({ status: 'ACCEPTED' })
+          .eq('id', assignmentId);
+        if (error) throw error;
+        return { error: null };
+      } catch (err) {
+        return { error: err as Error };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase]
+  );
 
-  const rejectProject = async (assignmentId: string) => {
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('project_assignments')
-        .update({ status: 'REJECTED' })
-        .eq('id', assignmentId);
-      if (error) throw error;
-      return { error: null };
-    } catch (err) {
-      return { error: err as Error };
-    } finally {
-      setLoading(false);
-    }
-  };
+  const rejectProject = useCallback(
+    async (assignmentId: string) => {
+      setLoading(true);
+      try {
+        const { error } = await supabase
+          .from('project_assignments')
+          .update({ status: 'REJECTED' })
+          .eq('id', assignmentId);
+        if (error) throw error;
+        return { error: null };
+      } catch (err) {
+        return { error: err as Error };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase]
+  );
 
   return { acceptProject, rejectProject, loading };
 }

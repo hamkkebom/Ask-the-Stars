@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
-import { formatDate, formatCurrency, cn } from '@/lib/utils';
+import { formatCurrency, cn } from '@/lib/utils';
 import {
   Star,
   Users,
@@ -12,11 +11,7 @@ import {
   DollarSign,
   TrendingUp,
   Search,
-  Filter,
   MoreVertical,
-  Eye,
-  Edit,
-  Trash2
 } from 'lucide-react';
 
 // Mock Data
@@ -84,7 +79,9 @@ export default function StarsManagementPage() {
             <Star className="w-8 h-8 text-yellow-400" />
             프리랜서 관리
           </h1>
-          <p className="text-gray-400 mt-1">제작요청, 프로젝트, 정산을 관리합니다</p>
+          <p className="text-gray-400 mt-1">
+            제작요청, 프로젝트, 정산을 관리합니다
+          </p>
         </div>
         <Link
           href="/admin/stars/requests/new"
@@ -102,7 +99,9 @@ export default function StarsManagementPage() {
               <Users className="w-5 h-5 text-yellow-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{freelancerStats.total}</p>
+              <p className="text-2xl font-bold text-white">
+                {freelancerStats.total}
+              </p>
               <p className="text-sm text-gray-400">전체 프리랜서</p>
             </div>
           </div>
@@ -113,7 +112,9 @@ export default function StarsManagementPage() {
               <TrendingUp className="w-5 h-5 text-green-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{freelancerStats.active}</p>
+              <p className="text-2xl font-bold text-white">
+                {freelancerStats.active}
+              </p>
               <p className="text-sm text-gray-400">활동 중</p>
             </div>
           </div>
@@ -124,7 +125,9 @@ export default function StarsManagementPage() {
               <Video className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{freelancerStats.newThisMonth}</p>
+              <p className="text-2xl font-bold text-white">
+                {freelancerStats.newThisMonth}
+              </p>
               <p className="text-sm text-gray-400">이번달 신규</p>
             </div>
           </div>
@@ -135,7 +138,9 @@ export default function StarsManagementPage() {
               <DollarSign className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{formatCurrency(freelancerStats.totalPayout)}</p>
+              <p className="text-2xl font-bold text-white">
+                {formatCurrency(freelancerStats.totalPayout)}
+              </p>
               <p className="text-sm text-gray-400">총 정산금</p>
             </div>
           </div>
@@ -147,7 +152,10 @@ export default function StarsManagementPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-white">최근 제작요청</h2>
-            <Link href="/admin/stars/requests" className="text-sm text-primary hover:underline">
+            <Link
+              href="/admin/stars/requests"
+              className="text-sm text-primary hover:underline"
+            >
               전체 보기
             </Link>
           </div>
@@ -166,17 +174,28 @@ export default function StarsManagementPage() {
 
           {/* Request List */}
           <div className="space-y-3">
-            {recentRequests.map(request => (
-              <Link key={request.id} href={`/admin/stars/requests/${request.id}`}>
+            {recentRequests.map((request) => (
+              <Link
+                key={request.id}
+                href={`/admin/stars/requests/${request.id}`}
+              >
                 <GlassCard className="p-4 hover:bg-white/10 transition-all cursor-pointer group">
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={cn(
-                          "px-2 py-0.5 rounded text-xs font-medium",
-                          statusColors[request.status as keyof typeof statusColors]
-                        )}>
-                          {statusLabels[request.status as keyof typeof statusLabels]}
+                        <span
+                          className={cn(
+                            'px-2 py-0.5 rounded text-xs font-medium',
+                            statusColors[
+                              request.status as keyof typeof statusColors
+                            ]
+                          )}
+                        >
+                          {
+                            statusLabels[
+                              request.status as keyof typeof statusLabels
+                            ]
+                          }
                         </span>
                       </div>
                       <h3 className="text-white font-medium group-hover:text-primary transition-colors truncate">
@@ -185,7 +204,9 @@ export default function StarsManagementPage() {
                       <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
                         <span>{request.freelancers}명 참여</span>
                         <span>마감: {request.deadline}</span>
-                        <span className="text-primary">{formatCurrency(request.budget)}</span>
+                        <span className="text-primary">
+                          {formatCurrency(request.budget)}
+                        </span>
                       </div>
                     </div>
                     <button className="p-2 hover:bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
@@ -229,4 +250,3 @@ export default function StarsManagementPage() {
     </div>
   );
 }
-

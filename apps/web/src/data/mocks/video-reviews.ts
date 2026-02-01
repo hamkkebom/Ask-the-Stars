@@ -1,4 +1,3 @@
-
 export type FeedbackType = 'subtitle' | 'bgm' | 'cut' | 'color' | 'other';
 export type AnnotationType = 'rect' | 'ellipse' | 'arrow' | 'path';
 export type ViewMode = 'single' | 'compare';
@@ -31,12 +30,35 @@ export interface VideoVersion {
 }
 
 // Feedback type config
-export const feedbackTypes: Record<FeedbackType, { label: string; icon: string; color: string }> = {
-  subtitle: { label: '자막', icon: '📝', color: 'bg-blue-500/20 text-blue-400 border-blue-500' },
-  bgm: { label: 'BGM', icon: '🎵', color: 'bg-purple-500/20 text-purple-400 border-purple-500' },
-  cut: { label: '컷편집', icon: '✂️', color: 'bg-orange-500/20 text-orange-400 border-orange-500' },
-  color: { label: '색보정', icon: '🎨', color: 'bg-green-500/20 text-green-400 border-green-500' },
-  other: { label: '기타', icon: '💬', color: 'bg-gray-500/20 text-gray-400 border-gray-500' },
+export const feedbackTypes: Record<
+  FeedbackType,
+  { label: string; icon: string; color: string }
+> = {
+  subtitle: {
+    label: '자막',
+    icon: '📝',
+    color: 'bg-blue-500/20 text-blue-400 border-blue-500',
+  },
+  bgm: {
+    label: 'BGM',
+    icon: '🎵',
+    color: 'bg-purple-500/20 text-purple-400 border-purple-500',
+  },
+  cut: {
+    label: '컷편집',
+    icon: '✂️',
+    color: 'bg-orange-500/20 text-orange-400 border-orange-500',
+  },
+  color: {
+    label: '색보정',
+    icon: '🎨',
+    color: 'bg-green-500/20 text-green-400 border-green-500',
+  },
+  other: {
+    label: '기타',
+    icon: '💬',
+    color: 'bg-gray-500/20 text-gray-400 border-gray-500',
+  },
 };
 
 // Mock Data
@@ -68,7 +90,10 @@ export const initialFeedbacks: Feedback[] = [
     annotation: {
       type: 'rect',
       color: '#3b82f6',
-      points: [{ x: 20, y: 70 }, { x: 80, y: 85 }]
+      points: [
+        { x: 20, y: 70 },
+        { x: 80, y: 85 },
+      ],
     },
     resolved: false,
     createdAt: '2026-01-16T15:00:00',
@@ -101,7 +126,10 @@ export const initialFeedbacks: Feedback[] = [
     annotation: {
       type: 'rect',
       color: '#ef4444',
-      points: [{ x: 10, y: 10 }, { x: 90, y: 90 }]
+      points: [
+        { x: 10, y: 10 },
+        { x: 90, y: 90 },
+      ],
     },
     resolved: true,
     createdAt: '2026-01-15T16:00:00',

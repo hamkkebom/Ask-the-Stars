@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import {
   Search,
   Filter,
-  Activity,
   Download,
   User,
   Video,
@@ -150,7 +148,9 @@ export default function ActivityLogPage() {
                 key={log.id}
                 className="flex items-start gap-4 p-4 hover:bg-[#3f3f3f] transition-colors"
               >
-                <div className={`w-10 h-10 rounded-lg ${log.bgColor} flex items-center justify-center shrink-0`}>
+                <div
+                  className={`w-10 h-10 rounded-lg ${log.bgColor} flex items-center justify-center shrink-0`}
+                >
                   <Icon className={`w-5 h-5 ${log.iconColor}`} />
                 </div>
                 <div className="flex-1 min-w-0">

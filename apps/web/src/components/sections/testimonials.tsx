@@ -8,47 +8,54 @@ import Image from 'next/image';
 const testimonials = [
   {
     id: 1,
-    name: "김민수",
-    role: "마케팅 팀장",
-    company: "스타트업 A사",
-    content: "한깨봄과 함께한 AI 마케팅 캠페인으로 광고 비용은 40% 절감하고, 전환율은 2배 이상 올랐습니다. 데이터 기반의 정확한 타겟팅이 차별화된 성과를 만들었습니다.",
+    name: '김민수',
+    role: '마케팅 팀장',
+    company: '스타트업 A사',
+    content:
+      '한깨봄과 함께한 AI 마케팅 캠페인으로 광고 비용은 40% 절감하고, 전환율은 2배 이상 올랐습니다. 데이터 기반의 정확한 타겟팅이 차별화된 성과를 만들었습니다.',
     rating: 5,
-    result: "전환율 200% 증가"
+    result: '전환율 200% 증가',
   },
   {
     id: 2,
-    name: "이지현",
-    role: "대표이사",
-    company: "뷰티 브랜드 B사",
-    content: "AI 영상 제작 서비스로 제품 홍보 영상을 빠르게 만들 수 있었습니다. 기존 대비 제작 시간은 70% 단축되었고, 품질은 오히려 더 좋아졌어요.",
+    name: '이지현',
+    role: '대표이사',
+    company: '뷰티 브랜드 B사',
+    content:
+      'AI 영상 제작 서비스로 제품 홍보 영상을 빠르게 만들 수 있었습니다. 기존 대비 제작 시간은 70% 단축되었고, 품질은 오히려 더 좋아졌어요.',
     rating: 5,
-    result: "제작 시간 70% 단축"
+    result: '제작 시간 70% 단축',
   },
   {
     id: 3,
-    name: "박정훈",
-    role: "인사담당자",
-    company: "IT 기업 C사",
-    content: "직원들의 AI 활용 역량을 높이기 위해 교육을 의뢰했는데, 실무 중심의 커리큘럼으로 바로 업무에 적용할 수 있었습니다. 교육 만족도가 95%를 넘었어요.",
+    name: '박정훈',
+    role: '인사담당자',
+    company: 'IT 기업 C사',
+    content:
+      '직원들의 AI 활용 역량을 높이기 위해 교육을 의뢰했는데, 실무 중심의 커리큘럼으로 바로 업무에 적용할 수 있었습니다. 교육 만족도가 95%를 넘었어요.',
     rating: 5,
-    result: "교육 만족도 95%"
+    result: '교육 만족도 95%',
   },
   {
     id: 4,
-    name: "최수연",
-    role: "콘텐츠 디렉터",
-    company: "미디어 D사",
-    content: "매달 대량의 영상 콘텐츠가 필요한데, 한깨봄 덕분에 안정적으로 고품질 콘텐츠를 공급받고 있습니다. 장기 파트너로 계속 함께하고 싶어요.",
+    name: '최수연',
+    role: '콘텐츠 디렉터',
+    company: '미디어 D사',
+    content:
+      '매달 대량의 영상 콘텐츠가 필요한데, 한깨봄 덕분에 안정적으로 고품질 콘텐츠를 공급받고 있습니다. 장기 파트너로 계속 함께하고 싶어요.',
     rating: 5,
-    result: "월 50편 콘텐츠 제작"
-  }
+    result: '월 50편 콘텐츠 제작',
+  },
 ];
 
 export function Testimonials() {
   const [current, setCurrent] = useState(0);
 
   const next = () => setCurrent((prev) => (prev + 1) % testimonials.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  const prev = () =>
+    setCurrent(
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+    );
 
   return (
     <section className="py-24 bg-slate-950/50">
@@ -80,10 +87,13 @@ export function Testimonials() {
               transition={{ duration: 0.3 }}
               className="bg-slate-900 rounded-3xl p-10 md:p-14 shadow-2xl border border-white/5"
             >
-               <Quote className="w-12 h-12 text-primary/20 mb-6" aria-hidden="true" />
+              <Quote
+                className="w-12 h-12 text-primary/20 mb-6"
+                aria-hidden="true"
+              />
 
               <p className="text-xl md:text-2xl text-white font-medium leading-relaxed mb-8">
-                "{testimonials[current].content}"
+                &quot;{testimonials[current].content}&quot;
               </p>
 
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -92,9 +102,12 @@ export function Testimonials() {
                     {testimonials[current].name[0]}
                   </div>
                   <div>
-                    <div className="font-bold text-lg text-white">{testimonials[current].name}</div>
+                    <div className="font-bold text-lg text-white">
+                      {testimonials[current].name}
+                    </div>
                     <div className="text-slate-400 text-sm">
-                      {testimonials[current].role} · {testimonials[current].company}
+                      {testimonials[current].role} ·{' '}
+                      {testimonials[current].company}
                     </div>
                   </div>
                 </div>
@@ -102,7 +115,10 @@ export function Testimonials() {
                 <div className="flex items-center gap-4">
                   <div className="flex gap-1">
                     {[...Array(testimonials[current].rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                      <Star
+                        key={i}
+                        className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                      />
                     ))}
                   </div>
                   <div className="px-4 py-2 bg-primary/10 text-primary font-bold rounded-full text-sm">

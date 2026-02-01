@@ -4,7 +4,20 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Search, Bell, User, ChevronDown, LogOut, Settings, LayoutDashboard, Video, Upload, Wallet } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Search,
+  Bell,
+  User,
+  ChevronDown,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+  Video,
+  Upload,
+  Wallet,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // 사용자 역할 타입
@@ -44,7 +57,9 @@ export function SimpleHeader() {
   // 모바일 메뉴 열릴 때 스크롤 방지
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isMobileMenuOpen]);
 
   const isActive = (href: string) => {
@@ -54,22 +69,18 @@ export function SimpleHeader() {
 
   // 권한별 메뉴 정의
   const getNavItems = () => {
-    const baseItems = [
-      { label: '영상', href: '/videos', icon: Video },
-    ];
+    const baseItems = [{ label: '영상', href: '/videos', icon: Video }];
 
     if (role === 'STAR' || role === 'ADMIN') {
       baseItems.push(
         { label: '대시보드', href: '/stars/dashboard', icon: LayoutDashboard },
         { label: '업로드', href: '/stars/upload', icon: Upload },
-        { label: '수입', href: '/stars/earnings', icon: Wallet },
+        { label: '수입', href: '/stars/earnings', icon: Wallet }
       );
     }
 
     if (role === 'ADMIN') {
-      baseItems.push(
-        { label: '관리자', href: '/admin', icon: Settings },
-      );
+      baseItems.push({ label: '관리자', href: '/admin', icon: Settings });
     }
 
     return baseItems;
@@ -88,10 +99,11 @@ export function SimpleHeader() {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-
           {/* 로고 */}
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-2xl group-hover:scale-110 transition-transform">🌟</span>
+            <span className="text-2xl group-hover:scale-110 transition-transform">
+              🌟
+            </span>
             <span className="text-lg font-bold text-white">함께봄</span>
           </Link>
 
@@ -148,10 +160,12 @@ export function SimpleHeader() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <ChevronDown className={cn(
-                      'w-4 h-4 text-gray-400 transition-transform hidden sm:block',
-                      isProfileOpen && 'rotate-180'
-                    )} />
+                    <ChevronDown
+                      className={cn(
+                        'w-4 h-4 text-gray-400 transition-transform hidden sm:block',
+                        isProfileOpen && 'rotate-180'
+                      )}
+                    />
                   </button>
 
                   <AnimatePresence>
@@ -163,7 +177,9 @@ export function SimpleHeader() {
                         className="absolute right-0 top-full mt-2 w-48 bg-neutral-900 border border-white/10 rounded-xl shadow-2xl py-2 z-50"
                       >
                         <div className="px-4 py-2 border-b border-white/10">
-                          <p className="text-sm font-medium text-white">{name || '사용자'}</p>
+                          <p className="text-sm font-medium text-white">
+                            {name || '사용자'}
+                          </p>
                           <p className="text-xs text-gray-500">{role}</p>
                         </div>
                         <Link
@@ -221,7 +237,11 @@ export function SimpleHeader() {
               className="md:hidden p-2 text-gray-300 hover:text-white"
               aria-label={isMobileMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>

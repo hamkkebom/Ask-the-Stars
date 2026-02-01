@@ -1,6 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 
 // Fabric.js types (dynamic import to avoid SSR issues)
 type FabricCanvas = any;
@@ -54,253 +61,286 @@ export interface AnnotationCanvasRef {
 /**
  * AnnotationCanvas - Fabric.js overlay for video marking
  */
-export const AnnotationCanvas = forwardRef<AnnotationCanvasRef, AnnotationCanvasProps>(
-  function AnnotationCanvas(
-    {
+export const AnnotationCanvas = forwardRef<
+  AnnotationCanvasRef,
+  AnnotationCanvasProps
+>(function AnnotationCanvas(
+  {
+    width,
+    height,
+    currentTime = 0,
+    annotations = [],
+    activeTool = null,
+    color = '#FF5733',
+    onAnnotationCreate,
+    onAnnotationSelect,
+    editable = true,
+    className = '',
+  },
+  ref
+) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fabricRef = useRef<FabricCanvas | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [fabricModule, setFabricModule] = useState<any>(null);
+
+  // Dynamic import of fabric.js (SSR safe)
+  useEffect(() => {
+    import('fabric').then((module) => {
+      setFabricModule(module);
+    });
+  }, []);
+
+  // Initialize Fabric canvas
+  const initializeCanvas = useCallback(() => {
+    if (!canvasRef.current || !fabricModule) return;
+
+    const { Canvas } = fabricModule;
+
+    const canvas = new Canvas(canvasRef.current, {
       width,
       height,
-      currentTime = 0,
-      annotations = [],
-      activeTool = null,
-      color = '#FF5733',
-      onAnnotationCreate,
-      onAnnotationSelect,
-      editable = true,
-      className = '',
-    },
-    ref
-  ) {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const fabricRef = useRef<FabricCanvas | null>(null);
-    const [isDrawing, setIsDrawing] = useState(false);
-    const [fabricModule, setFabricModule] = useState<any>(null);
+      selection: editable,
+      backgroundColor: 'transparent',
+    });
 
-    // Dynamic import of fabric.js (SSR safe)
-    useEffect(() => {
-      import('fabric').then((module) => {
-        setFabricModule(module);
-      });
-    }, []);
+    fabricRef.current = canvas;
 
-    // Initialize Fabric canvas
-    useEffect(() => {
-      if (!canvasRef.current || !fabricModule) return;
+    // Handle object selection
+    canvas.on('selection:created', (e: any) => {
+      const selected = e.selected?.[0];
+      if (selected?.data) {
+        onAnnotationSelect?.(selected.data as Annotation);
+      }
+    });
 
-      const { Canvas } = fabricModule;
+    canvas.on('selection:cleared', () => {
+      onAnnotationSelect?.(null);
+    });
 
-      const canvas = new Canvas(canvasRef.current, {
-        width,
-        height,
-        selection: editable,
-        backgroundColor: 'transparent',
-      });
+    return () => {
+      canvas.dispose();
+      fabricRef.current = null;
+    };
+  }, [width, height, fabricModule, editable, onAnnotationSelect]);
 
-      fabricRef.current = canvas;
+  useEffect(() => {
+    return initializeCanvas();
+  }, [initializeCanvas]);
 
-      // Handle object selection
-      canvas.on('selection:created', (e: any) => {
-        const selected = e.selected?.[0];
-        if (selected?.data) {
-          onAnnotationSelect?.(selected.data as Annotation);
-        }
-      });
+  // Handle drawing based on active tool
+  const handleDrawingSetup = useCallback(() => {
+    if (!fabricRef.current || !fabricModule || !activeTool) return;
 
-      canvas.on('selection:cleared', () => {
-        onAnnotationSelect?.(null);
-      });
+    const canvas = fabricRef.current;
+    const { Circle, Rect, Line, Path } = fabricModule;
 
-      return () => {
-        canvas.dispose();
-        fabricRef.current = null;
-      };
-    }, [width, height, fabricModule, editable]);
+    canvas.isDrawingMode = activeTool === 'freehand';
 
-    // Handle drawing based on active tool
-    useEffect(() => {
-      if (!fabricRef.current || !fabricModule || !activeTool) return;
+    if (activeTool === 'freehand') {
+      canvas.freeDrawingBrush.color = color;
+      canvas.freeDrawingBrush.width = 3;
+    }
 
-      const canvas = fabricRef.current;
-      const { Circle, Rect, Line, Path } = fabricModule;
+    let startPoint: { x: number; y: number } | null = null;
+    let tempShape: FabricObject | null = null;
 
-      canvas.isDrawingMode = activeTool === 'freehand';
+    const handleMouseDown = (e: any) => {
+      if (!editable || activeTool === 'freehand') return;
 
-      if (activeTool === 'freehand') {
-        canvas.freeDrawingBrush.color = color;
-        canvas.freeDrawingBrush.width = 3;
+      const pointer = canvas.getPointer(e.e);
+      startPoint = { x: pointer.x, y: pointer.y };
+      setIsDrawing(true);
+    };
+
+    const handleMouseMove = (e: any) => {
+      if (!startPoint || !editable || activeTool === 'freehand') return;
+
+      const pointer = canvas.getPointer(e.e);
+
+      // Remove temp shape
+      if (tempShape) {
+        canvas.remove(tempShape);
       }
 
-      let startPoint: { x: number; y: number } | null = null;
-      let tempShape: FabricObject | null = null;
+      // Create temp shape based on tool
+      if (activeTool === 'circle') {
+        const radius = Math.sqrt(
+          Math.pow(pointer.x - startPoint.x, 2) +
+            Math.pow(pointer.y - startPoint.y, 2)
+        );
+        tempShape = new Circle({
+          left: startPoint.x - radius,
+          top: startPoint.y - radius,
+          radius,
+          fill: 'transparent',
+          stroke: color,
+          strokeWidth: 3,
+          selectable: false,
+        });
+      } else if (activeTool === 'rectangle') {
+        tempShape = new Rect({
+          left: Math.min(startPoint.x, pointer.x),
+          top: Math.min(startPoint.y, pointer.y),
+          width: Math.abs(pointer.x - startPoint.x),
+          height: Math.abs(pointer.y - startPoint.y),
+          fill: 'transparent',
+          stroke: color,
+          strokeWidth: 3,
+          selectable: false,
+        });
+      } else if (activeTool === 'arrow') {
+        tempShape = new Line(
+          [startPoint.x, startPoint.y, pointer.x, pointer.y],
+          {
+            stroke: color,
+            strokeWidth: 3,
+            selectable: false,
+          }
+        );
+      }
 
-      const handleMouseDown = (e: any) => {
-        if (!editable || activeTool === 'freehand') return;
+      if (tempShape) {
+        canvas.add(tempShape);
+        canvas.renderAll();
+      }
+    };
 
-        const pointer = canvas.getPointer(e.e);
-        startPoint = { x: pointer.x, y: pointer.y };
-        setIsDrawing(true);
+    const handleMouseUp = (e: any) => {
+      if (!startPoint || !editable || activeTool === 'freehand') return;
+
+      const pointer = canvas.getPointer(e.e);
+
+      // Create final annotation
+      const annotation: Omit<Annotation, 'id'> = {
+        type: activeTool,
+        x: startPoint.x / width,
+        y: startPoint.y / height,
+        color,
+        timestamp: currentTime,
       };
 
-      const handleMouseMove = (e: any) => {
-        if (!isDrawing || !startPoint || !editable || activeTool === 'freehand') return;
-
-        const pointer = canvas.getPointer(e.e);
-
-        // Remove temp shape
-        if (tempShape) {
-          canvas.remove(tempShape);
-        }
-
-        // Create temp shape based on tool
-        if (activeTool === 'circle') {
-          const radius = Math.sqrt(
+      if (activeTool === 'circle') {
+        annotation.radius =
+          Math.sqrt(
             Math.pow(pointer.x - startPoint.x, 2) +
-            Math.pow(pointer.y - startPoint.y, 2)
-          );
-          tempShape = new Circle({
-            left: startPoint.x - radius,
-            top: startPoint.y - radius,
-            radius,
-            fill: 'transparent',
-            stroke: color,
-            strokeWidth: 3,
-            selectable: false,
-          });
-        } else if (activeTool === 'rectangle') {
-          tempShape = new Rect({
-            left: Math.min(startPoint.x, pointer.x),
-            top: Math.min(startPoint.y, pointer.y),
-            width: Math.abs(pointer.x - startPoint.x),
-            height: Math.abs(pointer.y - startPoint.y),
-            fill: 'transparent',
-            stroke: color,
-            strokeWidth: 3,
-            selectable: false,
-          });
-        } else if (activeTool === 'arrow') {
-          tempShape = new Line([startPoint.x, startPoint.y, pointer.x, pointer.y], {
-            stroke: color,
-            strokeWidth: 3,
-            selectable: false,
-          });
-        }
-
-        if (tempShape) {
-          canvas.add(tempShape);
-          canvas.renderAll();
-        }
-      };
-
-      const handleMouseUp = (e: any) => {
-        if (!isDrawing || !startPoint || !editable || activeTool === 'freehand') return;
-
-        const pointer = canvas.getPointer(e.e);
-
-        // Create final annotation
-        const annotation: Omit<Annotation, 'id'> = {
-          type: activeTool,
-          x: startPoint.x / width,
-          y: startPoint.y / height,
-          color,
-          timestamp: currentTime,
-        };
-
-        if (activeTool === 'circle') {
-          annotation.radius = Math.sqrt(
-            Math.pow(pointer.x - startPoint.x, 2) +
-            Math.pow(pointer.y - startPoint.y, 2)
+              Math.pow(pointer.y - startPoint.y, 2)
           ) / Math.min(width, height);
-        } else if (activeTool === 'rectangle') {
-          annotation.width = Math.abs(pointer.x - startPoint.x) / width;
-          annotation.height = Math.abs(pointer.y - startPoint.y) / height;
-        }
+      } else if (activeTool === 'rectangle') {
+        annotation.width = Math.abs(pointer.x - startPoint.x) / width;
+        annotation.height = Math.abs(pointer.y - startPoint.y) / height;
+      }
 
-        onAnnotationCreate?.(annotation);
+      onAnnotationCreate?.(annotation);
 
-        setIsDrawing(false);
-        startPoint = null;
-        tempShape = null;
-      };
+      setIsDrawing(false);
+      startPoint = null;
+      tempShape = null;
+    };
 
-      canvas.on('mouse:down', handleMouseDown);
-      canvas.on('mouse:move', handleMouseMove);
-      canvas.on('mouse:up', handleMouseUp);
+    canvas.on('mouse:down', handleMouseDown);
+    canvas.on('mouse:move', handleMouseMove);
+    canvas.on('mouse:up', handleMouseUp);
 
-      return () => {
-        canvas.off('mouse:down', handleMouseDown);
-        canvas.off('mouse:move', handleMouseMove);
-        canvas.off('mouse:up', handleMouseUp);
-      };
-    }, [activeTool, color, width, height, currentTime, editable, isDrawing, fabricModule]);
+    return () => {
+      canvas.off('mouse:down', handleMouseDown);
+      canvas.off('mouse:move', handleMouseMove);
+      canvas.off('mouse:up', handleMouseUp);
+    };
+  }, [
+    activeTool,
+    color,
+    width,
+    height,
+    currentTime,
+    editable,
+    fabricModule,
+    onAnnotationCreate,
+    setIsDrawing,
+  ]);
 
-    // Render existing annotations
-    useEffect(() => {
-      if (!fabricRef.current || !fabricModule) return;
+  useEffect(() => {
+    return handleDrawingSetup();
+  }, [handleDrawingSetup]);
 
-      const canvas = fabricRef.current;
-      const { Circle, Rect, Line } = fabricModule;
+  // Render existing annotations
+  const renderAnnotations = useCallback(() => {
+    if (!fabricRef.current || !fabricModule) return;
 
-      // Clear and re-render
-      canvas.clear();
+    const canvas = fabricRef.current;
+    const { Circle, Rect, Line } = fabricModule;
 
-      annotations.forEach((annotation) => {
-        let shape: FabricObject | null = null;
+    // Clear and re-render
+    canvas.clear();
 
-        if (annotation.type === 'circle' && annotation.radius) {
-          const radius = annotation.radius * Math.min(width, height);
-          shape = new Circle({
-            left: annotation.x * width - radius,
-            top: annotation.y * height - radius,
-            radius,
-            fill: 'transparent',
-            stroke: annotation.color,
-            strokeWidth: 3,
-            data: annotation,
-          });
-        } else if (annotation.type === 'rectangle' && annotation.width && annotation.height) {
-          shape = new Rect({
-            left: annotation.x * width,
-            top: annotation.y * height,
-            width: annotation.width * width,
-            height: annotation.height * height,
-            fill: 'transparent',
-            stroke: annotation.color,
-            strokeWidth: 3,
-            data: annotation,
-          });
-        }
+    annotations.forEach((annotation) => {
+      let shape: FabricObject | null = null;
 
-        if (shape) {
-          canvas.add(shape);
-        }
-      });
+      if (annotation.type === 'circle' && annotation.radius) {
+        const radius = annotation.radius * Math.min(width, height);
+        shape = new Circle({
+          left: annotation.x * width - radius,
+          top: annotation.y * height - radius,
+          radius,
+          fill: 'transparent',
+          stroke: annotation.color,
+          strokeWidth: 3,
+          data: annotation,
+        });
+      } else if (
+        annotation.type === 'rectangle' &&
+        annotation.width &&
+        annotation.height
+      ) {
+        shape = new Rect({
+          left: annotation.x * width,
+          top: annotation.y * height,
+          width: annotation.width * width,
+          height: annotation.height * height,
+          fill: 'transparent',
+          stroke: annotation.color,
+          strokeWidth: 3,
+          data: annotation,
+        });
+      }
 
-      canvas.renderAll();
-    }, [annotations, width, height, fabricModule]);
+      if (shape) {
+        canvas.add(shape);
+      }
+    });
 
-    // Expose methods via ref
-    useImperativeHandle(ref, () => ({
-      clearCanvas: () => {
-        fabricRef.current?.clear();
-      },
-      exportAnnotations: () => {
-        return annotations;
-      },
-      setTool: (tool: AnnotationType | null) => {
-        // This can be used to change tools programmatically
-      },
-    }));
+    canvas.renderAll();
+  }, [annotations, width, height, fabricModule]);
 
-    return (
-      <div className={`annotation-canvas-wrapper absolute inset-0 pointer-events-auto ${className}`}>
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0"
-          style={{ pointerEvents: editable ? 'auto' : 'none' }}
-        />
-      </div>
-    );
-  }
-);
+  useEffect(() => {
+    renderAnnotations();
+  }, [renderAnnotations]);
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    clearCanvas: () => {
+      fabricRef.current?.clear();
+    },
+    exportAnnotations: () => {
+      return annotations;
+    },
+    setTool: (tool: AnnotationType | null) => {
+      // This can be used to change tools programmatically
+    },
+  }));
+
+  return (
+    <div
+      className={`annotation-canvas-wrapper absolute inset-0 pointer-events-auto ${className}`}
+    >
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0"
+        style={{ pointerEvents: editable ? 'auto' : 'none' }}
+      />
+    </div>
+  );
+});
 
 // Toolbar component for annotation tools
 export function AnnotationToolbar({
@@ -331,7 +371,9 @@ export function AnnotationToolbar({
       {tools.map((tool) => (
         <button
           key={tool.type}
-          onClick={() => onToolChange(activeTool === tool.type ? null : tool.type)}
+          onClick={() =>
+            onToolChange(activeTool === tool.type ? null : tool.type)
+          }
           className={`p-2 rounded ${
             activeTool === tool.type
               ? 'bg-blue-600 text-white'

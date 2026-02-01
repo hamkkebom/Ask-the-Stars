@@ -20,7 +20,10 @@ export default function MyProjectsLoading() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="rounded-xl border border-white/10 bg-white/5 p-6">
+          <div
+            key={i}
+            className="rounded-xl border border-white/10 bg-white/5 p-6"
+          >
             <div className="flex items-center gap-4">
               <Skeleton className="w-12 h-12 rounded-full" />
               <div>

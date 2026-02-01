@@ -5,8 +5,11 @@ import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatCurrency, cn } from '@/lib/utils';
 import {
-  TrendingUp, TrendingDown, DollarSign, Calendar,
-  ArrowUpRight, ArrowDownRight, Download, Filter
+  TrendingUp,
+  DollarSign,
+  ArrowUpRight,
+  Download,
+  Filter,
 } from 'lucide-react';
 
 interface RevenueItem {
@@ -19,12 +22,54 @@ interface RevenueItem {
 }
 
 const mockRevenue: RevenueItem[] = [
-  { id: '1', source: '교육 수강료 - AI 영상제작 기초반', category: '교육', amount: 159000, date: '2026-01-21', status: 'confirmed' },
-  { id: '2', source: '교육 수강료 - AI 영상제작 기초반', category: '교육', amount: 159000, date: '2026-01-21', status: 'confirmed' },
-  { id: '3', source: '영상 제작 의뢰 - A사', category: '제작', amount: 500000, date: '2026-01-20', status: 'confirmed' },
-  { id: '4', source: '프리미엄 멤버십', category: '구독', amount: 29000, date: '2026-01-20', status: 'pending' },
-  { id: '5', source: '교육 수강료 - AI 퍼스널마케팅 심화반', category: '교육', amount: 259000, date: '2026-01-19', status: 'confirmed' },
-  { id: '6', source: '영상 제작 의뢰 - B사', category: '제작', amount: 350000, date: '2026-01-18', status: 'confirmed' },
+  {
+    id: '1',
+    source: '교육 수강료 - AI 영상제작 기초반',
+    category: '교육',
+    amount: 159000,
+    date: '2026-01-21',
+    status: 'confirmed',
+  },
+  {
+    id: '2',
+    source: '교육 수강료 - AI 영상제작 기초반',
+    category: '교육',
+    amount: 159000,
+    date: '2026-01-21',
+    status: 'confirmed',
+  },
+  {
+    id: '3',
+    source: '영상 제작 의뢰 - A사',
+    category: '제작',
+    amount: 500000,
+    date: '2026-01-20',
+    status: 'confirmed',
+  },
+  {
+    id: '4',
+    source: '프리미엄 멤버십',
+    category: '구독',
+    amount: 29000,
+    date: '2026-01-20',
+    status: 'pending',
+  },
+  {
+    id: '5',
+    source: '교육 수강료 - AI 퍼스널마케팅 심화반',
+    category: '교육',
+    amount: 259000,
+    date: '2026-01-19',
+    status: 'confirmed',
+  },
+  {
+    id: '6',
+    source: '영상 제작 의뢰 - B사',
+    category: '제작',
+    amount: 350000,
+    date: '2026-01-18',
+    status: 'confirmed',
+  },
 ];
 
 const stats = {
@@ -57,13 +102,15 @@ export default function RevenuePage() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex rounded-lg bg-white/5 p-1">
-            {(['week', 'month', 'year'] as const).map(p => (
+            {(['week', 'month', 'year'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={cn(
-                  "px-3 py-1 rounded text-sm transition-colors",
-                  period === p ? "bg-primary text-white" : "text-gray-400 hover:text-white"
+                  'px-3 py-1 rounded text-sm transition-colors',
+                  period === p
+                    ? 'bg-primary text-white'
+                    : 'text-gray-400 hover:text-white'
                 )}
               >
                 {p === 'week' ? '주간' : p === 'month' ? '월간' : '연간'}
@@ -83,21 +130,26 @@ export default function RevenuePage() {
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-gray-400">이번 달 매출</p>
             <div className="flex items-center text-green-400 text-sm">
-              <ArrowUpRight className="w-4 h-4" />
-              +{stats.growth}%
+              <ArrowUpRight className="w-4 h-4" />+{stats.growth}%
             </div>
           </div>
-          <p className="text-3xl font-bold text-white">{formatCurrency(stats.thisMonth)}</p>
+          <p className="text-3xl font-bold text-white">
+            {formatCurrency(stats.thisMonth)}
+          </p>
         </GlassCard>
 
         <GlassCard className="p-6">
           <p className="text-sm text-gray-400 mb-4">지난 달</p>
-          <p className="text-3xl font-bold text-gray-300">{formatCurrency(stats.lastMonth)}</p>
+          <p className="text-3xl font-bold text-gray-300">
+            {formatCurrency(stats.lastMonth)}
+          </p>
         </GlassCard>
 
         <GlassCard className="p-6">
           <p className="text-sm text-gray-400 mb-4">확정 대기</p>
-          <p className="text-3xl font-bold text-yellow-400">{formatCurrency(stats.pending)}</p>
+          <p className="text-3xl font-bold text-yellow-400">
+            {formatCurrency(stats.pending)}
+          </p>
         </GlassCard>
 
         <GlassCard className="p-6">
@@ -109,13 +161,17 @@ export default function RevenuePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Category Breakdown */}
         <GlassCard className="p-6">
-          <h2 className="text-lg font-semibold text-white mb-6">카테고리별 매출</h2>
+          <h2 className="text-lg font-semibold text-white mb-6">
+            카테고리별 매출
+          </h2>
           <div className="space-y-4">
-            {categoryBreakdown.map(cat => (
+            {categoryBreakdown.map((cat) => (
               <div key={cat.name}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-gray-300">{cat.name}</span>
-                  <span className="text-white font-medium">{cat.percentage}%</span>
+                  <span className="text-white font-medium">
+                    {cat.percentage}%
+                  </span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                   <m.div
@@ -125,7 +181,9 @@ export default function RevenuePage() {
                     className="h-full bg-gradient-to-r from-primary to-purple-500 rounded-full"
                   />
                 </div>
-                <p className="text-sm text-gray-500 mt-1">{formatCurrency(cat.amount)}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {formatCurrency(cat.amount)}
+                </p>
               </div>
             ))}
           </div>
@@ -155,19 +213,29 @@ export default function RevenuePage() {
                     <DollarSign className="w-4 h-4 text-green-400" />
                   </div>
                   <div>
-                    <p className="text-white text-sm font-medium">{item.source}</p>
+                    <p className="text-white text-sm font-medium">
+                      {item.source}
+                    </p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-xs text-gray-500">{item.date}</span>
-                      <span className="px-1.5 py-0.5 rounded bg-white/5 text-xs text-gray-400">{item.category}</span>
+                      <span className="px-1.5 py-0.5 rounded bg-white/5 text-xs text-gray-400">
+                        {item.category}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-green-400 font-medium">+{formatCurrency(item.amount)}</p>
-                  <span className={cn(
-                    "text-xs",
-                    item.status === 'confirmed' ? "text-green-400" : "text-yellow-400"
-                  )}>
+                  <p className="text-green-400 font-medium">
+                    +{formatCurrency(item.amount)}
+                  </p>
+                  <span
+                    className={cn(
+                      'text-xs',
+                      item.status === 'confirmed'
+                        ? 'text-green-400'
+                        : 'text-yellow-400'
+                    )}
+                  >
                     {item.status === 'confirmed' ? '확정' : '대기'}
                   </span>
                 </div>
@@ -179,4 +247,3 @@ export default function RevenuePage() {
     </div>
   );
 }
-

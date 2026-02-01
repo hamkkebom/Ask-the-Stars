@@ -19,26 +19,68 @@ const mockJournalEntries = [
     id: '1',
     date: '2026-01-29',
     entries: [
-      { id: 'e1', time: '10:00', description: '브랜드 영상 편집 시작', project: '삼성 브랜드 영상', completed: true },
-      { id: 'e2', time: '14:00', description: '색보정 및 자막 작업', project: '삼성 브랜드 영상', completed: true },
-      { id: 'e3', time: '16:30', description: '최종 렌더링 및 업로드', project: '삼성 브랜드 영상', completed: false },
-    ]
+      {
+        id: 'e1',
+        time: '10:00',
+        description: '브랜드 영상 편집 시작',
+        project: '삼성 브랜드 영상',
+        completed: true,
+      },
+      {
+        id: 'e2',
+        time: '14:00',
+        description: '색보정 및 자막 작업',
+        project: '삼성 브랜드 영상',
+        completed: true,
+      },
+      {
+        id: 'e3',
+        time: '16:30',
+        description: '최종 렌더링 및 업로드',
+        project: '삼성 브랜드 영상',
+        completed: false,
+      },
+    ],
   },
   {
     id: '2',
     date: '2026-01-28',
     entries: [
-      { id: 'e4', time: '09:00', description: '클라이언트 미팅 - 요구사항 논의', project: 'LG 제품 소개', completed: true },
-      { id: 'e5', time: '13:00', description: '스토리보드 작성', project: 'LG 제품 소개', completed: true },
-    ]
+      {
+        id: 'e4',
+        time: '09:00',
+        description: '클라이언트 미팅 - 요구사항 논의',
+        project: 'LG 제품 소개',
+        completed: true,
+      },
+      {
+        id: 'e5',
+        time: '13:00',
+        description: '스토리보드 작성',
+        project: 'LG 제품 소개',
+        completed: true,
+      },
+    ],
   },
   {
     id: '3',
     date: '2026-01-27',
     entries: [
-      { id: 'e6', time: '10:00', description: '영상 촬영', project: '현대 이벤트 영상', completed: true },
-      { id: 'e7', time: '15:00', description: '러프 편집', project: '현대 이벤트 영상', completed: true },
-    ]
+      {
+        id: 'e6',
+        time: '10:00',
+        description: '영상 촬영',
+        project: '현대 이벤트 영상',
+        completed: true,
+      },
+      {
+        id: 'e7',
+        time: '15:00',
+        description: '러프 편집',
+        project: '현대 이벤트 영상',
+        completed: true,
+      },
+    ],
   },
 ];
 
@@ -54,16 +96,24 @@ function formatDate(dateStr: string) {
   if (dateStr === todayStr) return '오늘';
   if (dateStr === yesterdayStr) return '어제';
 
-  return date.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+  return date.toLocaleDateString('ko-KR', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'short',
+  });
 }
 
 export default function WorkJournalPage() {
   const [isAdding, setIsAdding] = useState(false);
 
   // 통계 계산
-  const totalEntries = mockJournalEntries.reduce((acc, day) => acc + day.entries.length, 0);
-  const completedEntries = mockJournalEntries.reduce((acc, day) =>
-    acc + day.entries.filter(e => e.completed).length, 0
+  const totalEntries = mockJournalEntries.reduce(
+    (acc, day) => acc + day.entries.length,
+    0
+  );
+  const completedEntries = mockJournalEntries.reduce(
+    (acc, day) => acc + day.entries.filter((e) => e.completed).length,
+    0
   );
 
   return (
@@ -75,8 +125,7 @@ export default function WorkJournalPage() {
           onClick={() => setIsAdding(true)}
           className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg font-medium hover:bg-gray-200 transition-colors"
         >
-          <Plus className="w-4 h-4" />
-          새 기록
+          <Plus className="w-4 h-4" />새 기록
         </button>
       </div>
 
@@ -121,14 +170,18 @@ export default function WorkJournalPage() {
       {/* Journal Entries */}
       <div className="space-y-4">
         {mockJournalEntries.map((day) => (
-          <div key={day.id} className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
+          <div
+            key={day.id}
+            className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden"
+          >
             {/* Date Header */}
             <div className="px-4 py-3 border-b border-[#3f3f3f] bg-[#1a1a1a]">
               <h2 className="font-medium text-white flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#aaa]" />
                 {formatDate(day.date)}
                 <span className="text-[#666] text-sm ml-2">
-                  {day.entries.filter(e => e.completed).length}/{day.entries.length} 완료
+                  {day.entries.filter((e) => e.completed).length}/
+                  {day.entries.length} 완료
                 </span>
               </h2>
             </div>
@@ -141,12 +194,16 @@ export default function WorkJournalPage() {
                   className="flex items-center gap-4 p-4 hover:bg-[#3f3f3f] transition-colors group"
                 >
                   {/* Checkbox */}
-                  <button className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
-                    entry.completed
-                      ? 'bg-green-500 border-green-500'
-                      : 'border-[#666] hover:border-[#aaa]'
-                  }`}>
-                    {entry.completed && <CheckCircle className="w-3 h-3 text-white" />}
+                  <button
+                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                      entry.completed
+                        ? 'bg-green-500 border-green-500'
+                        : 'border-[#666] hover:border-[#aaa]'
+                    }`}
+                  >
+                    {entry.completed && (
+                      <CheckCircle className="w-3 h-3 text-white" />
+                    )}
                   </button>
 
                   {/* Time */}
@@ -157,7 +214,9 @@ export default function WorkJournalPage() {
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <p className={`${entry.completed ? 'text-[#666] line-through' : 'text-white'}`}>
+                    <p
+                      className={`${entry.completed ? 'text-[#666] line-through' : 'text-white'}`}
+                    >
                       {entry.description}
                     </p>
                     <p className="text-[#aaa] text-sm mt-0.5">

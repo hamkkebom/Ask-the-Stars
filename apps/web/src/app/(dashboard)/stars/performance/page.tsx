@@ -2,7 +2,14 @@
 
 import { useState } from 'react';
 import { formatCurrency } from '@/lib/utils';
-import { TrendingUp, Award, Star, Target, BarChart3, Users } from 'lucide-react';
+import {
+  TrendingUp,
+  Award,
+  Star,
+  Target,
+  BarChart3,
+  Users,
+} from 'lucide-react';
 
 interface PerformanceData {
   period: string;
@@ -54,9 +61,13 @@ export default function StarsPerformancePage() {
             <div className="p-2 rounded-lg bg-blue-500/20">
               <Target className="w-5 h-5 text-blue-400" />
             </div>
-            <span className="text-sm font-medium text-gray-400">완료 프로젝트</span>
+            <span className="text-sm font-medium text-gray-400">
+              완료 프로젝트
+            </span>
           </div>
-          <p className="text-4xl font-bold text-white">{performance.projectsCompleted}</p>
+          <p className="text-4xl font-bold text-white">
+            {performance.projectsCompleted}
+          </p>
         </div>
 
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors">
@@ -66,7 +77,9 @@ export default function StarsPerformancePage() {
             </div>
             <span className="text-sm font-medium text-gray-400">승인율</span>
           </div>
-          <p className="text-4xl font-bold text-green-400">{performance.approvalRate}%</p>
+          <p className="text-4xl font-bold text-green-400">
+            {performance.approvalRate}%
+          </p>
         </div>
 
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors">
@@ -76,7 +89,9 @@ export default function StarsPerformancePage() {
             </div>
             <span className="text-sm font-medium text-gray-400">평균 평점</span>
           </div>
-          <p className="text-4xl font-bold text-yellow-400">⭐ {performance.avgFeedbackScore}</p>
+          <p className="text-4xl font-bold text-yellow-400">
+            ⭐ {performance.avgFeedbackScore}
+          </p>
         </div>
 
         <div className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 transition-colors">
@@ -86,7 +101,9 @@ export default function StarsPerformancePage() {
             </div>
             <span className="text-sm font-medium text-gray-400">전체 순위</span>
           </div>
-          <p className="text-4xl font-bold text-purple-400">#{performance.ranking}</p>
+          <p className="text-4xl font-bold text-purple-400">
+            #{performance.ranking}
+          </p>
         </div>
       </div>
 
@@ -119,13 +136,18 @@ export default function StarsPerformancePage() {
         {/* Simple Bar Chart */}
         <div className="h-48 flex items-end justify-center gap-8 px-4 mb-6">
           {monthlyData.map((data, i) => {
-            const maxEarnings = Math.max(...monthlyData.map(d => d.earnings));
+            const maxEarnings = Math.max(...monthlyData.map((d) => d.earnings));
             const heightPercent = (data.earnings / maxEarnings) * 100;
             const isLast = i === monthlyData.length - 1;
 
             return (
-              <div key={data.month} className="flex flex-col items-center gap-2">
-                <span className="text-sm text-gray-400">{formatCurrency(data.earnings)}</span>
+              <div
+                key={data.month}
+                className="flex flex-col items-center gap-2"
+              >
+                <span className="text-sm text-gray-400">
+                  {formatCurrency(data.earnings)}
+                </span>
                 <div
                   className={`w-16 rounded-t-lg transition-all ${
                     isLast
@@ -144,11 +166,15 @@ export default function StarsPerformancePage() {
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-white/5 border border-white/5">
             <p className="text-sm text-gray-400 mb-1">이번 달 수입</p>
-            <p className="text-2xl font-bold text-green-400">{formatCurrency(performance.totalEarnings)}</p>
+            <p className="text-2xl font-bold text-green-400">
+              {formatCurrency(performance.totalEarnings)}
+            </p>
           </div>
           <div className="p-4 rounded-xl bg-white/5 border border-white/5">
             <p className="text-sm text-gray-400 mb-1">누적 조회수</p>
-            <p className="text-2xl font-bold text-white">{(performance.viewsGenerated / 10000).toFixed(1)}만</p>
+            <p className="text-2xl font-bold text-white">
+              {(performance.viewsGenerated / 10000).toFixed(1)}만
+            </p>
           </div>
         </div>
       </div>
@@ -166,12 +192,18 @@ export default function StarsPerformancePage() {
           <div className="space-y-4">
             <div className="flex justify-between items-center py-2 border-b border-white/5">
               <span className="text-gray-400">제출한 버전</span>
-              <span className="font-medium text-white">{performance.versionsSubmitted}개</span>
+              <span className="font-medium text-white">
+                {performance.versionsSubmitted}개
+              </span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-white/5">
               <span className="text-gray-400">승인된 버전</span>
               <span className="font-medium text-green-400">
-                {Math.round(performance.versionsSubmitted * (performance.approvalRate / 100))}개
+                {Math.round(
+                  performance.versionsSubmitted *
+                    (performance.approvalRate / 100)
+                )}
+                개
               </span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-white/5">

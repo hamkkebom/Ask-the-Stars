@@ -17,20 +17,25 @@ export interface WorkJournalEntry {
 
 export const workJournalApi = {
   // 작업일지 목록 조회
-  listEntries: async (freelancerId: string, params?: {
-    startDate?: string;
-    endDate?: string;
-    limit?: number;
-  }) => {
+  listEntries: async (
+    freelancerId: string,
+    params?: {
+      startDate?: string;
+      endDate?: string;
+      limit?: number;
+    }
+  ) => {
     const supabase = createClient();
 
     let query = supabase
       .from('work_journal_entries')
-      .select(`
+      .select(
+        `
         *,
         project:projects(id, title),
         video:videos(id, title)
-      `)
+      `
+      )
       .eq('freelancer_id', freelancerId)
       .order('date', { ascending: false });
 
@@ -47,7 +52,9 @@ export const workJournalApi = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('listEntries error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('listEntries error:', error);
+      }
       return [];
     }
 
@@ -55,21 +62,28 @@ export const workJournalApi = {
   },
 
   // 날짜별 조회
-  getByDate: async (freelancerId: string, date: string): Promise<WorkJournalEntry | null> => {
+  getByDate: async (
+    freelancerId: string,
+    date: string
+  ): Promise<WorkJournalEntry | null> => {
     const supabase = createClient();
     const { data, error } = await supabase
       .from('work_journal_entries')
-      .select(`
+      .select(
+        `
         *,
         project:projects(id, title),
         video:videos(id, title)
-      `)
+      `
+      )
       .eq('freelancer_id', freelancerId)
       .eq('date', date)
       .maybeSingle();
 
     if (error) {
-      console.error('getByDate error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getByDate error:', error);
+      }
       return null;
     }
 
@@ -90,15 +104,23 @@ export const workJournalApi = {
       .lte('date', weekEnd.toISOString().split('T')[0]);
 
     if (error) {
-      console.error('getWeeklyStats error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getWeeklyStats error:', error);
+      }
       return { totalHours: 0, entries: 0, dailyHours: {} };
     }
 
-    const totalHours = (data || []).reduce((sum, e) => sum + (e.hours_worked || 0), 0);
-    const dailyHours = (data || []).reduce((acc, e) => {
-      acc[e.date] = e.hours_worked || 0;
-      return acc;
-    }, {} as Record<string, number>);
+    const totalHours = (data || []).reduce(
+      (sum, e) => sum + (e.hours_worked || 0),
+      0
+    );
+    const dailyHours = (data || []).reduce(
+      (acc, e) => {
+        acc[e.date] = e.hours_worked || 0;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return { totalHours, entries: data?.length || 0, dailyHours };
   },

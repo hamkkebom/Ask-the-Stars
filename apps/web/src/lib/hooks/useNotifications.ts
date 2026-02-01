@@ -27,7 +27,7 @@ export function useNotifications() {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, notificationsApi]);
 
   // 실시간 구독 설정
   useEffect(() => {
@@ -51,7 +51,7 @@ export function useNotifications() {
         notificationsApi.unsubscribe(realtimeChannel);
       }
     };
-  }, [user, loadNotifications]);
+  }, [user, loadNotifications, notificationsApi]);
 
   // 읽음 처리
   const markAsRead = useCallback(async (id: string) => {
@@ -80,19 +80,22 @@ export function useNotifications() {
   }, [user]);
 
   // 알림 삭제
-  const deleteNotification = useCallback(async (id: string) => {
-    try {
-      await notificationsApi.delete(id);
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-      // 삭제된 알림이 읽지 않은 것이었다면 카운트 감소
-      const deletedNotification = notifications.find((n) => n.id === id);
-      if (deletedNotification && !deletedNotification.is_read) {
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+  const deleteNotification = useCallback(
+    async (id: string) => {
+      try {
+        await notificationsApi.delete(id);
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+        // 삭제된 알림이 읽지 않은 것이었다면 카운트 감소
+        const deletedNotification = notifications.find((n) => n.id === id);
+        if (deletedNotification && !deletedNotification.is_read) {
+          setUnreadCount((prev) => Math.max(0, prev - 1));
+        }
+      } catch (error) {
+        console.error('Failed to delete notification:', error);
       }
-    } catch (error) {
-      console.error('Failed to delete notification:', error);
-    }
-  }, [notifications]);
+    },
+    [notifications]
+  );
 
   return {
     notifications,

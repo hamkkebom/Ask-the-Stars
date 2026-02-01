@@ -54,7 +54,12 @@ const recentContent = [
 
 // Mock 최근 피드백
 const recentFeedback = [
-  { id: '1', type: '수정요청', message: '자막 위치 조정 부탁드립니다', time: '2시간 전' },
+  {
+    id: '1',
+    type: '수정요청',
+    message: '자막 위치 조정 부탁드립니다',
+    time: '2시간 전',
+  },
   { id: '2', type: '승인', message: '잘됐어요! 감사합니다', time: '5시간 전' },
   { id: '3', type: '수정요청', message: '음악 볼륨 조절 필요', time: '1일 전' },
 ];
@@ -82,7 +87,10 @@ export default function StarsDashboardPage() {
           <h2 className="text-white font-medium">채널 분석</h2>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-[#aaa]">최근 28일</span>
-            <Link href="/stars/analytics" className="text-blue-400 hover:underline">
+            <Link
+              href="/stars/analytics"
+              className="text-blue-400 hover:underline"
+            >
               분석으로 이동
             </Link>
           </div>
@@ -98,9 +106,11 @@ export default function StarsDashboardPage() {
               <span className="text-3xl font-bold text-white">
                 {channelAnalytics.views.value.toLocaleString()}
               </span>
-              <span className={`flex items-center text-sm ${
-                channelAnalytics.views.up ? 'text-green-400' : 'text-red-400'
-              }`}>
+              <span
+                className={`flex items-center text-sm ${
+                  channelAnalytics.views.up ? 'text-green-400' : 'text-red-400'
+                }`}
+              >
                 {channelAnalytics.views.up ? (
                   <ArrowUpRight className="w-4 h-4" />
                 ) : (
@@ -121,9 +131,13 @@ export default function StarsDashboardPage() {
               <span className="text-3xl font-bold text-white">
                 {channelAnalytics.completedVideos.value}
               </span>
-              <span className={`flex items-center text-sm ${
-                channelAnalytics.completedVideos.up ? 'text-green-400' : 'text-red-400'
-              }`}>
+              <span
+                className={`flex items-center text-sm ${
+                  channelAnalytics.completedVideos.up
+                    ? 'text-green-400'
+                    : 'text-red-400'
+                }`}
+              >
                 {channelAnalytics.completedVideos.up ? (
                   <ArrowUpRight className="w-4 h-4" />
                 ) : (
@@ -144,9 +158,13 @@ export default function StarsDashboardPage() {
               <span className="text-3xl font-bold text-white">
                 {formatCurrency(channelAnalytics.earnings.value)}
               </span>
-              <span className={`flex items-center text-sm ${
-                channelAnalytics.earnings.up ? 'text-green-400' : 'text-red-400'
-              }`}>
+              <span
+                className={`flex items-center text-sm ${
+                  channelAnalytics.earnings.up
+                    ? 'text-green-400'
+                    : 'text-red-400'
+                }`}
+              >
                 {channelAnalytics.earnings.up ? (
                   <ArrowUpRight className="w-4 h-4" />
                 ) : (
@@ -163,7 +181,10 @@ export default function StarsDashboardPage() {
       <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#3f3f3f]">
           <h2 className="text-white font-medium">최근 게시 콘텐츠</h2>
-          <Link href="/stars/my-videos" className="text-sm text-blue-400 hover:underline">
+          <Link
+            href="/stars/my-videos"
+            className="text-sm text-blue-400 hover:underline"
+          >
             모두 보기
           </Link>
         </div>
@@ -181,7 +202,9 @@ export default function StarsDashboardPage() {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-white font-medium truncate">{content.title}</p>
+                <p className="text-white font-medium truncate">
+                  {content.title}
+                </p>
                 <div className="flex items-center gap-3 mt-1 text-sm">
                   <span className={content.statusColor}>{content.status}</span>
                   <span className="text-[#666]">•</span>
@@ -210,23 +233,33 @@ export default function StarsDashboardPage() {
               <MessageSquare className="w-4 h-4 text-[#aaa]" />
               최근 피드백
             </h2>
-            <Link href="/stars/feedback" className="text-sm text-blue-400 hover:underline">
+            <Link
+              href="/stars/feedback"
+              className="text-sm text-blue-400 hover:underline"
+            >
               모두 보기
             </Link>
           </div>
           <div className="divide-y divide-[#3f3f3f]">
             {recentFeedback.map((feedback) => (
-              <div key={feedback.id} className="p-4 hover:bg-[#3f3f3f] transition-colors">
+              <div
+                key={feedback.id}
+                className="p-4 hover:bg-[#3f3f3f] transition-colors"
+              >
                 <div className="flex items-start gap-3">
-                  <div className={`px-2 py-0.5 rounded text-xs font-medium ${
-                    feedback.type === '승인'
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-orange-500/20 text-orange-400'
-                  }`}>
+                  <div
+                    className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      feedback.type === '승인'
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-orange-500/20 text-orange-400'
+                    }`}
+                  >
                     {feedback.type}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm truncate">{feedback.message}</p>
+                    <p className="text-white text-sm truncate">
+                      {feedback.message}
+                    </p>
                     <p className="text-[#666] text-xs mt-1">{feedback.time}</p>
                   </div>
                 </div>
@@ -242,23 +275,35 @@ export default function StarsDashboardPage() {
               <Clock className="w-4 h-4 text-[#aaa]" />
               오늘의 할 일
             </h2>
-            <Link href="/stars/my-projects" className="text-sm text-blue-400 hover:underline">
+            <Link
+              href="/stars/my-projects"
+              className="text-sm text-blue-400 hover:underline"
+            >
               모두 보기
             </Link>
           </div>
           <div className="divide-y divide-[#3f3f3f]">
             {todayTasks.map((task) => (
-              <div key={task.id} className="flex items-center gap-3 p-4 hover:bg-[#3f3f3f] transition-colors">
-                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                  task.completed
-                    ? 'bg-green-500 border-green-500'
-                    : 'border-[#666]'
-                }`}>
-                  {task.completed && <CheckCircle className="w-3 h-3 text-white" />}
+              <div
+                key={task.id}
+                className="flex items-center gap-3 p-4 hover:bg-[#3f3f3f] transition-colors"
+              >
+                <div
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                    task.completed
+                      ? 'bg-green-500 border-green-500'
+                      : 'border-[#666]'
+                  }`}
+                >
+                  {task.completed && (
+                    <CheckCircle className="w-3 h-3 text-white" />
+                  )}
                 </div>
-                <span className={`flex-1 ${
-                  task.completed ? 'text-[#666] line-through' : 'text-white'
-                }`}>
+                <span
+                  className={`flex-1 ${
+                    task.completed ? 'text-[#666] line-through' : 'text-white'
+                  }`}
+                >
                   {task.title}
                 </span>
                 {task.urgent && !task.completed && (

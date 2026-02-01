@@ -56,7 +56,10 @@ export function NotificationBell() {
   // 외부 클릭 감지
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -103,9 +106,7 @@ export function NotificationBell() {
             {loading ? (
               <div className="p-8 text-center text-[#666]">로딩 중...</div>
             ) : notifications.length === 0 ? (
-              <div className="p-8 text-center text-[#666]">
-                알림이 없습니다
-              </div>
+              <div className="p-8 text-center text-[#666]">알림이 없습니다</div>
             ) : (
               notifications.slice(0, 10).map((notification) => (
                 <div
@@ -116,12 +117,18 @@ export function NotificationBell() {
                   )}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-lg">{getNotificationIcon(notification.type)}</span>
+                    <span className="text-lg">
+                      {getNotificationIcon(notification.type)}
+                    </span>
                     <div className="flex-1 min-w-0">
-                      <p className={cn(
-                        'text-sm truncate',
-                        notification.is_read ? 'text-[#aaa]' : 'text-white font-medium'
-                      )}>
+                      <p
+                        className={cn(
+                          'text-sm truncate',
+                          notification.is_read
+                            ? 'text-[#aaa]'
+                            : 'text-white font-medium'
+                        )}
+                      >
                         {notification.title}
                       </p>
                       <p className="text-xs text-[#666] mt-0.5 line-clamp-2">

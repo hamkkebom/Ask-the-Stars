@@ -56,35 +56,54 @@ export default function MyProjectDetailPage() {
 
   const [newVersionTitle, setNewVersionTitle] = useState('');
   const [showNewVersionForm, setShowNewVersionForm] = useState(false);
-  const [previewVideo, setPreviewVideo] = useState<{ uid: string; token?: string; title: string } | null>(null);
+  const [previewVideo, setPreviewVideo] = useState<{
+    uid: string;
+    token?: string;
+    title: string;
+  } | null>(null);
 
   // Fetch Project/Assignment Data
-  const { data: assignment, isLoading, error } = useQuery({
+  const {
+    data: assignment,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['my-project', projectId],
     queryFn: async () => {
       // Assuming projectId in URL is actually the "Assignment ID" or we have an endpoint that resolves to it.
       // If the URL is my-projects/:assignmentId, better.
       // Let's assume the ID passed is Assignment ID for now.
-      const response = await axiosInstance.get(`/project-assignments/${projectId}`);
+      const response = await axiosInstance.get(
+        `/project-assignments/${projectId}`
+      );
       // Also fetch related submissions
-      const submissionsRes = await axiosInstance.get(`/submissions?assignmentId=${projectId}`);
+      const submissionsRes = await axiosInstance.get(
+        `/submissions?assignmentId=${projectId}`
+      );
 
       return {
         ...response.data,
-        submissions: submissionsRes.data
+        submissions: submissionsRes.data,
       };
-    }
+    },
   });
 
   if (isLoading) return <div className="p-8 text-center">로딩 중...</div>;
-  if (error || !assignment) return <div className="p-8 text-center text-red-500">프로젝트를 불러올 수 없습니다.</div>;
+  if (error || !assignment)
+    return (
+      <div className="p-8 text-center text-red-500">
+        프로젝트를 불러올 수 없습니다.
+      </div>
+    );
 
   const projectRequest = assignment.request;
   const submissions = assignment.submissions || [];
   const maxVersions = 5;
 
-  const availableSlots = Array.from({ length: maxVersions }, (_, i) => i + 1)
-    .filter((slot) => !submissions.some((v: any) => v.versionSlot === slot));
+  const availableSlots = Array.from(
+    { length: maxVersions },
+    (_, i) => i + 1
+  ).filter((slot) => !submissions.some((v: any) => v.versionSlot === slot));
 
   const handleNewVersionUpload = async () => {
     if (!newVersionTitle.trim()) {
@@ -93,7 +112,9 @@ export default function MyProjectDetailPage() {
     }
 
     // Navigate to upload page with pre-filled info
-    router.push(`/stars/upload?projectId=${projectId}&slot=${availableSlots[0]}&title=${encodeURIComponent(newVersionTitle)}`);
+    router.push(
+      `/stars/upload?projectId=${projectId}&slot=${availableSlots[0]}&title=${encodeURIComponent(newVersionTitle)}`
+    );
   };
 
   const getDaysUntilDeadline = () => {
@@ -124,17 +145,19 @@ export default function MyProjectDetailPage() {
                 {projectRequest.title}
               </h1>
               <p className="mt-1 text-gray-600">
-                {projectRequest.description || "설명 없음"}
+                {projectRequest.description || '설명 없음'}
               </p>
             </div>
 
-            <div className={`px-4 py-2 rounded-lg font-medium ${
-              daysLeft <= 1
-                ? 'bg-red-100 text-red-700'
-                : daysLeft <= 3
-                ? 'bg-orange-100 text-orange-700'
-                : 'bg-blue-100 text-blue-700'
-            }`}>
+            <div
+              className={`px-4 py-2 rounded-lg font-medium ${
+                daysLeft <= 1
+                  ? 'bg-red-100 text-red-700'
+                  : daysLeft <= 3
+                    ? 'bg-orange-100 text-orange-700'
+                    : 'bg-blue-100 text-blue-700'
+              }`}
+            >
               {daysLeft <= 0 ? '마감됨' : `D-${daysLeft}`}
             </div>
           </div>
@@ -149,16 +172,22 @@ export default function MyProjectDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-sm text-gray-500">카테고리</p>
-              <p className="font-medium">{projectRequest.categories?.join(', ') || '-'}</p>
+              <p className="font-medium">
+                {projectRequest.categories?.join(', ') || '-'}
+              </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">마감일</p>
-              <p className="font-medium">📅 {formatDate(projectRequest.deadline)}</p>
+              <p className="font-medium">
+                📅 {formatDate(projectRequest.deadline)}
+              </p>
             </div>
             <div>
               <p className="text-sm text-gray-500">예상 정산</p>
               <p className="font-medium text-green-600">
-                  {projectRequest.estimatedBudget ? formatCurrency(Number(projectRequest.estimatedBudget)) : '미정'}
+                {projectRequest.estimatedBudget
+                  ? formatCurrency(Number(projectRequest.estimatedBudget))
+                  : '미정'}
               </p>
             </div>
             <div>
@@ -234,26 +263,32 @@ export default function MyProjectDetailPage() {
                       {version.versionSlot}
                     </span>
                     <div>
-                      <h3 className="font-medium">{version.versionTitle || `버전 ${version.versionSlot}`}</h3>
+                      <h3 className="font-medium">
+                        {version.versionTitle || `버전 ${version.versionSlot}`}
+                      </h3>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <span>v{version.version}.0</span>
                         <span>·</span>
-                        <span>{formatDate(version.updatedAt || version.createdAt)}</span>
+                        <span>
+                          {formatDate(version.updatedAt || version.createdAt)}
+                        </span>
                         {version.views !== undefined && (
-                            <>
-                                <span>·</span>
-                                <span className="flex items-center gap-1 text-blue-600 font-medium">
-                                    👁️ {version.views.toLocaleString()}회 시청
-                                </span>
-                            </>
+                          <>
+                            <span>·</span>
+                            <span className="flex items-center gap-1 text-blue-600 font-medium">
+                              👁️ {version.views.toLocaleString()}회 시청
+                            </span>
+                          </>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    statusLabels[version.status]?.color || 'bg-gray-100'
-                  }`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      statusLabels[version.status]?.color || 'bg-gray-100'
+                    }`}
+                  >
                     {version.status === 'APPROVED' && '✅ '}
                     {version.status === 'REJECTED' && '❌ '}
                     {version.status === 'REVISED' && '⏳ '}
@@ -276,7 +311,8 @@ export default function MyProjectDetailPage() {
                     피드백 보기
                   </Link>
 
-                  {(version.status === 'REVISED' || version.status === 'PENDING') && (
+                  {(version.status === 'REVISED' ||
+                    version.status === 'PENDING') && (
                     <Link
                       href={`/stars/upload?projectId=${projectId}&slot=${version.versionSlot}&revision=true&title=${encodeURIComponent(version.versionTitle || '')}`}
                       className="px-3 py-1.5 text-sm bg-orange-100 text-orange-700 rounded hover:bg-orange-200"
@@ -286,79 +322,100 @@ export default function MyProjectDetailPage() {
                   )}
 
                   {/* Preview Button */}
-                    <div className="flex items-center gap-2">
-                        {/* Auto Caption (CC) */}
-                        <button
-                            onClick={async () => {
-                                if (!confirm('AI 자동 자막을 생성하시겠습니까? (약 1~2분 소요)')) return;
-                                try {
-                                    await axiosInstance.post(`/submissions/${version.id}/captions`);
-                                    alert('자막 생성이 시작되었습니다.');
-                                } catch (e) {
-                                    alert('자막 생성 실패');
-                                }
-                            }}
-                            className="px-3 py-1.5 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 flex items-center gap-1"
-                            title="AI 자동 자막 생성"
-                        >
-                            <span>🤖 CC</span>
-                        </button>
+                  <div className="flex items-center gap-2">
+                    {/* Auto Caption (CC) */}
+                    <button
+                      onClick={async () => {
+                        if (
+                          !confirm(
+                            'AI 자동 자막을 생성하시겠습니까? (약 1~2분 소요)'
+                          )
+                        )
+                          return;
+                        try {
+                          await axiosInstance.post(
+                            `/submissions/${version.id}/captions`
+                          );
+                          alert('자막 생성이 시작되었습니다.');
+                        } catch (e) {
+                          alert('자막 생성 실패');
+                        }
+                      }}
+                      className="px-3 py-1.5 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 flex items-center gap-1"
+                      title="AI 자동 자막 생성"
+                    >
+                      <span>🤖 CC</span>
+                    </button>
 
-                        {/* Manual Caption Upload */}
-                        <label className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer flex items-center gap-1" title="자막 파일 업로드 (.vtt/.srt)">
-                             <span>📁 자막</span>
-                             <input
-                                type="file"
-                                accept=".vtt,.srt"
-                                className="hidden"
-                                onChange={async (e) => {
-                                    const file = e.target.files?.[0];
-                                    if (!file) return;
-                                    if (!confirm(`${file.name} 자막을 업로드하시겠습니까?`)) return;
+                    {/* Manual Caption Upload */}
+                    <label
+                      className="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer flex items-center gap-1"
+                      title="자막 파일 업로드 (.vtt/.srt)"
+                    >
+                      <span>📁 자막</span>
+                      <input
+                        type="file"
+                        accept=".vtt,.srt"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (
+                            !confirm(`${file.name} 자막을 업로드하시겠습니까?`)
+                          )
+                            return;
 
-                                    const formData = new FormData();
-                                    formData.append('file', file);
+                          const formData = new FormData();
+                          formData.append('file', file);
 
-                                    try {
-                                        // TODO: We need the VIDEO ID, but here we have submission ID.
-                                        // The backend SubmissionsController doesn't have uploadCaption yet?
-                                        // Wait, I implemented it in VideosController only.
-                                        // I need to add uploadCaption to SubmissionsController too or expose the video ID.
-                                        // Let's implement it in SubmissionsController quickly or call videos endpoint if we have video ID.
-                                        // We have `version.id` (submission ID).
-                                        // Let's add the endpoint to SubmissionsController for consistency.
-                                        await axiosInstance.put(`/submissions/${version.id}/captions/ko`, formData, {
-                                            headers: { 'Content-Type': 'multipart/form-data' }
-                                        });
-                                        alert('자막 업로드가 완료되었습니다.');
-                                    } catch (err) {
-                                        console.error(err);
-                                        alert('자막 업로드 실패');
-                                    }
-                                    // Reset input
-                                    e.target.value = '';
-                                }}
-                             />
-                        </label>
+                          try {
+                            // TODO: We need the VIDEO ID, but here we have submission ID.
+                            // The backend SubmissionsController doesn't have uploadCaption yet?
+                            // Wait, I implemented it in VideosController only.
+                            // I need to add uploadCaption to SubmissionsController too or expose the video ID.
+                            // Let's implement it in SubmissionsController quickly or call videos endpoint if we have video ID.
+                            // We have `version.id` (submission ID).
+                            // Let's add the endpoint to SubmissionsController for consistency.
+                            await axiosInstance.put(
+                              `/submissions/${version.id}/captions/ko`,
+                              formData,
+                              {
+                                headers: {
+                                  'Content-Type': 'multipart/form-data',
+                                },
+                              }
+                            );
+                            alert('자막 업로드가 완료되었습니다.');
+                          } catch (err) {
+                            console.error(err);
+                            alert('자막 업로드 실패');
+                          }
+                          // Reset input
+                          e.target.value = '';
+                        }}
+                      />
+                    </label>
 
-                        <button
-                            onClick={() => {
-                                if (version.streamUid) {
-                                setPreviewVideo({
-                                    uid: version.streamUid,
-                                    token: version.signedToken,
-                                    title: version.versionTitle || `버전 ${version.versionSlot}`
-                                });
-                                } else if (version.videoUrl) {
-                                // Fallback to direct URL open if no UID
-                                window.open(version.videoUrl, '_blank');
-                                }
-                            }}
-                            className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                        >
-                            미리보기
-                        </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        if (version.streamUid) {
+                          setPreviewVideo({
+                            uid: version.streamUid,
+                            token: version.signedToken,
+                            title:
+                              version.versionTitle ||
+                              `버전 ${version.versionSlot}`,
+                          });
+                        } else if (version.videoUrl) {
+                          // Fallback to direct URL open if no UID
+                          window.open(version.videoUrl, '_blank');
+                        }
+                      }}
+                      className="px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                    >
+                      미리보기
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -367,15 +424,17 @@ export default function MyProjectDetailPage() {
             {submissions.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <p>아직 제출한 버전이 없습니다.</p>
-                <p className="text-sm mt-1">위의 "새 버전 추가" 버튼을 눌러 영상을 업로드하세요.</p>
+                <p className="text-sm mt-1">
+                  위의 &quot;새 버전 추가&quot; 버튼을 눌러 영상을 업로드하세요.
+                </p>
               </div>
             )}
           </div>
         </div>
       </div>
 
-       {/* Video Preview Modal */}
-       <Modal
+      {/* Video Preview Modal */}
+      <Modal
         open={!!previewVideo}
         onClose={() => setPreviewVideo(null)}
         title={previewVideo?.title || '영상 미리보기'}

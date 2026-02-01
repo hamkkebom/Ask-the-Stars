@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Star, Video, Wallet, Clock, ArrowRight, Users } from "lucide-react";
-import { motion } from "framer-motion";
+import Link from 'next/link';
+import { Star, Video, Wallet, Clock, ArrowRight, Users } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const features = [
   {
     icon: Wallet,
-    title: "합리적인 수익",
-    description: "영상 제작에 대한 공정한 보상을 받으세요.",
+    title: '합리적인 수익',
+    description: '영상 제작에 대한 공정한 보상을 받으세요.',
   },
   {
     icon: Clock,
-    title: "유연한 일정",
-    description: "원하는 프로젝트를 선택하고 자유롭게 작업하세요.",
+    title: '유연한 일정',
+    description: '원하는 프로젝트를 선택하고 자유롭게 작업하세요.',
   },
   {
     icon: Video,
-    title: "포트폴리오 구축",
-    description: "다양한 프로젝트로 경력을 쌓아보세요.",
+    title: '포트폴리오 구축',
+    description: '다양한 프로젝트로 경력을 쌓아보세요.',
   },
   {
     icon: Users,
-    title: "커뮤니티",
-    description: "함께봄 전문가 네트워크에 참여하세요.",
+    title: '커뮤니티',
+    description: '함께봄 전문가 네트워크에 참여하세요.',
   },
 ];
 
@@ -44,7 +44,9 @@ export default function StarsLandingPage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-vibrant-cyan/10 border border-vibrant-cyan/20 mb-8">
               <Star className="w-4 h-4 text-vibrant-cyan fill-vibrant-cyan" />
-              <span className="text-sm text-vibrant-cyan font-medium">전문가 포털</span>
+              <span className="text-sm text-vibrant-cyan font-medium">
+                전문가 포털
+              </span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-neutral-400">
@@ -85,7 +87,9 @@ export default function StarsLandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">왜 함께봄인가요?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              왜 함께봄인가요?
+            </h2>
             <p className="text-neutral-400">전문가로서 누릴 수 있는 혜택들</p>
           </motion.div>
 
@@ -103,7 +107,9 @@ export default function StarsLandingPage() {
                   <feature.icon className="w-6 h-6 text-vibrant-cyan" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-neutral-400">{feature.description}</p>
+                <p className="text-sm text-neutral-400">
+                  {feature.description}
+                </p>
               </motion.div>
             ))}
           </div>

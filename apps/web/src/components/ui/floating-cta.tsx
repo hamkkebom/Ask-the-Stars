@@ -33,8 +33,12 @@ export function FloatingCTA() {
                   <Mail className="w-5 h-5 text-primary" aria-hidden="true" />
                 </div>
                 <div>
-                  <div className="font-bold text-sm text-white">문의 남기기</div>
-                  <div className="text-xs text-slate-400">폼 작성으로 빠른 상담</div>
+                  <div className="font-bold text-sm text-white">
+                    문의 남기기
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    폼 작성으로 빠른 상담
+                  </div>
                 </div>
               </Link>
               <a
@@ -56,10 +60,15 @@ export function FloatingCTA() {
                 className="flex items-center gap-3 p-3 rounded-xl bg-[#FEE500] hover:bg-[#FDD835] transition-colors"
               >
                 <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-black" aria-hidden="true" />
+                  <MessageCircle
+                    className="w-5 h-5 text-black"
+                    aria-hidden="true"
+                  />
                 </div>
                 <div>
-                  <div className="font-semibold text-sm text-black">카카오톡 상담</div>
+                  <div className="font-semibold text-sm text-black">
+                    카카오톡 상담
+                  </div>
                   <div className="text-xs text-black/60">실시간 채팅 상담</div>
                 </div>
               </a>
@@ -75,12 +84,13 @@ export function FloatingCTA() {
         className={`
           w-16 h-16 rounded-full shadow-2xl flex items-center justify-center
           transition-all duration-300 z-50
-          ${isOpen
-            ? 'bg-slate-800 rotate-0'
-            : 'bg-primary shadow-lg shadow-primary/20'
+          ${
+            isOpen
+              ? 'bg-slate-800 rotate-0'
+              : 'bg-primary shadow-lg shadow-primary/20'
           }
         `}
-        aria-label={isOpen ? "상담 메뉴 닫기" : "상담 메뉴 열기"}
+        aria-label={isOpen ? '상담 메뉴 닫기' : '상담 메뉴 열기'}
         aria-expanded={isOpen}
       >
         {isOpen ? (

@@ -14,7 +14,8 @@ export default function PortfolioPage() {
       >
         <h1 className="text-3xl font-bold text-white">내 포트폴리오</h1>
         <p className="text-gray-400">
-          작업물을 업로드하고 관리하세요. 등록된 포트폴리오는 클라이언트에게 공개됩니다.
+          작업물을 업로드하고 관리하세요. 등록된 포트폴리오는 클라이언트에게
+          공개됩니다.
         </p>
       </m.div>
 
@@ -23,4 +24,3 @@ export default function PortfolioPage() {
     </div>
   );
 }
-

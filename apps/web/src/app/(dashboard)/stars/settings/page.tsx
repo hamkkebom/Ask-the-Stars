@@ -1,7 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { User, Bell, Shield, Palette, Globe, HelpCircle, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  User,
+  Bell,
+  Shield,
+  Palette,
+  Globe,
+  HelpCircle,
+  ChevronRight,
+} from 'lucide-react';
 
 interface SettingSection {
   title: string;
@@ -63,9 +71,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-white">설정</h1>
-        <p className="text-gray-400 mt-1">
-          계정 설정 및 환경설정을 관리하세요
-        </p>
+        <p className="text-gray-400 mt-1">계정 설정 및 환경설정을 관리하세요</p>
       </div>
 
       {/* Settings Sections */}
@@ -102,14 +108,21 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-500">새 피드백, 정산 알림 등</p>
             </div>
             <button
-              onClick={() => setNotifications({ ...notifications, email: !notifications.email })}
+              onClick={() =>
+                setNotifications({
+                  ...notifications,
+                  email: !notifications.email,
+                })
+              }
               className={`w-12 h-6 rounded-full transition-colors ${
                 notifications.email ? 'bg-yellow-500' : 'bg-white/10'
               }`}
             >
-              <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                notifications.email ? 'translate-x-6' : 'translate-x-0.5'
-              }`} />
+              <div
+                className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                  notifications.email ? 'translate-x-6' : 'translate-x-0.5'
+                }`}
+              />
             </button>
           </div>
 
@@ -119,14 +132,21 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-500">브라우저 푸시 알림</p>
             </div>
             <button
-              onClick={() => setNotifications({ ...notifications, push: !notifications.push })}
+              onClick={() =>
+                setNotifications({
+                  ...notifications,
+                  push: !notifications.push,
+                })
+              }
               className={`w-12 h-6 rounded-full transition-colors ${
                 notifications.push ? 'bg-yellow-500' : 'bg-white/10'
               }`}
             >
-              <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                notifications.push ? 'translate-x-6' : 'translate-x-0.5'
-              }`} />
+              <div
+                className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                  notifications.push ? 'translate-x-6' : 'translate-x-0.5'
+                }`}
+              />
             </button>
           </div>
 
@@ -136,14 +156,21 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-500">이벤트 및 프로모션 정보</p>
             </div>
             <button
-              onClick={() => setNotifications({ ...notifications, marketing: !notifications.marketing })}
+              onClick={() =>
+                setNotifications({
+                  ...notifications,
+                  marketing: !notifications.marketing,
+                })
+              }
               className={`w-12 h-6 rounded-full transition-colors ${
                 notifications.marketing ? 'bg-yellow-500' : 'bg-white/10'
               }`}
             >
-              <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                notifications.marketing ? 'translate-x-6' : 'translate-x-0.5'
-              }`} />
+              <div
+                className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                  notifications.marketing ? 'translate-x-6' : 'translate-x-0.5'
+                }`}
+              />
             </button>
           </div>
         </div>

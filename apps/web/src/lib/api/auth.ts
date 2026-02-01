@@ -31,10 +31,13 @@ export const authApi = {
 
   resetPassword: async (token: string, newPassword: string) => {
     // TODO: Implement backend endpoint first
-    return apiClient.patch('/auth/password-reset/confirm', { token, newPassword });
+    return apiClient.patch('/auth/password-reset/confirm', {
+      token,
+      newPassword,
+    });
   },
 
   verifyEmail: async (token: string) => {
     return apiClient.post('/auth/verify-email', { token });
-  }
+  },
 };

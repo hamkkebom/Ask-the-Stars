@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 // @ts-ignore - Plyr types are not properly exported
 import Plyr from 'plyr';
 import Hls from 'hls.js';
@@ -55,62 +55,8 @@ export function VideoPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // Initialize Plyr + HLS
-  useEffect(() => {
-    if (!videoRef.current) return;
-
-    const video = videoRef.current;
-    const isHls = src.includes('.m3u8') || src.includes('stream');
-
-    // Setup HLS if needed
-    if (isHls && Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true,
-        maxBufferLength: 30,
-        maxMaxBufferLength: 600,
-        maxBufferSize: 60 * 1000 * 1000,
-        maxBufferHole: 0.5,
-      });
-      hls.loadSource(src);
-      hls.attachMedia(video);
-      hlsRef.current = hls;
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        initPlyr();
-      });
-
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        console.error('HLS Error:', data);
-        if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              console.log('Attempting to restart HLS stream...');
-              hls.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              console.log('Attempting to recover from media error...');
-              hls.recoverMediaError();
-              break;
-            default:
-              console.log('Destroying HLS instance due to fatal error');
-              hls.destroy();
-              hlsRef.current = null;
-              break;
-          }
-        }
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native HLS support (Safari)
-      video.src = src;
-      initPlyr();
-    } else {
-      // Direct video source
-      video.src = src;
-      initPlyr();
-    }
-
-    function initPlyr() {
+  const initPlyr = useCallback(
+    (video: HTMLVideoElement) => {
       if (playerRef.current) {
         playerRef.current.destroy();
         playerRef.current = null;
@@ -179,6 +125,63 @@ export function VideoPlayer({
       player.on('loadedmetadata', () => {
         setDuration(player.duration);
       });
+    },
+    [controls, autoplay, loop, muted, onReady, onTimeUpdate, onSeek, onEnded]
+  );
+
+  // Initialize Plyr + HLS
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    const video = videoRef.current;
+    const isHls = src.includes('.m3u8') || src.includes('stream');
+
+    // Setup HLS if needed
+    if (isHls && Hls.isSupported()) {
+      const hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 600,
+        maxBufferSize: 60 * 1000 * 1000,
+        maxBufferHole: 0.5,
+      });
+      hls.loadSource(src);
+      hls.attachMedia(video);
+      hlsRef.current = hls;
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        initPlyr(video);
+      });
+
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        console.error('HLS Error:', data);
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.log('Attempting to restart HLS stream...');
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.log('Attempting to recover from media error...');
+              hls.recoverMediaError();
+              break;
+            default:
+              console.log('Destroying HLS instance due to fatal error');
+              hls.destroy();
+              hlsRef.current = null;
+              break;
+          }
+        }
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Native HLS support (Safari)
+      video.src = src;
+      initPlyr(video);
+    } else {
+      // Direct video source
+      video.src = src;
+      initPlyr(video);
     }
 
     return () => {
@@ -219,7 +222,7 @@ export function VideoPlayer({
 
       console.log('Video player cleanup completed');
     };
-  }, [src, controls, autoplay, loop, muted]);
+  }, [src, initPlyr]);
 
   // Seek to specific time
   const seekTo = useCallback((time: number) => {

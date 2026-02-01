@@ -4,7 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { m } from 'framer-motion';
 import { formatDate, formatTimestamp } from '@/lib/utils';
-import { MessageSquare, CheckCircle, Clock, Play, ExternalLink, Filter } from 'lucide-react';
+import {
+  MessageSquare,
+  CheckCircle,
+  Clock,
+  Play,
+  ExternalLink,
+  Filter,
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { axiosInstance } from '@/lib/api/axios';
 
@@ -73,16 +80,37 @@ const mockFeedbacks: FeedbackItem[] = [
 ];
 
 const priorityConfig: Record<string, { label: string; color: string }> = {
-  LOW: { label: '낮음', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
-  NORMAL: { label: '보통', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-  HIGH: { label: '높음', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
-  URGENT: { label: '긴급', color: 'bg-red-500/20 text-red-400 border-red-500/30 animate-pulse' },
+  LOW: {
+    label: '낮음',
+    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+  },
+  NORMAL: {
+    label: '보통',
+    color: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  },
+  HIGH: {
+    label: '높음',
+    color: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  },
+  URGENT: {
+    label: '긴급',
+    color: 'bg-red-500/20 text-red-400 border-red-500/30 animate-pulse',
+  },
 };
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  PENDING: { label: '미처리', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-  RESOLVED: { label: '해결됨', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  WONTFIX: { label: '수정안함', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
+  PENDING: {
+    label: '미처리',
+    color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  },
+  RESOLVED: {
+    label: '해결됨',
+    color: 'bg-green-500/20 text-green-400 border-green-500/30',
+  },
+  WONTFIX: {
+    label: '수정안함',
+    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
+  },
 };
 
 export default function StarsFeedbackPage() {
@@ -95,20 +123,32 @@ export default function StarsFeedbackPage() {
       // Fetch all feedbacks for current user (Star)
       const response = await axiosInstance.get('/feedback');
       return response.data;
-    }
+    },
   });
 
   const filteredFeedbacks = feedbacks.filter((fb: FeedbackItem) => {
     if (filter.status !== 'all' && fb.status !== filter.status) return false;
-    if (filter.priority !== 'all' && fb.priority !== filter.priority) return false;
+    if (filter.priority !== 'all' && fb.priority !== filter.priority)
+      return false;
     return true;
   });
 
-  const pendingCount = feedbacks.filter((fb: FeedbackItem) => fb.status === 'PENDING').length;
-  const resolvedCount = feedbacks.filter((fb: FeedbackItem) => fb.status === 'RESOLVED').length;
-  const urgentCount = feedbacks.filter((fb: FeedbackItem) => fb.priority === 'URGENT' && fb.status === 'PENDING').length;
+  const pendingCount = feedbacks.filter(
+    (fb: FeedbackItem) => fb.status === 'PENDING'
+  ).length;
+  const resolvedCount = feedbacks.filter(
+    (fb: FeedbackItem) => fb.status === 'RESOLVED'
+  ).length;
+  const urgentCount = feedbacks.filter(
+    (fb: FeedbackItem) => fb.priority === 'URGENT' && fb.status === 'PENDING'
+  ).length;
 
-  if (isLoading) return <div className="p-8 text-center text-gray-500">피드백을 불러오는 중...</div>;
+  if (isLoading)
+    return (
+      <div className="p-8 text-center text-gray-500">
+        피드백을 불러오는 중...
+      </div>
+    );
 
   // 🎬 Handle timestamp click - opens video at specific time
   const handleTimestampClick = (feedback: FeedbackItem) => {
@@ -141,7 +181,9 @@ export default function StarsFeedbackPage() {
           </div>
           <div>
             <p className="text-sm text-gray-400">전체</p>
-            <p className="text-2xl font-bold text-white">{feedbacks.length}개</p>
+            <p className="text-2xl font-bold text-white">
+              {feedbacks.length}개
+            </p>
           </div>
         </m.div>
 
@@ -171,7 +213,9 @@ export default function StarsFeedbackPage() {
           </div>
           <div>
             <p className="text-sm text-yellow-400">미처리</p>
-            <p className="text-2xl font-bold text-yellow-400">{pendingCount}개</p>
+            <p className="text-2xl font-bold text-yellow-400">
+              {pendingCount}개
+            </p>
           </div>
         </m.div>
 
@@ -186,7 +230,9 @@ export default function StarsFeedbackPage() {
           </div>
           <div>
             <p className="text-sm text-green-400">해결됨</p>
-            <p className="text-2xl font-bold text-green-400">{resolvedCount}개</p>
+            <p className="text-2xl font-bold text-green-400">
+              {resolvedCount}개
+            </p>
           </div>
         </m.div>
       </div>
@@ -205,21 +251,39 @@ export default function StarsFeedbackPage() {
             onChange={(e) => setFilter({ ...filter, status: e.target.value })}
             className="bg-white/10 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
           >
-            <option value="all" className="bg-gray-900">전체 상태</option>
-            <option value="PENDING" className="bg-gray-900">미처리</option>
-            <option value="RESOLVED" className="bg-gray-900">해결됨</option>
-            <option value="WONTFIX" className="bg-gray-900">수정안함</option>
+            <option value="all" className="bg-gray-900">
+              전체 상태
+            </option>
+            <option value="PENDING" className="bg-gray-900">
+              미처리
+            </option>
+            <option value="RESOLVED" className="bg-gray-900">
+              해결됨
+            </option>
+            <option value="WONTFIX" className="bg-gray-900">
+              수정안함
+            </option>
           </select>
           <select
             value={filter.priority}
             onChange={(e) => setFilter({ ...filter, priority: e.target.value })}
             className="bg-white/10 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
           >
-            <option value="all" className="bg-gray-900">전체 우선순위</option>
-            <option value="URGENT" className="bg-gray-900">긴급</option>
-            <option value="HIGH" className="bg-gray-900">높음</option>
-            <option value="NORMAL" className="bg-gray-900">보통</option>
-            <option value="LOW" className="bg-gray-900">낮음</option>
+            <option value="all" className="bg-gray-900">
+              전체 우선순위
+            </option>
+            <option value="URGENT" className="bg-gray-900">
+              긴급
+            </option>
+            <option value="HIGH" className="bg-gray-900">
+              높음
+            </option>
+            <option value="NORMAL" className="bg-gray-900">
+              보통
+            </option>
+            <option value="LOW" className="bg-gray-900">
+              낮음
+            </option>
           </select>
         </div>
       </m.div>
@@ -252,10 +316,14 @@ export default function StarsFeedbackPage() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <span className={`px-2 py-0.5 rounded text-xs font-medium border ${priorityConfig[feedback.priority].color}`}>
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium border ${priorityConfig[feedback.priority].color}`}
+                >
                   {priorityConfig[feedback.priority].label}
                 </span>
-                <span className={`px-2 py-0.5 rounded text-xs font-medium border ${statusConfig[feedback.status].color}`}>
+                <span
+                  className={`px-2 py-0.5 rounded text-xs font-medium border ${statusConfig[feedback.status].color}`}
+                >
                   {statusConfig[feedback.status].label}
                 </span>
               </div>
@@ -274,7 +342,8 @@ export default function StarsFeedbackPage() {
                   <Play className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                   <span className="font-mono">
                     {formatTimestamp(feedback.startTime)}
-                    {feedback.endTime !== undefined && ` ~ ${formatTimestamp(feedback.endTime)}`}
+                    {feedback.endTime !== undefined &&
+                      ` ~ ${formatTimestamp(feedback.endTime)}`}
                   </span>
                 </button>
               )}
@@ -284,7 +353,9 @@ export default function StarsFeedbackPage() {
               <span className="text-gray-500 flex items-center gap-1">
                 👤 {feedback.author.name}
               </span>
-              <span className="text-gray-600">{formatDate(feedback.createdAt)}</span>
+              <span className="text-gray-600">
+                {formatDate(feedback.createdAt)}
+              </span>
             </div>
 
             {feedback.status === 'PENDING' && (
@@ -319,4 +390,3 @@ export default function StarsFeedbackPage() {
     </div>
   );
 }
-

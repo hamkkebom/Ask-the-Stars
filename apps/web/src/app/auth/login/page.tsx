@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -44,9 +44,7 @@ function LoginContent() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-white text-center mb-2">
-        로그인
-      </h1>
+      <h1 className="text-2xl font-bold text-white text-center mb-2">로그인</h1>
       <p className="text-[#aaa] text-center mb-8">
         계정에 접속하여 작업을 시작하세요
       </p>
@@ -54,7 +52,10 @@ function LoginContent() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             이메일
           </label>
           <input
@@ -70,7 +71,10 @@ function LoginContent() {
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-[#aaa] mb-2">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-[#aaa] mb-2"
+          >
             비밀번호
           </label>
           <div className="relative">
@@ -88,7 +92,11 @@ function LoginContent() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors"
             >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -153,4 +161,3 @@ export default function LoginPage() {
     </Suspense>
   );
 }
-

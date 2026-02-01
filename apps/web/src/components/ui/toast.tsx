@@ -48,13 +48,15 @@ export function Toaster() {
             >
               <GlassCard
                 className={cn(
-                  "flex items-center gap-3 p-4 min-w-[300px] backdrop-blur-xl border shadow-lg",
+                  'flex items-center gap-3 p-4 min-w-[300px] backdrop-blur-xl border shadow-lg',
                   bgColors[toast.type]
                 )}
                 hoverEffect={false}
               >
-                <Icon className={cn("w-5 h-5", colors[toast.type])} />
-                <p className="text-sm font-medium text-white flex-1">{toast.message}</p>
+                <Icon className={cn('w-5 h-5', colors[toast.type])} />
+                <p className="text-sm font-medium text-white flex-1">
+                  {toast.message}
+                </p>
                 <button
                   onClick={() => removeToast(toast.id)}
                   className="text-gray-400 hover:text-white transition-colors"

@@ -8,7 +8,7 @@ export const UserRole = {
   CLIENT: 'CLIENT',
 } as const;
 
-export type UserRole = typeof UserRole[keyof typeof UserRole];
+export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
 
 // AssignmentType as const object
 export const AssignmentType = {
@@ -17,13 +17,14 @@ export const AssignmentType = {
   GROUP: 'GROUP',
 } as const;
 
-export type AssignmentType = typeof AssignmentType[keyof typeof AssignmentType];
+export type AssignmentTypeType =
+  (typeof AssignmentType)[keyof typeof AssignmentType];
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: UserRole;
+  role: UserRoleType;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,7 +34,7 @@ export interface SignupDto {
   password: string;
   name: string;
   phone?: string;
-  role?: UserRole;
+  role?: UserRoleType;
   // Allow additional role-specific fields
   [key: string]: unknown;
 }

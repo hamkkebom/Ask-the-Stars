@@ -65,14 +65,21 @@ export const adminApi = {
 
     // 이번 달 수익 (지급된 정산 합계)
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const monthStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    ).toISOString();
     const { data: monthlySettlements } = await supabase
       .from('settlements')
       .select('amount')
       .eq('status', 'PAID')
       .gte('paid_at', monthStart);
 
-    const monthlyRevenue = (monthlySettlements || []).reduce((sum, s) => sum + s.amount, 0);
+    const monthlyRevenue = (monthlySettlements || []).reduce(
+      (sum, s) => sum + s.amount,
+      0
+    );
 
     return {
       totalVideos: totalVideos || 0,
@@ -107,7 +114,9 @@ export const adminApi = {
       query = query.eq('status', params.status);
     }
     if (params?.search) {
-      query = query.or(`name.ilike.%${params.search}%,email.ilike.%${params.search}%`);
+      query = query.or(
+        `name.ilike.%${params.search}%,email.ilike.%${params.search}%`
+      );
     }
     if (params?.limit) {
       const offset = params.offset || 0;
@@ -117,7 +126,9 @@ export const adminApi = {
     const { data, count, error } = await query;
 
     if (error) {
-      console.error('listUsers error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('listUsers error:', error);
+      }
       return { data: [], total: 0 };
     }
 
@@ -134,7 +145,9 @@ export const adminApi = {
       .single();
 
     if (error) {
-      console.error('getUser error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getUser error:', error);
+      }
       return null;
     }
 
@@ -190,7 +203,10 @@ export const adminApi = {
   },
 
   // 정산 처리
-  processSettlement: async (id: string, action: 'approve' | 'pay' | 'reject') => {
+  processSettlement: async (
+    id: string,
+    action: 'approve' | 'pay' | 'reject'
+  ) => {
     const supabase = createClient();
 
     let status = 'PENDING';
@@ -260,8 +276,12 @@ export const adminApi = {
         actor: p.client?.name || 'Unknown',
         timestamp: p.created_at,
       })),
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-     .slice(0, limit);
+    ]
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      )
+      .slice(0, limit);
 
     return activities;
   },

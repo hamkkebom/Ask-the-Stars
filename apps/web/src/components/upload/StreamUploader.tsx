@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Upload } from 'tus-js-client';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '../ui/glass-card';
@@ -15,7 +15,7 @@ interface StreamUploaderProps {
 export default function StreamUploader({
   onUploadComplete,
   allowedExtensions = ['mp4', 'mov', 'avi', 'mkv'],
-  maxSizeMB = 2048 // 2GB default
+  maxSizeMB = 2048, // 2GB default
 }: StreamUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -32,7 +32,9 @@ export default function StreamUploader({
     // Validate Extension
     const ext = selectedFile.name.split('.').pop()?.toLowerCase();
     if (!ext || !allowedExtensions.includes(ext)) {
-      setError(`지원하지 않는 파일 형식입니다. (${allowedExtensions.join(', ')})`);
+      setError(
+        `지원하지 않는 파일 형식입니다. (${allowedExtensions.join(', ')})`
+      );
       return;
     }
 
@@ -61,27 +63,27 @@ export default function StreamUploader({
       // We assume this endpoint returns { url, key }
       const presignedRes = await axios.post('/api/uploads/presigned-put-url', {
         key: `raw/${Date.now()}_${file.name}`, // Generate a safe key prefix
-        contentType: file.type
+        contentType: file.type,
       });
 
       if (!presignedRes.data.success || !presignedRes.data.url) {
-          throw new Error('Failed to generate upload URL');
+        throw new Error('Failed to generate upload URL');
       }
 
       const { url, key } = presignedRes.data;
 
       // 2. Upload to R2 (Direct PUT)
       await axios.put(url, file, {
-          headers: {
-              'Content-Type': file.type
-          },
-          onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                  const percent = (progressEvent.loaded / progressEvent.total) * 100;
-                  setUploadProgress(percent);
-              }
-          },
-          signal: signal
+        headers: {
+          'Content-Type': file.type,
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = (progressEvent.loaded / progressEvent.total) * 100;
+            setUploadProgress(percent);
+          }
+        },
+        signal: signal,
       });
 
       console.log('✅ R2 Upload Complete:', key);
@@ -95,14 +97,14 @@ export default function StreamUploader({
 
       const getUrlRes = await axios.post('/api/uploads/presigned', { key });
       if (!getUrlRes.data.success) {
-           throw new Error('Failed to get verification URL');
+        throw new Error('Failed to get verification URL');
       }
       const publicR2Url = getUrlRes.data.url;
 
       // 4. Trigger Stream Import
       const importRes = await axios.post('/api/videos/import-stream', {
-          url: publicR2Url,
-          creator: 'user_upload' // Pass metadata if needed
+        url: publicR2Url,
+        creator: 'user_upload', // Pass metadata if needed
       });
 
       const { uid } = importRes.data;
@@ -111,10 +113,9 @@ export default function StreamUploader({
       setIsUploading(false);
       onUploadComplete({
         uid,
-        videoUrl: `https://cloudflarestream.com/${uid}/manifest/video.m3u8`
+        videoUrl: `https://cloudflarestream.com/${uid}/manifest/video.m3u8`,
       });
       toast.success('동영상 업로드 및 변환 요청이 완료되었습니다.');
-
     } catch (err: any) {
       if (axios.isCancel(err)) {
         console.log('Upload cancelled by user:', err.message);
@@ -142,7 +143,7 @@ export default function StreamUploader({
         <div className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:bg-white/5 transition-colors relative">
           <input
             type="file"
-            accept={allowedExtensions.map(ext => `.${ext}`).join(',')}
+            accept={allowedExtensions.map((ext) => `.${ext}`).join(',')}
             onChange={handleFileSelect}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
@@ -151,9 +152,12 @@ export default function StreamUploader({
               <UploadCloud className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <p className="text-white font-medium">동영상 파일을 드래그하거나 클릭하여 선택하세요</p>
+              <p className="text-white font-medium">
+                동영상 파일을 드래그하거나 클릭하여 선택하세요
+              </p>
               <p className="text-sm text-gray-500 mt-1">
-                최대 {maxSizeMB}MB • {allowedExtensions.join(', ').toUpperCase()}
+                최대 {maxSizeMB}MB •{' '}
+                {allowedExtensions.join(', ').toUpperCase()}
               </p>
             </div>
           </div>
@@ -162,18 +166,25 @@ export default function StreamUploader({
         <GlassCard className="p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-               <div className="bg-white/10 p-2 rounded-lg">
-                 <FileVideo className="w-6 h-6 text-blue-400" />
-               </div>
-               <div>
-                 <p className="text-white font-medium truncate max-w-[200px]">{file.name}</p>
-                 <p className="text-xs text-gray-400">{(file.size / (1024 * 1024)).toFixed(1)}MB</p>
-               </div>
+              <div className="bg-white/10 p-2 rounded-lg">
+                <FileVideo className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <p className="text-white font-medium truncate max-w-[200px]">
+                  {file.name}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {(file.size / (1024 * 1024)).toFixed(1)}MB
+                </p>
+              </div>
             </div>
             {!isUploading && !uploadProgress && (
-               <button onClick={() => setFile(null)} className="text-gray-400 hover:text-white">
-                 <X className="w-5 h-5" />
-               </button>
+              <button
+                onClick={() => setFile(null)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
             )}
           </div>
 
@@ -185,27 +196,30 @@ export default function StreamUploader({
           )}
 
           {isUploading ? (
-             <div className="space-y-2">
-               <div className="flex justify-between text-xs text-gray-400">
-                 <span>업로드 중...</span>
-                 <span>{uploadProgress.toFixed(0)}%</span>
-               </div>
-               <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                 <div
-                   className="h-full bg-primary transition-all duration-300 ease-out"
-                   style={{ width: `${uploadProgress}%` }}
-                 />
-               </div>
-               <div className="flex justify-end mt-2">
-                 <button onClick={cancelUpload} className="text-xs text-red-300 hover:text-red-200">
-                    취소
-                 </button>
-               </div>
-             </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>업로드 중...</span>
+                <span>{uploadProgress.toFixed(0)}%</span>
+              </div>
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={cancelUpload}
+                  className="text-xs text-red-300 hover:text-red-200"
+                >
+                  취소
+                </button>
+              </div>
+            </div>
           ) : (
-             <Button onClick={startUpload} className="w-full">
-               업로드 시작
-             </Button>
+            <Button onClick={startUpload} className="w-full">
+              업로드 시작
+            </Button>
           )}
         </GlassCard>
       )}

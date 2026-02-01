@@ -1,6 +1,6 @@
-﻿'use client';
+'use client';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, X, File, AlertCircle } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 
@@ -40,7 +40,7 @@ export function FileDropzone({
     // Simple MIME type check if accept is provided
     if (accept && accept.length > 0) {
       const fileType = file.type;
-      const isAccepted = accept.some(type => {
+      const isAccepted = accept.some((type) => {
         if (type.endsWith('/*')) {
           return fileType.startsWith(type.replace('/*', ''));
         }
@@ -65,7 +65,7 @@ export function FileDropzone({
       return;
     }
 
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
       const errorMsg = validateFile(file);
       if (errorMsg) {
         errors.push(`${file.name}: ${errorMsg}`);
@@ -116,9 +116,13 @@ export function FileDropzone({
         />
 
         <div className="flex flex-col items-center gap-3">
-          <div className={`p-3 rounded-full transition-colors ${
-            isDragging ? 'bg-purple-500/20 text-purple-400' : 'bg-white/5 text-gray-400 group-hover:text-purple-400'
-          }`}>
+          <div
+            className={`p-3 rounded-full transition-colors ${
+              isDragging
+                ? 'bg-purple-500/20 text-purple-400'
+                : 'bg-white/5 text-gray-400 group-hover:text-purple-400'
+            }`}
+          >
             <Upload className="w-6 h-6" />
           </div>
           <div>
@@ -126,7 +130,8 @@ export function FileDropzone({
               파일을 드래그하거나 클릭하여 업로드
             </p>
             <p className="text-sm text-gray-500">
-              최대 {Math.round(maxSize / 1024 / 1024)}MB, {accept ? '관련 파일' : '모든 파일'}
+              최대 {Math.round(maxSize / 1024 / 1024)}MB,{' '}
+              {accept ? '관련 파일' : '모든 파일'}
             </p>
           </div>
         </div>

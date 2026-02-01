@@ -28,25 +28,27 @@ export const mockResources: ResourceItem[] = [
   {
     id: '1',
     title: '2025년 영상 제작 표준 가이드라인_v1.0',
-    description: 'Hamkkebom 플랫폼의 영상 제작 표준 규격 및 납품 가이드라인입니다. 모든 작업 전 필독해주세요.',
+    description:
+      'Hamkkebom 플랫폼의 영상 제작 표준 규격 및 납품 가이드라인입니다. 모든 작업 전 필독해주세요.',
     category: 'guide',
     fileType: 'PDF',
     fileSize: '2.5 MB',
     author: '운영팀',
     downloads: 1250,
     date: '2025.01.02',
-    isNew: true
+    isNew: true,
   },
   {
     id: '2',
     title: '공식 로고 및 워터마크 팩',
-    description: '영상에 삽입해야 할 공식 로고와 워터마크 AI, PNG 파일 모음입니다.',
+    description:
+      '영상에 삽입해야 할 공식 로고와 워터마크 AI, PNG 파일 모음입니다.',
     category: 'asset',
     fileType: 'ZIP',
     fileSize: '15.4 MB',
     author: '디자인팀',
     downloads: 890,
-    date: '2024.12.15'
+    date: '2024.12.15',
   },
   {
     id: '3',
@@ -57,18 +59,19 @@ export const mockResources: ResourceItem[] = [
     fileSize: '450 KB',
     author: '법무팀',
     downloads: 340,
-    date: '2024.11.20'
+    date: '2024.11.20',
   },
   {
     id: '4',
     title: '무료 상업용 폰트 모음 (저작권 확인 완료)',
-    description: '영상 자막에 자유롭게 사용할 수 있는 산돌, 나눔 등 무료 폰트 리스트입니다.',
+    description:
+      '영상 자막에 자유롭게 사용할 수 있는 산돌, 나눔 등 무료 폰트 리스트입니다.',
     category: 'asset',
     fileType: 'LINK',
     author: '운영팀',
     downloads: 2100,
     date: '2025.01.10',
-    isNew: true
+    isNew: true,
   },
   {
     id: '5',
@@ -79,6 +82,6 @@ export const mockResources: ResourceItem[] = [
     fileSize: '58 MB',
     author: '디자인팀',
     downloads: 560,
-    date: '2025.01.05'
-  }
+    date: '2025.01.05',
+  },
 ];

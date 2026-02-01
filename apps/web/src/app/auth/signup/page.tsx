@@ -7,9 +7,7 @@ export default function SignupPage() {
       <h1 className="text-2xl font-bold text-white text-center mb-2">
         회원가입
       </h1>
-      <p className="text-[#aaa] text-center mb-8">
-        가입 유형을 선택해주세요
-      </p>
+      <p className="text-[#aaa] text-center mb-8">가입 유형을 선택해주세요</p>
 
       <div className="space-y-4">
         {/* 프리랜서 가입 */}

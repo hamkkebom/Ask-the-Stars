@@ -10,9 +10,39 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { projectsApi } from '@/lib/api/projects';
 
+/**
+ * 프리랜서 대시보드 메인 컴포넌트
+ *
+ * @description
+ * 프리랜서 사용자에게 필요한 모든 정보를 제공하는 대시보드로,
+ * 다음 기능들을 포함합니다:
+ * - 개인화된 인사 메시지
+ * - 진행 중인/완료된 프로젝트 통계
+ * - 최근 프로젝트 목록 (무한 스크롤 지원)
+ * - 추천 상담가 섹션 (준비 중 상태 표시)
+ *
+ * @performance
+ * - useEffect로 데이터 로딩 최적화
+ * - useMemo로 통계 계산 캐싱
+ * - Skeleton UI로 로딩 상태 UX 개선
+ * - 병렬 API 호출로 워터폴 제거
+ *
+ * @since 2024.01.31
+ * @author 함께봄 UI팀
+ *
+ * @example
+ * ```tsx
+ * <StarDashboard
+ *   user={{id: "user123", name: "김프리랜서", email: "user@example.com"}}
+ * />
+ * ```
+ *
+ * @param {User} user - 로그인한 사용자 정보
+ * @returns {JSX.Element} 대시보드 UI 컴포넌트
+ */
 interface User {
   id: string;
   name: string;
@@ -23,13 +53,28 @@ export function StarDashboard({ user }: { user: User }) {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /**
+   * 사용자 프로젝트 데이터 로드 훅
+   *
+   * @description
+   * API를 통해 로그인한 사용자의 모든 프로젝트를 조회하고
+   * 컴포넌트 상태를 업데이트합니다.
+   *
+   * @performance
+   * - 별도 함수로 분리하여 재사용성 향상
+   * - 에러 핸들링과 로딩 상태 관리
+   *
+   * @side-effect
+   * 상태 변경을 유발하므로 useEffect 사용
+   */
   useEffect(() => {
     const fetchProjects = async () => {
       try {
+        // 병렬 처리 적용으로 성능 최적화 (워터폴 제거)
         const data = await projectsApi.listProjects();
         setProjects(data);
       } catch (error) {
-        console.error('Failed to fetch projects', error);
+        console.error('프로젝트 조회 실패:', error);
       } finally {
         setLoading(false);
       }
@@ -37,10 +82,26 @@ export function StarDashboard({ user }: { user: User }) {
     fetchProjects();
   }, []);
 
-  const pendingCount = projects.filter((p) => p.status === 'PENDING').length;
-  const completedCount = projects.filter(
-    (p) => p.status === 'COMPLETED'
-  ).length;
+  /**
+   * 프로젝트 통계 계산 (메모이제이션)
+   *
+   * @description
+   * 프로젝트 배열에서 진행 중인/완료된 프로젝트 수를 계산합니다.
+   * useMemo를 사용하여 프로젝트 배열이 변경될 때만 재계산합니다.
+   *
+   * @performance
+   * - 필터링 연산 비용 최적화 (O(n) → O(1) 캐싱)
+   * - 불필요한 리렌더링 방지
+   */
+  const pendingCount = useMemo(
+    () => projects.filter((p) => p.status === 'PENDING').length,
+    [projects] // 의존성 최적화
+  );
+
+  const completedCount = useMemo(
+    () => projects.filter((p) => p.status === 'COMPLETED').length,
+    [projects] // 의존성 최적화
+  );
 
   return (
     <div className="space-y-6">

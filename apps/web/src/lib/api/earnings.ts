@@ -23,12 +23,15 @@ export interface EarningsSummary {
 
 export const earningsApi = {
   // 정산 목록 조회
-  listSettlements: async (freelancerId: string, params?: {
-    type?: 'PRIMARY' | 'SECONDARY';
-    status?: string;
-    year?: number;
-    month?: number;
-  }) => {
+  listSettlements: async (
+    freelancerId: string,
+    params?: {
+      type?: 'PRIMARY' | 'SECONDARY';
+      status?: string;
+      year?: number;
+      month?: number;
+    }
+  ) => {
     const supabase = createClient();
 
     let query = supabase
@@ -47,7 +50,9 @@ export const earningsApi = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('listSettlements error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('listSettlements error:', error);
+      }
       return [];
     }
 
@@ -55,7 +60,9 @@ export const earningsApi = {
   },
 
   // 수익 요약 조회
-  getEarningsSummary: async (freelancerId: string): Promise<EarningsSummary> => {
+  getEarningsSummary: async (
+    freelancerId: string
+  ): Promise<EarningsSummary> => {
     const supabase = createClient();
 
     // 전체 수익
@@ -65,7 +72,10 @@ export const earningsApi = {
       .eq('freelancer_id', freelancerId)
       .eq('status', 'PAID');
 
-    const totalEarnings = (allSettlements || []).reduce((sum, s) => sum + s.amount, 0);
+    const totalEarnings = (allSettlements || []).reduce(
+      (sum, s) => sum + s.amount,
+      0
+    );
 
     // 대기 중 정산
     const { data: pendingSettlements } = await supabase
@@ -74,11 +84,18 @@ export const earningsApi = {
       .eq('freelancer_id', freelancerId)
       .eq('status', 'PENDING');
 
-    const pendingPayments = (pendingSettlements || []).reduce((sum, s) => sum + s.amount, 0);
+    const pendingPayments = (pendingSettlements || []).reduce(
+      (sum, s) => sum + s.amount,
+      0
+    );
 
     // 이번 달 지급
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const monthStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    ).toISOString();
     const { data: thisMonthSettlements } = await supabase
       .from('settlements')
       .select('amount')
@@ -86,7 +103,10 @@ export const earningsApi = {
       .eq('status', 'PAID')
       .gte('paid_at', monthStart);
 
-    const paidThisMonth = (thisMonthSettlements || []).reduce((sum, s) => sum + s.amount, 0);
+    const paidThisMonth = (thisMonthSettlements || []).reduce(
+      (sum, s) => sum + s.amount,
+      0
+    );
 
     // 완료 프로젝트 수
     const { count } = await supabase
@@ -118,13 +138,15 @@ export const earningsApi = {
       .lte('paid_at', endDate);
 
     if (error) {
-      console.error('getMonthlyEarnings error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getMonthlyEarnings error:', error);
+      }
       return Array(12).fill(0);
     }
 
     // 월별 합계 계산
     const monthlyTotals = Array(12).fill(0);
-    (data || []).forEach(s => {
+    (data || []).forEach((s) => {
       if (s.paid_at) {
         const month = new Date(s.paid_at).getMonth();
         monthlyTotals[month] += s.amount;

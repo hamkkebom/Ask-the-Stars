@@ -1,9 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, Plus, X as RemoveIcon } from 'lucide-react';
-import { PortfolioItem, PortfolioCategory, portfolioCategories } from '@/data/mocks/portfolio';
+import Image from 'next/image';
+import {
+  PortfolioItem,
+  PortfolioCategory,
+  portfolioCategories,
+} from '@/data/mocks/portfolio';
 import { cn } from '@/lib/utils';
 import { GlassCard } from '@/components/ui/glass-card';
 
@@ -14,7 +19,12 @@ interface PortfolioEditorModalProps {
   initialData?: PortfolioItem | null;
 }
 
-export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: PortfolioEditorModalProps) {
+export function PortfolioEditorModal({
+  isOpen,
+  onClose,
+  onSave,
+  initialData,
+}: PortfolioEditorModalProps) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -23,11 +33,11 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
     thumbnailUrl: '',
     videoUrl: '',
     role: '',
-    tagInput: ''
+    tagInput: '',
   });
 
   useEffect(() => {
-    if (initialData) {
+    if (initialData && isOpen) {
       setFormData({
         title: initialData.title,
         description: initialData.description,
@@ -36,10 +46,10 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
         thumbnailUrl: initialData.thumbnailUrl,
         videoUrl: initialData.videoUrl || '',
         role: initialData.role,
-        tagInput: ''
+        tagInput: '',
       });
-    } else {
-      // Reset form for new item
+    } else if (!isOpen) {
+      // Reset form when modal closes
       setFormData({
         title: '',
         description: '',
@@ -48,10 +58,10 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
         thumbnailUrl: '',
         videoUrl: '',
         role: '',
-        tagInput: ''
+        tagInput: '',
       });
     }
-  }, [initialData?.id, isOpen]);
+  }, [initialData, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,27 +70,32 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
       description: formData.description,
       category: formData.category,
       tags: formData.tags,
-      thumbnailUrl: formData.thumbnailUrl || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop', // Default placeholder
+      thumbnailUrl:
+        formData.thumbnailUrl ||
+        'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop', // Default placeholder
       videoUrl: formData.videoUrl,
-      role: formData.role
+      role: formData.role,
     });
     onClose();
   };
 
   const addTag = () => {
-    if (formData.tagInput.trim() && !formData.tags.includes(formData.tagInput.trim())) {
-      setFormData(prev => ({
+    if (
+      formData.tagInput.trim() &&
+      !formData.tags.includes(formData.tagInput.trim())
+    ) {
+      setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, prev.tagInput.trim()],
-        tagInput: ''
+        tagInput: '',
       }));
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
@@ -117,65 +132,100 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
           </div>
 
           {/* Body */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-
+          <form
+            onSubmit={handleSubmit}
+            className="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar"
+          >
             {/* Title & Category */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2 space-y-2">
-                <label className="text-sm font-medium text-gray-400">제목</label>
+                <label className="text-sm font-medium text-gray-400">
+                  제목
+                </label>
                 <input
                   type="text"
                   required
                   value={formData.title}
-                  onChange={e => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   placeholder="작품 제목을 입력하세요"
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/50 transition-colors"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">카테고리</label>
+                <label className="text-sm font-medium text-gray-400">
+                  카테고리
+                </label>
                 <select
                   value={formData.category}
-                  onChange={e => setFormData({ ...formData, category: e.target.value as PortfolioCategory })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      category: e.target.value as PortfolioCategory,
+                    })
+                  }
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none [&>option]:bg-gray-900"
                 >
-                  {portfolioCategories.filter(c => c.value !== 'ALL').map(c => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
+                  {portfolioCategories
+                    .filter((c) => c.value !== 'ALL')
+                    .map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
+                      </option>
+                    ))}
                 </select>
               </div>
             </div>
 
             {/* URL Inputs */}
             <div className="space-y-4">
-               {/* Thumbnail URL (Simple text input for MVP) */}
-               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">썸네일 이미지 URL</label>
+              {/* Thumbnail URL (Simple text input for MVP) */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-400">
+                  썸네일 이미지 URL
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="url"
                     value={formData.thumbnailUrl}
-                    onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, thumbnailUrl: e.target.value })
+                    }
                     placeholder="https://example.com/image.jpg"
                     className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none"
                   />
                   {formData.thumbnailUrl && (
                     <div className="w-10 h-10 rounded overflow-hidden border border-white/10 shrink-0">
-                      <img src={formData.thumbnailUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <Image
+                        src={formData.thumbnailUrl}
+                        alt="Preview"
+                        width={40}
+                        height={40}
+                        className="w-full h-full object-cover"
+                        unoptimized
+                      />
                     </div>
                   )}
                 </div>
-                <p className="text-xs text-gray-500">* 실제 구현 시 파일 업로더로 교체됩니다.</p>
+                <p className="text-xs text-gray-500">
+                  * 실제 구현 시 파일 업로더로 교체됩니다.
+                </p>
               </div>
 
               {/* Video URL */}
-              {(formData.category === 'VIDEO' || formData.category === 'SHORTS') && (
+              {(formData.category === 'VIDEO' ||
+                formData.category === 'SHORTS') && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400">영상 링크 (유튜브 등)</label>
+                  <label className="text-sm font-medium text-gray-400">
+                    영상 링크 (유튜브 등)
+                  </label>
                   <input
                     type="url"
                     value={formData.videoUrl}
-                    onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, videoUrl: e.target.value })
+                    }
                     placeholder="https://youtube.com/watch?v=..."
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none"
                   />
@@ -186,21 +236,29 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
             {/* Role & Description */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">나의 역할 / 기여도</label>
+                <label className="text-sm font-medium text-gray-400">
+                  나의 역할 / 기여도
+                </label>
                 <input
                   type="text"
                   value={formData.role}
-                  onChange={e => setFormData({ ...formData, role: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
                   placeholder="예: 기획, 촬영, 컷편집, 자막 (100%)"
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-400">작품 설명</label>
+                <label className="text-sm font-medium text-gray-400">
+                  작품 설명
+                </label>
                 <textarea
                   value={formData.description}
-                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="작품에 대한 간단한 설명을 입력하세요..."
                   rows={4}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none resize-none"
@@ -212,10 +270,17 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-400">태그</label>
               <div className="flex flex-wrap gap-2 mb-2">
-                {formData.tags.map(tag => (
-                  <span key={tag} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm flex items-center gap-1 border border-primary/20">
+                {formData.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm flex items-center gap-1 border border-primary/20"
+                  >
                     #{tag}
-                    <button type="button" onClick={() => removeTag(tag)} className="hover:text-white">
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="hover:text-white"
+                    >
                       <RemoveIcon className="w-3 h-3" />
                     </button>
                   </span>
@@ -225,8 +290,12 @@ export function PortfolioEditorModal({ isOpen, onClose, onSave, initialData }: P
                 <input
                   type="text"
                   value={formData.tagInput}
-                  onChange={e => setFormData({ ...formData, tagInput: e.target.value })}
-                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tagInput: e.target.value })
+                  }
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' && (e.preventDefault(), addTag())
+                  }
                   placeholder="태그 입력 후 Enter"
                   className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-primary/50 focus:outline-none"
                 />

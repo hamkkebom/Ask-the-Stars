@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { videosApi } from '@/lib/api/videos';
@@ -13,6 +13,7 @@ import {
   CheckCircle,
   AlertCircle,
 } from 'lucide-react';
+import Image from 'next/image';
 
 const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || '';
 
@@ -36,33 +37,43 @@ export default function UploadPage() {
   });
 
   // 파일 선택 핸들러
-  const handleVideoSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // 파일 크기 체크 (1GB)
-      if (file.size > 1024 * 1024 * 1024) {
-        setError('파일 크기는 1GB 이하여야 합니다.');
-        return;
+  const handleVideoSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        // 파일 크기 체크 (1GB)
+        if (file.size > 1024 * 1024 * 1024) {
+          setError('파일 크기는 1GB 이하여야 합니다.');
+          return;
+        }
+        setVideoFile(file);
+        setFormData((prev) => ({
+          ...prev,
+          title: file.name.replace(/\.[^/.]+$/, ''), // 확장자 제거한 파일명
+        }));
+        setStep('details');
       }
-      setVideoFile(file);
-      setFormData(prev => ({
-        ...prev,
-        title: file.name.replace(/\.[^/.]+$/, ''), // 확장자 제거한 파일명
-      }));
-      setStep('details');
-    }
-  }, []);
+    },
+    []
+  );
 
-  const handleThumbnailSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setThumbnailFile(file);
-      setThumbnailPreview(URL.createObjectURL(file));
-    }
-  }, []);
+  const handleThumbnailSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setThumbnailFile(file);
+        setThumbnailPreview(URL.createObjectURL(file));
+      }
+    },
+    []
+  );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -81,7 +92,7 @@ export default function UploadPage() {
 
       // 시뮬레이션: 진행률 업데이트
       for (let i = 0; i <= 100; i += 10) {
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 200));
         setUploadProgress(i);
       }
 
@@ -115,7 +126,8 @@ export default function UploadPage() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">업로드 완료!</h1>
           <p className="text-[#aaa] mb-6">
-            영상이 검토 대기열에 추가되었습니다.<br />
+            영상이 검토 대기열에 추가되었습니다.
+            <br />
             승인 후 갤러리에 게시됩니다.
           </p>
           <div className="flex gap-4 justify-center">
@@ -152,7 +164,9 @@ export default function UploadPage() {
             <div className="w-20 h-20 bg-[#3f3f3f] rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-500/20 transition-colors">
               <Upload className="w-10 h-10 text-[#aaa] group-hover:text-yellow-500 transition-colors" />
             </div>
-            <p className="text-lg font-medium text-white mb-2">동영상 파일을 끌어다 놓거나 클릭하세요</p>
+            <p className="text-lg font-medium text-white mb-2">
+              동영상 파일을 끌어다 놓거나 클릭하세요
+            </p>
             <p className="text-sm text-[#666]">MP4, MOV, AVI (최대 1GB)</p>
             <input
               type="file"
@@ -173,7 +187,9 @@ export default function UploadPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-[#aaa] mb-2">제목 (필수)</label>
+                  <label className="block text-sm text-[#aaa] mb-2">
+                    제목 (필수)
+                  </label>
                   <input
                     name="title"
                     value={formData.title}
@@ -198,7 +214,9 @@ export default function UploadPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm text-[#aaa] mb-2">카테고리</label>
+                  <label className="block text-sm text-[#aaa] mb-2">
+                    카테고리
+                  </label>
                   <select
                     name="category"
                     value={formData.category}
@@ -224,7 +242,14 @@ export default function UploadPage() {
               <div className="flex gap-4">
                 <div className="w-40 h-24 bg-[#121212] rounded-lg overflow-hidden flex items-center justify-center">
                   {thumbnailPreview ? (
-                    <img src={thumbnailPreview} alt="Thumbnail" className="w-full h-full object-cover" />
+                    <Image
+                      src={thumbnailPreview}
+                      alt="Thumbnail"
+                      width={160}
+                      height={96}
+                      className="w-full h-full object-cover"
+                      unoptimized
+                    />
                   ) : (
                     <ImageIcon className="w-8 h-8 text-[#666]" />
                   )}
@@ -256,10 +281,14 @@ export default function UploadPage() {
             <div className="bg-[#212121] rounded-xl border border-[#3f3f3f] p-4">
               <div className="flex items-center gap-3 mb-4">
                 <Video className="w-5 h-5 text-[#aaa]" />
-                <span className="text-white font-medium truncate">{videoFile?.name}</span>
+                <span className="text-white font-medium truncate">
+                  {videoFile?.name}
+                </span>
               </div>
               <p className="text-sm text-[#666]">
-                {videoFile ? `${(videoFile.size / 1024 / 1024).toFixed(1)} MB` : ''}
+                {videoFile
+                  ? `${(videoFile.size / 1024 / 1024).toFixed(1)} MB`
+                  : ''}
               </p>
             </div>
 

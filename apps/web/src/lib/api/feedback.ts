@@ -28,11 +28,14 @@ export interface FeedbackResponse {
 
 export const feedbackApi = {
   // 피드백 목록 조회 (프리랜서)
-  listMyFeedback: async (freelancerId: string, params?: {
-    status?: string;
-    videoId?: string;
-    limit?: number;
-  }) => {
+  listMyFeedback: async (
+    freelancerId: string,
+    params?: {
+      status?: string;
+      videoId?: string;
+      limit?: number;
+    }
+  ) => {
     const supabase = createClient();
 
     // 먼저 프리랜서의 영상 ID들 조회
@@ -41,18 +44,20 @@ export const feedbackApi = {
       .select('id')
       .eq('freelancer_id', freelancerId);
 
-    const videoIds = (videos || []).map(v => v.id);
+    const videoIds = (videos || []).map((v) => v.id);
 
     if (videoIds.length === 0) return [];
 
     let query = supabase
       .from('feedbacks')
-      .select(`
+      .select(
+        `
         *,
         author:users!author_id(id, name, role),
         video:videos(id, title),
         project:projects(id, title)
-      `)
+      `
+      )
       .in('video_id', videoIds)
       .order('created_at', { ascending: false });
 
@@ -69,7 +74,9 @@ export const feedbackApi = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('listMyFeedback error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('listMyFeedback error:', error);
+      }
       return [];
     }
 
@@ -83,27 +90,33 @@ export const feedbackApi = {
     // 피드백 조회
     const { data: feedback, error } = await supabase
       .from('feedbacks')
-      .select(`
+      .select(
+        `
         *,
         author:users!author_id(id, name, role),
         video:videos(id, title),
         project:projects(id, title)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
     if (error) {
-      console.error('getFeedback error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getFeedback error:', error);
+      }
       return null;
     }
 
     // 응답 조회
     const { data: responses } = await supabase
       .from('feedback_responses')
-      .select(`
+      .select(
+        `
         *,
         author:users!author_id(id, name)
-      `)
+      `
+      )
       .eq('feedback_id', id)
       .order('created_at', { ascending: true });
 
@@ -111,7 +124,11 @@ export const feedbackApi = {
   },
 
   // 피드백 응답 추가
-  addResponse: async (feedbackId: string, authorId: string, content: string) => {
+  addResponse: async (
+    feedbackId: string,
+    authorId: string,
+    content: string
+  ) => {
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -144,7 +161,7 @@ export const feedbackApi = {
       .from('feedbacks')
       .update({
         status: 'RESOLVED',
-        resolved_at: new Date().toISOString()
+        resolved_at: new Date().toISOString(),
       })
       .eq('id', id);
 
@@ -175,7 +192,7 @@ export const feedbackApi = {
       .select('id')
       .eq('freelancer_id', freelancerId);
 
-    const videoIds = (videos || []).map(v => v.id);
+    const videoIds = (videos || []).map((v) => v.id);
 
     if (videoIds.length === 0) return 0;
 

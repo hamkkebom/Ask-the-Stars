@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { videosApi, VideoDetails } from '@/lib/api/videos';
 import {
@@ -44,12 +45,18 @@ function getStatusIcon(status: string) {
 
 function getStatusLabel(status: string) {
   switch (status) {
-    case 'PUBLIC': return '공개됨';
-    case 'APPROVED': return '승인됨';
-    case 'REVIEWING': return '검수중';
-    case 'FEEDBACK': return '피드백';
-    case 'DRAFT': return '초안';
-    default: return status;
+    case 'PUBLIC':
+      return '공개됨';
+    case 'APPROVED':
+      return '승인됨';
+    case 'REVIEWING':
+      return '검수중';
+    case 'FEEDBACK':
+      return '피드백';
+    case 'DRAFT':
+      return '초안';
+    default:
+      return status;
   }
 }
 
@@ -99,8 +106,11 @@ export default function MyVideosPage() {
   }, [user, activeTab]);
 
   // 검색 필터링
-  const filteredVideos = videos.filter(video => {
-    if (searchQuery && !video.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+  const filteredVideos = videos.filter((video) => {
+    if (
+      searchQuery &&
+      !video.title.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
       return false;
     }
     return true;
@@ -109,7 +119,7 @@ export default function MyVideosPage() {
   // 탭별 카운트 계산
   const getCounts = () => {
     const counts: Record<string, number> = { all: videos.length };
-    videos.forEach(v => {
+    videos.forEach((v) => {
       counts[v.status] = (counts[v.status] || 0) + 1;
     });
     return counts;
@@ -120,15 +130,15 @@ export default function MyVideosPage() {
     if (selectedVideos.length === filteredVideos.length) {
       setSelectedVideos([]);
     } else {
-      setSelectedVideos(filteredVideos.map(v => v.id));
+      setSelectedVideos(filteredVideos.map((v) => v.id));
     }
   };
 
   const toggleSelect = (id: string) => {
     if (selectedVideos.includes(id)) {
-      setSelectedVideos(prev => prev.filter(v => v !== id));
+      setSelectedVideos((prev) => prev.filter((v) => v !== id));
     } else {
-      setSelectedVideos(prev => [...prev, id]);
+      setSelectedVideos((prev) => [...prev, id]);
     }
   };
 
@@ -196,7 +206,10 @@ export default function MyVideosPage() {
             <div className="flex items-center">
               <input
                 type="checkbox"
-                checked={selectedVideos.length === filteredVideos.length && filteredVideos.length > 0}
+                checked={
+                  selectedVideos.length === filteredVideos.length &&
+                  filteredVideos.length > 0
+                }
                 onChange={toggleSelectAll}
                 className="w-4 h-4 rounded border-[#666] bg-transparent"
               />
@@ -228,16 +241,27 @@ export default function MyVideosPage() {
                 </div>
 
                 {/* Video Info */}
-                <Link href={`/stars/my-videos/${video.id}`} className="flex items-center gap-3 group">
+                <Link
+                  href={`/stars/my-videos/${video.id}`}
+                  className="flex items-center gap-3 group"
+                >
                   <div className="w-28 h-16 bg-[#3f3f3f] rounded-lg flex items-center justify-center shrink-0 relative overflow-hidden">
                     {video.thumbnail_url ? (
-                      <img src={video.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                      <Image
+                        src={video.thumbnail_url}
+                        alt=""
+                        width={112}
+                        height={64}
+                        className="w-full h-full object-cover"
+                        unoptimized
+                      />
                     ) : (
                       <Play className="w-5 h-5 text-[#666]" />
                     )}
                     {video.duration && (
                       <span className="absolute bottom-1 right-1 px-1 py-0.5 bg-black/80 rounded text-[10px] text-white">
-                        {Math.floor(video.duration / 60)}:{String(video.duration % 60).padStart(2, '0')}
+                        {Math.floor(video.duration / 60)}:
+                        {String(video.duration % 60).padStart(2, '0')}
                       </span>
                     )}
                   </div>

@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { UserRole } from '@/types';
+import { UserRole, UserRoleType } from '@/types';
 
 interface User {
   id: string;
   email: string;
   name: string;
-  role: UserRole;
+  role: UserRoleType;
 }
 
 export interface AuthState {
@@ -15,7 +15,7 @@ export interface AuthState {
   setAccessToken: (token: string) => void;
   setUser: (user: User) => void;
   logout: () => void;
-  hasRole: (role: UserRole) => boolean;
+  hasRole: (role: UserRoleType) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -37,7 +37,7 @@ export const useAuthStore = create<AuthState>()(
         // Optional: Clear any other local storage or cookies if needed
       },
 
-      hasRole: (role: UserRole) => {
+      hasRole: (role: UserRoleType) => {
         const currentUser = get().user;
         return currentUser ? currentUser.role === role : false;
       },
@@ -45,7 +45,10 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage', // key in localStorage
       storage: createJSONStorage(() => localStorage), // utilize localStorage
-      partialize: (state) => ({ accessToken: state.accessToken, user: state.user }), // persist token and user
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        user: state.user,
+      }), // persist token and user
     }
   )
 );

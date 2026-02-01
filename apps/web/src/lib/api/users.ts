@@ -40,7 +40,9 @@ export const usersApi = {
   },
 
   updateRole: async (id: string, role: User['role']): Promise<User> => {
-    const response = await axiosInstance.patch<User>(`/users/${id}/role`, { role });
+    const response = await axiosInstance.patch<User>(`/users/${id}/role`, {
+      role,
+    });
     return response.data;
   },
 };

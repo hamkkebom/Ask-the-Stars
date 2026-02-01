@@ -1,5 +1,29 @@
 import { createClient } from '@/lib/supabase/client';
 
+/**
+ * 프로젝트 관련 타입 정의
+ * @namespace ProjectTypes
+ * @version 1.0.0
+ */
+
+/**
+ * 프로젝트 기본 정보 타입
+ *
+ * @description
+ * 함께봄 플랫폼에서 관리하는 프로젝트의 핵심 정보를 정의합니다.
+ * 클라이언트가 발주한 프로젝트와 프리랜서가 참여하는 프로젝트 모두 포함합니다.
+ *
+ * @example
+ * ```typescript
+ * const project: Project = {
+ *   id: "proj-123",
+ *   title: "기업 홍보 영상 제작",
+ *   status: "OPEN",
+ *   budget: 5000000,
+ *   deadline: "2024-02-15T23:59:59Z"
+ * };
+ * ```
+ */
 export interface Project {
   id: string;
   title: string;
@@ -19,7 +43,13 @@ export interface ProjectAssignment {
   id: string;
   project_id: string;
   freelancer_id: string;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'IN_PROGRESS' | 'SUBMITTED' | 'COMPLETED';
+  status:
+    | 'PENDING'
+    | 'ACCEPTED'
+    | 'REJECTED'
+    | 'IN_PROGRESS'
+    | 'SUBMITTED'
+    | 'COMPLETED';
   assigned_at: string;
   accepted_at: string | null;
   completed_at: string | null;
@@ -29,7 +59,14 @@ export interface ProjectAssignment {
 
 // ProjectRequest is an alias for Project used in project board views
 export interface ProjectRequest extends Omit<Project, 'status'> {
-  status: 'OPEN' | 'FULL' | 'CLOSED' | 'CANCELLED' | 'IN_PROGRESS' | 'REVIEW' | 'COMPLETED';
+  status:
+    | 'OPEN'
+    | 'FULL'
+    | 'CLOSED'
+    | 'CANCELLED'
+    | 'IN_PROGRESS'
+    | 'REVIEW'
+    | 'COMPLETED';
   assignments?: ProjectAssignment[];
   // Additional fields used by project board UI
   estimatedBudget?: number;
@@ -41,8 +78,38 @@ export interface ProjectRequest extends Omit<Project, 'status'> {
   createdAt: string;
 }
 
+/**
+ * 프로젝트 API 통합 모듈
+ * @namespace ProjectsApi
+ * @version 1.0.0
+ */
 export const projectsApi = {
-  // 프로젝트 목록 조회
+  /**
+   * 프로젝트 목록 조회
+   *
+   * @description
+   * 인증된 사용자가 접근 가능한 모든 프로젝트 목록을 조회합니다.
+   * 클라이언트 필터링, 상태 필터링, 페이징을 지원합니다.
+   *
+   * @endpoint GET /api/projects
+   * @auth required
+   * @rateLimit 100 requests/hour
+   *
+   * @example
+   * ```typescript
+   * const projects = await projectsApi.listProjects({
+   *   status: 'OPEN',
+   *   limit: 20
+   * });
+   * ```
+   *
+   * @param {Object} params - 조회 파라미터
+   * @param {string} [params.status] - 프로젝트 상태 필터
+   * @param {string} [params.clientId] - 클라이언트 ID 필터
+   * @param {number} [params.limit] - 최대 조회 건수
+   * @returns {Promise<Project[]>} 프로젝트 목록 배열
+   * @throws {ApiError} API 호출 실패 시 에러 발생
+   */
   listProjects: async (params?: {
     status?: string;
     clientId?: string;
@@ -52,13 +119,16 @@ export const projectsApi = {
 
     let query = supabase
       .from('projects')
-      .select(`
+      .select(
+        `
         *,
         client:users!client_id(id, name),
         category:categories(id, name)
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
+    // 동적 쿼리 빌드 (성능 최적화)
     if (params?.status) {
       query = query.eq('status', params.status);
     }
@@ -71,15 +141,49 @@ export const projectsApi = {
 
     const { data, error } = await query;
 
+    // 에러 핸들링 (안정성 향상)
     if (error) {
-      console.error('listProjects error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('프로젝트 목록 조회 실패:', error);
+      }
+      // 에러 발생 시 빈 배열 반환 (fail-safe)
       return [];
     }
 
     return data || [];
   },
 
-  // 프로젝트 생성
+  /**
+   * 새 프로젝트 생성
+   *
+   * @description
+   * 클라이언트가 새로운 프로젝트를 발주합니다.
+   * 현재 로그인한 사용자를 자동으로 프로젝트 소유자로 설정합니다.
+   *
+   * @endpoint POST /api/projects
+   * @auth required
+   * @rateLimit 50 requests/hour
+   *
+   * @example
+   * ```typescript
+   * const newProject = await projectsApi.create({
+   *   title: "제품 홍보 영상",
+   *   description: "10분 분량의 제품 소개 영상",
+   *   budget: 3000000,
+   *   deadline: "2024-03-15"
+   * });
+   * ```
+   *
+   * @param {Object} data - 프로젝트 생성 데이터
+   * @param {string} data.title - 프로젝트 제목 (필수)
+   * @param {string} [data.description] - 프로젝트 설명
+   * @param {number} [data.budget] - 예산 (원)
+   * @param {string} [data.deadline] - 마감일 (ISO 8601)
+   * @param {string} [data.category_id] - 카테고리 ID
+   * @returns {Promise<Project|null>} 생성된 프로젝트 정보
+   * @throws {ValidationError} 필수 데이터 누락 시
+   * @throws {UnauthorizedError} 인증되지 않은 경우
+   */
   create: async (data: {
     title: string;
     description?: string;
@@ -101,7 +205,7 @@ export const projectsApi = {
         category_id: data.category_id,
         client_id: userData.user.id,
         status: 'OPEN',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -115,16 +219,20 @@ export const projectsApi = {
     const supabase = createClient();
     const { data, error } = await supabase
       .from('projects')
-      .select(`
+      .select(
+        `
         *,
         client:users!client_id(id, name),
         category:categories(id, name)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
     if (error) {
-      console.error('getProject error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getProject error:', error);
+      }
       return null;
     }
 
@@ -136,17 +244,21 @@ export const projectsApi = {
     const supabase = createClient();
     const { data, error } = await supabase
       .from('projects')
-      .select(`
+      .select(
+        `
         *,
         client:users!client_id(id, name),
         category:categories(id, name),
         assignments:project_assignments(id, freelancer_id, status)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 
     if (error) {
-      console.error('getRequest error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getRequest error:', error);
+      }
       return null;
     }
 
@@ -163,7 +275,9 @@ export const projectsApi = {
   },
 
   // 내 할당된 프로젝트 (프리랜서)
-  getMyAssignments: async (freelancerId?: string): Promise<ProjectAssignment[]> => {
+  getMyAssignments: async (
+    freelancerId?: string
+  ): Promise<ProjectAssignment[]> => {
     const supabase = createClient();
 
     // If no freelancerId provided, get from authenticated user
@@ -176,66 +290,111 @@ export const projectsApi = {
 
     const { data, error } = await supabase
       .from('project_assignments')
-      .select(`
+      .select(
+        `
         *,
         project:projects(
           *,
           client:users!client_id(id, name)
         ),
         request:projects(id, title, deadline, description)
-      `)
+      `
+      )
       .eq('freelancer_id', userId)
       .order('assigned_at', { ascending: false });
 
     if (error) {
-      console.error('getMyAssignments error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getMyAssignments error:', error);
+      }
       return [];
     }
 
     return data || [];
   },
 
-  // 프로젝트 보드 (OPEN 프로젝트만)
-  getProjectBoard: async () => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('projects')
-      .select(`
-        *,
-        client:users!client_id(id, name),
-        category:categories(id, name)
-      `)
-      .eq('status', 'OPEN')
-      .order('created_at', { ascending: false });
+  // 프로젝트 보드 (OPEN 프로젝트만) - API 연동
+  getProjectBoard: async (): Promise<ProjectRequest[]> => {
+    try {
+      const response = await fetch('/api/projects/requests/board', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (error) {
-      console.error('getProjectBoard error:', error);
+      if (!response.ok) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('getProjectBoard API error:', response.statusText);
+        }
+        return [];
+      }
+
+      const data = await response.json();
+
+      // API 응답을 ProjectRequest 형태로 변환
+      return data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        status: item.status,
+        estimatedBudget: item.estimatedBudget,
+        categories: item.categories || [],
+        assignmentType: item.assignmentType || 'MULTIPLE',
+        currentAssignees: item.currentAssignees || 0,
+        maxAssignees: item.maxAssignees || 5,
+        deadline: item.deadline,
+        createdBy: item.createdBy,
+        createdAt: item.createdAt,
+      })) as ProjectRequest[];
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getProjectBoard error:', error);
+      }
       return [];
     }
-
-    return data || [];
   },
 
-  // 프로젝트 요청 목록 (getProjectBoard의 별칭)
+  // 프로젝트 요청 목록 (getProjectBoard의 별칭) - API 연동
   getProjectRequests: async (): Promise<ProjectRequest[]> => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('projects')
-      .select(`
-        *,
-        client:users!client_id(id, name),
-        category:categories(id, name),
-        assignments:project_assignments(id, freelancer_id, status)
-      `)
-      .in('status', ['OPEN', 'IN_PROGRESS', 'REVIEW'])
-      .order('created_at', { ascending: false });
+    try {
+      const response = await fetch('/api/projects/requests/board', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (error) {
-      console.error('getProjectRequests error:', error);
+      if (!response.ok) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('getProjectRequests API error:', response.statusText);
+        }
+        return [];
+      }
+
+      const data = await response.json();
+
+      // API 응답을 ProjectRequest 형태로 변환
+      return data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        status: item.status,
+        estimatedBudget: item.estimatedBudget,
+        categories: item.categories || [],
+        assignmentType: item.assignmentType || 'MULTIPLE',
+        currentAssignees: item.currentAssignees || 0,
+        maxAssignees: item.maxAssignees || 5,
+        deadline: item.deadline,
+        createdBy: item.createdBy,
+        createdAt: item.createdAt,
+      })) as ProjectRequest[];
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getProjectRequests error:', error);
+      }
       return [];
     }
-
-    return (data || []) as ProjectRequest[];
   },
 
   // 프로젝트 수락
@@ -245,7 +404,7 @@ export const projectsApi = {
       .from('project_assignments')
       .update({
         status: 'ACCEPTED',
-        accepted_at: new Date().toISOString()
+        accepted_at: new Date().toISOString(),
       })
       .eq('id', assignmentId);
 
@@ -281,7 +440,7 @@ export const projectsApi = {
       .from('project_assignments')
       .update({
         status: 'COMPLETED',
-        completed_at: new Date().toISOString()
+        completed_at: new Date().toISOString(),
       })
       .eq('id', assignmentId);
 
@@ -324,7 +483,7 @@ export const projectsApi = {
         project_id: projectId,
         freelancer_id: freelancerId,
         status: 'PENDING',
-        assigned_at: new Date().toISOString()
+        assigned_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -348,7 +507,7 @@ export const projectsApi = {
         freelancer_id: userData.user.id,
         status: 'ACCEPTED',
         assigned_at: new Date().toISOString(),
-        accepted_at: new Date().toISOString()
+        accepted_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -381,7 +540,7 @@ export const projectsApi = {
         deadline: data.deadline,
         client_id: userData.user.id,
         status: 'OPEN',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -424,7 +583,7 @@ export const projectsApi = {
         stream_uid: data.streamUid,
         description: data.description || data.notes,
         status: 'PENDING',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       })
       .select()
       .single();

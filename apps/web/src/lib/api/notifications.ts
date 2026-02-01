@@ -6,7 +6,14 @@ export interface Notification {
   user_id: string;
   title: string;
   message: string;
-  type: 'INFO' | 'WARNING' | 'SUCCESS' | 'ERROR' | 'FEEDBACK' | 'PROJECT' | 'PAYMENT';
+  type:
+    | 'INFO'
+    | 'WARNING'
+    | 'SUCCESS'
+    | 'ERROR'
+    | 'FEEDBACK'
+    | 'PROJECT'
+    | 'PAYMENT';
   is_read: boolean;
   link?: string;
   created_at: string;
@@ -24,7 +31,9 @@ export const notificationsApi = {
       .limit(50);
 
     if (error) {
-      console.error('getMy notifications error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getMy notifications error:', error);
+      }
       return [];
     }
 
@@ -42,7 +51,9 @@ export const notificationsApi = {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('getUnread error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getUnread error:', error);
+      }
       return [];
     }
 
@@ -82,7 +93,9 @@ export const notificationsApi = {
       .eq('is_read', false);
 
     if (error) {
-      console.error('getUnreadCount error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('getUnreadCount error:', error);
+      }
       return 0;
     }
 
@@ -133,7 +146,9 @@ export const notificationsApi = {
   },
 
   // 알림 생성 (서버용, Admin/System)
-  create: async (data: Omit<Notification, 'id' | 'created_at'>): Promise<Notification> => {
+  create: async (
+    data: Omit<Notification, 'id' | 'created_at'>
+  ): Promise<Notification> => {
     const supabase = createClient();
     const { data: notification, error } = await supabase
       .from('notifications')

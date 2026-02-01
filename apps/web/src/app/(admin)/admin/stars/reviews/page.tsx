@@ -1,8 +1,8 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { GlassCard } from '@/components/ui/glass-card';
 import { cn, formatDate } from '@/lib/utils';
 import { submissionsApi, Submission } from '@/lib/api/submissions';
@@ -11,19 +11,37 @@ import {
   Play,
   CheckCircle,
   XCircle,
-  MessageSquare,
   Clock,
   AlertTriangle,
   Search,
   ChevronRight,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-  PENDING: { label: '검수 대기', color: 'bg-yellow-500/20 text-yellow-400', icon: Clock },
-  APPROVED: { label: '승인', color: 'bg-green-500/20 text-green-400', icon: CheckCircle },
-  REJECTED: { label: '반려', color: 'bg-red-500/20 text-red-400', icon: XCircle },
-  REVISION: { label: '수정요청', color: 'bg-orange-500/20 text-orange-400', icon: AlertTriangle },
+const statusConfig: Record<
+  string,
+  { label: string; color: string; icon: any }
+> = {
+  PENDING: {
+    label: '검수 대기',
+    color: 'bg-yellow-500/20 text-yellow-400',
+    icon: Clock,
+  },
+  APPROVED: {
+    label: '승인',
+    color: 'bg-green-500/20 text-green-400',
+    icon: CheckCircle,
+  },
+  REJECTED: {
+    label: '반려',
+    color: 'bg-red-500/20 text-red-400',
+    icon: XCircle,
+  },
+  REVISION: {
+    label: '수정요청',
+    color: 'bg-orange-500/20 text-orange-400',
+    icon: AlertTriangle,
+  },
 };
 
 const tabs: { key: string; label: string }[] = [
@@ -55,18 +73,20 @@ export default function ReviewsPage() {
     }
   };
 
-  const filteredReviews = reviews.filter(review => {
+  const filteredReviews = reviews.filter((review) => {
     const matchesTab = activeTab === 'all' || review.status === activeTab;
-    const projectTitle = review.assignment?.request.title || review.project?.title || '';
+    const projectTitle =
+      review.assignment?.request.title || review.project?.title || '';
     const freelancerName = review.user?.name || '';
 
-    const matchesSearch = projectTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch =
+      projectTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       freelancerName.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
   });
 
-  const pendingCount = reviews.filter(r => r.status === 'PENDING').length;
-  const revisionCount = reviews.filter(r => r.status === 'REVISION').length;
+  const pendingCount = reviews.filter((r) => r.status === 'PENDING').length;
+  const revisionCount = reviews.filter((r) => r.status === 'REVISION').length;
 
   return (
     <div className="space-y-6">
@@ -99,7 +119,7 @@ export default function ReviewsPage() {
         </GlassCard>
         <GlassCard className="p-4 text-center border-l-2 border-green-500">
           <p className="text-2xl font-bold text-green-400">
-            {reviews.filter(r => r.status === 'APPROVED').length}
+            {reviews.filter((r) => r.status === 'APPROVED').length}
           </p>
           <p className="text-xs text-gray-400">승인완료</p>
         </GlassCard>
@@ -108,15 +128,15 @@ export default function ReviewsPage() {
       {/* Tabs & Search */}
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <div className="flex gap-1 p-1 bg-white/5 rounded-lg w-fit">
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={cn(
-                "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                 activeTab === tab.key
-                  ? "bg-primary text-white"
-                  : "text-gray-400 hover:text-white"
+                  ? 'bg-primary text-white'
+                  : 'text-gray-400 hover:text-white'
               )}
             >
               {tab.label}
@@ -134,7 +154,7 @@ export default function ReviewsPage() {
             type="text"
             placeholder="프리랜서, 프로젝트 검색..."
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2 text-white text-sm placeholder-gray-500 w-72"
           />
         </div>
@@ -142,68 +162,80 @@ export default function ReviewsPage() {
 
       {/* Video Cards */}
       {loading ? (
-          <div className="flex justify-center py-20">
-              <Loader2 className="w-10 h-10 animate-spin text-primary" />
-          </div>
+        <div className="flex justify-center py-20">
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredReviews.map(review => {
+          {filteredReviews.map((review) => {
             const config = statusConfig[review.status] || statusConfig.PENDING;
             const StatusIcon = config.icon;
-            const projectTitle = review.assignment?.request.title || review.project?.title || 'Unknown Project';
+            const projectTitle =
+              review.assignment?.request.title ||
+              review.project?.title ||
+              'Unknown Project';
 
             return (
-                <Link
+              <Link
                 key={review.id}
                 href={`/admin/stars/reviews/${review.id}`}
                 className="group"
-                >
+              >
                 <GlassCard className="p-4 hover:bg-white/10 transition-all cursor-pointer">
-                    <div className="flex gap-4">
+                  <div className="flex gap-4">
                     <div className="relative w-40 h-24 bg-gray-800 rounded-lg overflow-hidden flex-shrink-0">
-                        {review.thumbnailUrl ? (
-                            <img src={review.thumbnailUrl} alt="Thumbnail" className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                                <Play className="w-8 h-8 text-white/50" />
-                            </div>
-                        )}
-                        <div className="absolute top-1 left-1">
-                        <span className="bg-primary/80 px-1.5 py-0.5 rounded text-xs text-white">
-                            v{review.version}
-                        </span>
+                      {review.thumbnailUrl ? (
+                        <Image
+                          src={review.thumbnailUrl}
+                          alt="Thumbnail"
+                          width={160}
+                          height={96}
+                          className="w-full h-full object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                          <Play className="w-8 h-8 text-white/50" />
                         </div>
+                      )}
+                      <div className="absolute top-1 left-1">
+                        <span className="bg-primary/80 px-1.5 py-0.5 rounded text-xs text-white">
+                          v{review.version}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start justify-between gap-2">
                         <h3 className="text-white font-medium truncate group-hover:text-primary transition-colors">
-                            {projectTitle}
+                          {projectTitle}
                         </h3>
-                        <span className={cn(
-                            "flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium flex-shrink-0",
+                        <span
+                          className={cn(
+                            'flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium flex-shrink-0',
                             config.color
-                        )}>
-                            <StatusIcon className="w-3 h-3" />
-                            {config.label}
+                          )}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {config.label}
                         </span>
-                        </div>
+                      </div>
 
-                        <p className="text-gray-400 text-sm mt-1">
+                      <p className="text-gray-400 text-sm mt-1">
                         {review.user?.name || 'Anonymous'}
-                        </p>
+                      </p>
 
-                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
                         <span>제출: {formatDate(review.createdAt)}</span>
-                        </div>
+                      </div>
                     </div>
 
                     <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-primary transition-colors self-center" />
-                    </div>
+                  </div>
                 </GlassCard>
-                </Link>
+              </Link>
             );
-            })}
+          })}
         </div>
       )}
 

@@ -2,7 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { PortfolioItem, mockPortfolioItems, portfolioCategories } from '@/data/mocks/portfolio';
+import {
+  PortfolioItem,
+  mockPortfolioItems,
+  portfolioCategories,
+} from '@/data/mocks/portfolio';
 import { PortfolioCard } from './PortfolioCard';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,17 +14,23 @@ import { Search, Plus } from 'lucide-react';
 import { EmptyState } from '@/components/common/EmptyState';
 
 // Dynamically import heavy modals
-const PortfolioEditorModal = dynamic(() =>
-  import('./PortfolioEditorModal').then(mod => mod.PortfolioEditorModal), {
-  ssr: false,
-  loading: () => null
-});
+const PortfolioEditorModal = dynamic(
+  () =>
+    import('./PortfolioEditorModal').then((mod) => mod.PortfolioEditorModal),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
-const PortfolioDetailModal = dynamic(() =>
-  import('./PortfolioDetailModal').then(mod => mod.PortfolioDetailModal), {
-  ssr: false,
-  loading: () => null
-});
+const PortfolioDetailModal = dynamic(
+  () =>
+    import('./PortfolioDetailModal').then((mod) => mod.PortfolioDetailModal),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
 
 export function PortfolioGrid() {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -34,10 +44,14 @@ export function PortfolioGrid() {
 
   // Filter items
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
-      const matchCategory = selectedCategory === 'ALL' || item.category === selectedCategory;
-      const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    return items.filter((item) => {
+      const matchCategory =
+        selectedCategory === 'ALL' || item.category === selectedCategory;
+      const matchSearch =
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.tags.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        );
       return matchCategory && matchSearch;
     });
   }, [items, selectedCategory, searchQuery]);
@@ -52,12 +66,14 @@ export function PortfolioGrid() {
     setIsEditorOpen(true);
   };
 
-  const handleSaveItem = (newItemData: Omit<PortfolioItem, 'id' | 'createdAt' | 'stats'>) => {
+  const handleSaveItem = (
+    newItemData: Omit<PortfolioItem, 'id' | 'createdAt' | 'stats'>
+  ) => {
     const newItem: PortfolioItem = {
       ...newItemData,
       id: Math.random().toString(36).substr(2, 9),
       createdAt: new Date().toISOString().split('T')[0],
-      stats: { views: 0, likes: 0 }
+      stats: { views: 0, likes: 0 },
     };
     setItems([newItem, ...items]);
   };
@@ -68,15 +84,15 @@ export function PortfolioGrid() {
       <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
         {/* Categories */}
         <div className="flex p-1 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 overflow-x-auto max-w-full no-scrollbar">
-          {portfolioCategories.map(cat => (
+          {portfolioCategories.map((cat) => (
             <button
               key={cat.value}
               onClick={() => setSelectedCategory(cat.value)}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all",
+                'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all',
                 selectedCategory === cat.value
-                  ? "bg-primary text-white shadow-lg shadow-primary/20"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
               )}
             >
               {cat.label}
@@ -113,7 +129,7 @@ export function PortfolioGrid() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
           <AnimatePresence>
-            {filteredItems.map(item => (
+            {filteredItems.map((item) => (
               <PortfolioCard
                 key={item.id}
                 id={item.id}
@@ -130,15 +146,15 @@ export function PortfolioGrid() {
         </motion.div>
       ) : (
         <div className="col-span-full">
-           <EmptyState
-             title="검색 결과가 없습니다"
-             description={`"${searchQuery}"에 대한 프로젝트를 찾을 수 없습니다.`}
-             icon={Search}
-             action={{
-               label: "초기화",
-               onClick: () => setSearchQuery('')
-             }}
-           />
+          <EmptyState
+            title="검색 결과가 없습니다"
+            description={`"${searchQuery}"에 대한 프로젝트를 찾을 수 없습니다.`}
+            icon={Search}
+            action={{
+              label: '초기화',
+              onClick: () => setSearchQuery(''),
+            }}
+          />
         </div>
       )}
 

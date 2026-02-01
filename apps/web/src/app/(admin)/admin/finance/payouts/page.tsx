@@ -5,8 +5,12 @@ import { m } from 'framer-motion';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatCurrency, cn } from '@/lib/utils';
 import {
-  CreditCard, Clock, CheckCircle, AlertCircle,
-  Download, Filter, User, Calendar
+  CreditCard,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Download,
+  Calendar,
 } from 'lucide-react';
 
 interface Payout {
@@ -20,12 +24,60 @@ interface Payout {
 }
 
 const mockPayouts: Payout[] = [
-  { id: '1', recipient: '홍길동', role: 'freelancer', amount: 350000, period: '1월 2주차', status: 'pending', dueDate: '2026-01-25' },
-  { id: '2', recipient: '김영희', role: 'freelancer', amount: 280000, period: '1월 2주차', status: 'pending', dueDate: '2026-01-25' },
-  { id: '3', recipient: '이철수', role: 'freelancer', amount: 420000, period: '1월 2주차', status: 'processing', dueDate: '2026-01-25' },
-  { id: '4', recipient: '박민수', role: 'counselor', amount: 150000, period: '1월 2주차', status: 'completed', dueDate: '2026-01-20' },
-  { id: '5', recipient: '최수아', role: 'freelancer', amount: 180000, period: '1월 1주차', status: 'completed', dueDate: '2026-01-10' },
-  { id: '6', recipient: '정다은', role: 'freelancer', amount: 520000, period: '1월 1주차', status: 'completed', dueDate: '2026-01-10' },
+  {
+    id: '1',
+    recipient: '홍길동',
+    role: 'freelancer',
+    amount: 350000,
+    period: '1월 2주차',
+    status: 'pending',
+    dueDate: '2026-01-25',
+  },
+  {
+    id: '2',
+    recipient: '김영희',
+    role: 'freelancer',
+    amount: 280000,
+    period: '1월 2주차',
+    status: 'pending',
+    dueDate: '2026-01-25',
+  },
+  {
+    id: '3',
+    recipient: '이철수',
+    role: 'freelancer',
+    amount: 420000,
+    period: '1월 2주차',
+    status: 'processing',
+    dueDate: '2026-01-25',
+  },
+  {
+    id: '4',
+    recipient: '박민수',
+    role: 'counselor',
+    amount: 150000,
+    period: '1월 2주차',
+    status: 'completed',
+    dueDate: '2026-01-20',
+  },
+  {
+    id: '5',
+    recipient: '최수아',
+    role: 'freelancer',
+    amount: 180000,
+    period: '1월 1주차',
+    status: 'completed',
+    dueDate: '2026-01-10',
+  },
+  {
+    id: '6',
+    recipient: '정다은',
+    role: 'freelancer',
+    amount: 520000,
+    period: '1월 1주차',
+    status: 'completed',
+    dueDate: '2026-01-10',
+  },
 ];
 
 const stats = {
@@ -36,17 +88,37 @@ const stats = {
 };
 
 const statusConfig = {
-  pending: { label: '대기', color: 'text-yellow-400', bg: 'bg-yellow-500/20', icon: Clock },
-  processing: { label: '처리중', color: 'text-blue-400', bg: 'bg-blue-500/20', icon: CreditCard },
-  completed: { label: '완료', color: 'text-green-400', bg: 'bg-green-500/20', icon: CheckCircle },
-  failed: { label: '실패', color: 'text-red-400', bg: 'bg-red-500/20', icon: AlertCircle },
+  pending: {
+    label: '대기',
+    color: 'text-yellow-400',
+    bg: 'bg-yellow-500/20',
+    icon: Clock,
+  },
+  processing: {
+    label: '처리중',
+    color: 'text-blue-400',
+    bg: 'bg-blue-500/20',
+    icon: CreditCard,
+  },
+  completed: {
+    label: '완료',
+    color: 'text-green-400',
+    bg: 'bg-green-500/20',
+    icon: CheckCircle,
+  },
+  failed: {
+    label: '실패',
+    color: 'text-red-400',
+    bg: 'bg-red-500/20',
+    icon: AlertCircle,
+  },
 };
 
 export default function PayoutsPage() {
   const [filter, setFilter] = useState<Payout['status'] | 'all'>('all');
 
-  const filteredPayouts = mockPayouts.filter(p =>
-    filter === 'all' || p.status === filter
+  const filteredPayouts = mockPayouts.filter(
+    (p) => filter === 'all' || p.status === filter
   );
 
   return (
@@ -74,11 +146,13 @@ export default function PayoutsPage() {
             <GlassCard key={key} className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm text-gray-400">{config.label}</p>
-                <div className={cn("p-2 rounded-lg", config.bg)}>
-                  <Icon className={cn("w-4 h-4", config.color)} />
+                <div className={cn('p-2 rounded-lg', config.bg)}>
+                  <Icon className={cn('w-4 h-4', config.color)} />
                 </div>
               </div>
-              <p className={cn("text-2xl font-bold", config.color)}>{formatCurrency(value)}</p>
+              <p className={cn('text-2xl font-bold', config.color)}>
+                {formatCurrency(value)}
+              </p>
             </GlassCard>
           );
         })}
@@ -90,8 +164,10 @@ export default function PayoutsPage() {
           <button
             onClick={() => setFilter('all')}
             className={cn(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-              filter === 'all' ? "bg-primary text-white" : "bg-white/5 text-gray-400 hover:bg-white/10"
+              'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+              filter === 'all'
+                ? 'bg-primary text-white'
+                : 'bg-white/5 text-gray-400 hover:bg-white/10'
             )}
           >
             전체
@@ -101,8 +177,10 @@ export default function PayoutsPage() {
               key={key}
               onClick={() => setFilter(key as Payout['status'])}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                filter === key ? "bg-primary text-white" : "bg-white/5 text-gray-400 hover:bg-white/10"
+                'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                filter === key
+                  ? 'bg-primary text-white'
+                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
               )}
             >
               {config.label}
@@ -136,11 +214,17 @@ export default function PayoutsPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-white font-medium">{payout.recipient}</p>
-                      <span className={cn(
-                        "px-2 py-0.5 rounded text-xs",
-                        payout.role === 'freelancer' ? "bg-blue-500/20 text-blue-400" : "bg-purple-500/20 text-purple-400"
-                      )}>
+                      <p className="text-white font-medium">
+                        {payout.recipient}
+                      </p>
+                      <span
+                        className={cn(
+                          'px-2 py-0.5 rounded text-xs',
+                          payout.role === 'freelancer'
+                            ? 'bg-blue-500/20 text-blue-400'
+                            : 'bg-purple-500/20 text-purple-400'
+                        )}
+                      >
                         {payout.role === 'freelancer' ? '프리랜서' : '상담사'}
                       </span>
                     </div>
@@ -155,11 +239,16 @@ export default function PayoutsPage() {
                 </div>
 
                 <div className="flex items-center gap-6">
-                  <p className="text-xl font-bold text-white">{formatCurrency(payout.amount)}</p>
-                  <span className={cn(
-                    "flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium",
-                    config.bg, config.color
-                  )}>
+                  <p className="text-xl font-bold text-white">
+                    {formatCurrency(payout.amount)}
+                  </p>
+                  <span
+                    className={cn(
+                      'flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium',
+                      config.bg,
+                      config.color
+                    )}
+                  >
                     <StatusIcon className="w-4 h-4" />
                     {config.label}
                   </span>
@@ -177,4 +266,3 @@ export default function PayoutsPage() {
     </div>
   );
 }
-

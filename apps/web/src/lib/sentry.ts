@@ -10,7 +10,9 @@ export function initSentry() {
   const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
   if (!dsn) {
-    console.log('Sentry: Missing DSN, skipping initialization');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Sentry: Missing DSN, skipping initialization');
+    }
     return;
   }
 
@@ -23,7 +25,9 @@ export function initSentry() {
   });
 
   isInitialized = true;
-  console.log('✅ Sentry initialized');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('✅ Sentry initialized');
+  }
 }
 
 export function setSentryUser(user: {

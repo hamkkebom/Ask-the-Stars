@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -91,17 +91,22 @@ export function StudioSidebar({ variant }: StudioSidebarProps) {
   const brandEmoji = variant === 'stars' ? '⭐' : '🛠️';
 
   const toggleExpand = (label: string) => {
-    setExpandedItems(prev =>
+    setExpandedItems((prev) =>
       prev.includes(label)
-        ? prev.filter(item => item !== label)
+        ? prev.filter((item) => item !== label)
         : [...prev, label]
     );
   };
 
   const isActive = (href: string) => {
     if (href === '/admin' && pathname === '/admin') return true;
-    if (href === '/stars/dashboard' && pathname === '/stars/dashboard') return true;
-    return pathname.startsWith(href) && href !== '/admin' && href !== '/stars/dashboard';
+    if (href === '/stars/dashboard' && pathname === '/stars/dashboard')
+      return true;
+    return (
+      pathname.startsWith(href) &&
+      href !== '/admin' &&
+      href !== '/stars/dashboard'
+    );
   };
 
   return (
@@ -120,7 +125,10 @@ export function StudioSidebar({ variant }: StudioSidebarProps) {
           <Menu className="w-5 h-5 text-white" />
         </button>
         {!collapsed && (
-          <Link href={variant === 'stars' ? '/stars/dashboard' : '/admin'} className="ml-2 flex items-center gap-2">
+          <Link
+            href={variant === 'stars' ? '/stars/dashboard' : '/admin'}
+            className="ml-2 flex items-center gap-2"
+          >
             <span className="text-xl">{brandEmoji}</span>
             <span className="text-white font-semibold">{brandName}</span>
           </Link>
@@ -137,8 +145,15 @@ export function StudioSidebar({ variant }: StudioSidebarProps) {
 
           // Add separator before specific items
           const needsSeparator =
-            (variant === 'stars' && (item.label === '콘텐츠' || item.label === '피드백' || item.label === '내 성과' || item.label === '설정')) ||
-            (variant === 'admin' && (item.label === '영상 자산' || item.label === '클라이언트' || item.label === '설정'));
+            (variant === 'stars' &&
+              (item.label === '콘텐츠' ||
+                item.label === '피드백' ||
+                item.label === '내 성과' ||
+                item.label === '설정')) ||
+            (variant === 'admin' &&
+              (item.label === '영상 자산' ||
+                item.label === '클라이언트' ||
+                item.label === '설정'));
 
           return (
             <div key={item.label}>
@@ -172,7 +187,7 @@ export function StudioSidebar({ variant }: StudioSidebarProps) {
                   </button>
                   {!collapsed && isExpanded && (
                     <div className="pl-12 py-1">
-                      {item.children?.map(child => (
+                      {item.children?.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}

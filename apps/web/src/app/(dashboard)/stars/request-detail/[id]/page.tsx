@@ -19,7 +19,7 @@ import {
   User,
   DollarSign,
   Play,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 
 // Types
@@ -46,7 +46,8 @@ const mockRequests: Record<string, ProjectRequest> = {
   '1': {
     id: '1',
     title: '신년운세 × 신규 상담사 김태희 홍보',
-    description: '2026년 신년운세 시즌 홍보 영상 제작. 새해를 맞아 신년운세와 신규 상담사 김태희님을 홍보하는 영상을 제작합니다. 밝고 희망찬 분위기로 제작해주세요.',
+    description:
+      '2026년 신년운세 시즌 홍보 영상 제작. 새해를 맞아 신년운세와 신규 상담사 김태희님을 홍보하는 영상을 제작합니다. 밝고 희망찬 분위기로 제작해주세요.',
     categories: ['신년운세', '신규상담사', '사주'],
     deadline: '2026-01-25T23:59:59Z',
     assignmentType: 'MULTIPLE',
@@ -71,7 +72,8 @@ const mockRequests: Record<string, ProjectRequest> = {
   '2': {
     id: '2',
     title: '2026 봄 타로 시즌 캠페인',
-    description: '봄 시즌 타로 운세 홍보 영상. 봄의 따뜻한 느낌을 살려 타로 상담을 홍보하는 영상입니다.',
+    description:
+      '봄 시즌 타로 운세 홍보 영상. 봄의 따뜻한 느낌을 살려 타로 상담을 홍보하는 영상입니다.',
     categories: ['타로', '계절별', '브랜드홍보'],
     deadline: '2026-02-10T23:59:59Z',
     assignmentType: 'SINGLE',
@@ -90,11 +92,11 @@ const mockRequests: Record<string, ProjectRequest> = {
 };
 
 const categoryColors: Record<string, string> = {
-  '신년운세': 'bg-red-500/20 text-red-200 border-red-500/30',
-  '타로': 'bg-purple-500/20 text-purple-200 border-purple-500/30',
-  '사주': 'bg-blue-500/20 text-blue-200 border-blue-500/30',
-  '신점': 'bg-orange-500/20 text-orange-200 border-orange-500/30',
-  'default': 'bg-gray-500/20 text-gray-200 border-gray-500/30',
+  신년운세: 'bg-red-500/20 text-red-200 border-red-500/30',
+  타로: 'bg-purple-500/20 text-purple-200 border-purple-500/30',
+  사주: 'bg-blue-500/20 text-blue-200 border-blue-500/30',
+  신점: 'bg-orange-500/20 text-orange-200 border-orange-500/30',
+  default: 'bg-gray-500/20 text-gray-200 border-gray-500/30',
 };
 
 function getCategoryStyle(cat: string) {
@@ -117,7 +119,12 @@ function StatusBadge({ status }: { status: ProjectRequest['status'] }) {
   };
 
   return (
-    <span className={cn("px-3 py-1 rounded-full text-sm font-medium border", styles[status])}>
+    <span
+      className={cn(
+        'px-3 py-1 rounded-full text-sm font-medium border',
+        styles[status]
+      )}
+    >
       {labels[status]}
     </span>
   );
@@ -151,7 +158,7 @@ export default function RequestDetailPage() {
     setAccepting(true);
 
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     toast.success('제작 요청을 수락했습니다!');
     setAccepting(false);
@@ -172,16 +179,25 @@ export default function RequestDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <AlertCircle className="w-16 h-16 text-gray-400" />
-        <h2 className="text-xl font-bold text-white">요청을 찾을 수 없습니다</h2>
-        <Link href="/stars/project-board" className="text-primary hover:underline">
+        <h2 className="text-xl font-bold text-white">
+          요청을 찾을 수 없습니다
+        </h2>
+        <Link
+          href="/stars/project-board"
+          className="text-primary hover:underline"
+        >
           프로젝트 보드로 돌아가기
         </Link>
       </div>
     );
   }
 
-  const canAccept = request.status === 'OPEN' && request.currentAssignees < request.maxAssignees;
-  const daysLeft = Math.ceil((new Date(request.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  const canAccept =
+    request.status === 'OPEN' &&
+    request.currentAssignees < request.maxAssignees;
+  const daysLeft = Math.ceil(
+    (new Date(request.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
 
   return (
     <div className="min-h-screen bg-transparent p-6 space-y-6">
@@ -269,7 +285,10 @@ export default function RequestDetailPage() {
               </h3>
               <ul className="space-y-3">
                 {request.requirements.map((req, index) => (
-                  <li key={index} className="flex items-start gap-3 text-gray-300">
+                  <li
+                    key={index}
+                    className="flex items-start gap-3 text-gray-300"
+                  >
                     <span className="shrink-0 w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-sm font-medium">
                       {index + 1}
                     </span>
@@ -327,12 +346,20 @@ export default function RequestDetailPage() {
                   <Clock className="w-4 h-4" />
                   마감일
                 </span>
-                <span className={cn(
-                  "font-medium",
-                  daysLeft < 3 ? "text-red-400" : daysLeft < 7 ? "text-yellow-400" : "text-gray-300"
-                )}>
+                <span
+                  className={cn(
+                    'font-medium',
+                    daysLeft < 3
+                      ? 'text-red-400'
+                      : daysLeft < 7
+                        ? 'text-yellow-400'
+                        : 'text-gray-300'
+                  )}
+                >
                   {formatDate(request.deadline)}
-                  {daysLeft > 0 && <span className="text-sm ml-1">({daysLeft}일 남음)</span>}
+                  {daysLeft > 0 && (
+                    <span className="text-sm ml-1">({daysLeft}일 남음)</span>
+                  )}
                 </span>
               </div>
 
@@ -367,8 +394,14 @@ export default function RequestDetailPage() {
               카테고리
             </h3>
             <div className="flex flex-wrap gap-2">
-              {request.categories.map(cat => (
-                <span key={cat} className={cn("px-3 py-1 rounded-full text-sm border", getCategoryStyle(cat))}>
+              {request.categories.map((cat) => (
+                <span
+                  key={cat}
+                  className={cn(
+                    'px-3 py-1 rounded-full text-sm border',
+                    getCategoryStyle(cat)
+                  )}
+                >
                   {cat}
                 </span>
               ))}

@@ -50,12 +50,6 @@ const nextConfig: NextConfig = {
     // optimizeCss: true,
   },
   serverExternalPackages: ['@supabase/supabase-js'],
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
 
 export default nextConfig;

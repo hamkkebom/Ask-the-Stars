@@ -66,12 +66,16 @@ export function useChat() {
     );
 
     socketInstance.on('connect', () => {
-      console.log('Connected to chat server');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Connected to chat server');
+      }
       setIsConnected(true);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('Disconnected from chat server');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Disconnected from chat server');
+      }
       setIsConnected(false);
     });
 
@@ -94,7 +98,7 @@ export function useChat() {
           setMessages(
             roomMessages.map((msg) => ({
               ...msg,
-              isOwn: msg.userId === socketInstance.data?.user?.id,
+              isOwn: msg.userId === 'me',
             }))
           );
         }
@@ -122,7 +126,9 @@ export function useChat() {
       'userJoined',
       (data: { userId: string; name: string; roomId: string }) => {
         if (data.roomId === currentRoom) {
-          console.log(`${data.name} joined the room`);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`${data.name} joined the room`);
+          }
         }
       }
     );
@@ -131,7 +137,9 @@ export function useChat() {
       'userLeft',
       (data: { userId: string; name: string; roomId: string }) => {
         if (data.roomId === currentRoom) {
-          console.log(`${data.name} left the room`);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`${data.name} left the room`);
+          }
         }
       }
     );
@@ -151,13 +159,17 @@ export function useChat() {
     socketInstance.on(
       'messageDelivered',
       ({ messageId, timestamp }: { messageId: string; timestamp: Date }) => {
-        console.log(`Message ${messageId} delivered at ${timestamp}`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Message ${messageId} delivered at ${timestamp}`);
+        }
       }
     );
 
     // 에러 처리
     socketInstance.on('error', (error: { message: string }) => {
-      console.error('Socket error:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Socket error:', error);
+      }
     });
 
     setSocket(socketInstance);
@@ -182,13 +194,13 @@ export function useChat() {
     const tempMessage: Message = {
       id: `temp-${Date.now()}`,
       content: message.content,
-      userId: socket.data?.user?.id || 'me',
+      userId: 'me',
       roomId: message.roomId,
       createdAt: new Date(),
       user: {
-        id: socket.data?.user?.id || 'me',
-        name: socket.data?.user?.name || 'Me',
-        avatar: socket.data?.user?.profileImage,
+        id: 'me',
+        name: 'Me',
+        avatar: undefined,
       },
       isOwn: true,
     };

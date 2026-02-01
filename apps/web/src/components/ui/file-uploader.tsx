@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   Cloud,
   Upload,
@@ -43,7 +43,7 @@ export default function FileUploader({
 }) {
   const [files, setFiles] = useState<FileUploadItem[]>([]);
   const [dragOver, setDragOver] = useState(false);
-  const fileInputRef = useState<HTMLInputElement>(null)[0];
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     maxFiles = 10,
@@ -265,8 +265,8 @@ export default function FileUploader({
     addFiles(selectedFiles);
 
     // input 초기화 (같은 파일 재선택 가능)
-    if (fileInputRef) {
-      fileInputRef.value = '';
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -306,7 +306,7 @@ export default function FileUploader({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors pointer-events-auto"
-              onClick={() => fileInputRef?.click()}
+              onClick={() => fileInputRef.current?.click()}
             >
               <Upload className="w-4 h-4 inline mr-2" />
               파일 선택

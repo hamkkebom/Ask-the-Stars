@@ -1,9 +1,9 @@
 # 🛠️ 기술 스택 (Tech Stack)
 
-> **최종 확정**: 2026-01-19
+> **최종 확정**: 2026-02-01
 > **예산**: 월 $30 (현재 Free Tier 적용 중)
-> **적용 현황 업데이트**: 2026-01-30
-> **빌드 상태**: ✅ 통과 (TypeScript 에러 0개)
+> **적용 현황 업데이트**: 2026-02-01
+> **빌드 상태**: ✅ Vercel 배포 성공 (TypeScript 에러 0개)
 
 ---
 
@@ -11,7 +11,7 @@
 
 | 분류 | 핵심 기술 | 버전 | 적용 |
 |------|----------|------|:----:|
-| 🎨 Frontend | Next.js + React | 15.5.9 / 19.0.0 | ✅ |
+| 🎨 Frontend | Next.js + React | 16.1.6 / 19.2.3 | ✅ |
 | 🔧 Backend | NestJS + Prisma | 11.1.12 / 6.3.1 | ✅ |
 | 🎬 Video | Cloudflare Stream + R2 | Hybrid | ✅ |
 | 🧠 AI/ML | OpenAI + pgvector | - | ✅ |
@@ -29,10 +29,10 @@
 
 | 기술 | 버전 | 용도 | 상세 설명 |
 |------|------|------|-----------|
-| [Next.js](https://nextjs.org/) | 15.5.9 | React 프레임워크 | App Router 기반. `(public)`, `(dashboard)`, `(admin)` 라우트 그룹으로 레이아웃 분리 |
-| [React](https://react.dev/) | 19.0.0 | UI 라이브러리 | Server Components로 번들 사이즈 40% 감소. `use client` 최소화 전략 |
-| [TypeScript](https://www.typescriptlang.org/) | 5.7.2 | 타입 안전성 | Zod 스키마와 연동하여 런타임 + 컴파일타임 이중 검증 |
-| [TailwindCSS](https://tailwindcss.com/) | 4.0.8 | 유틸리티 CSS | v4의 Lightning CSS 엔진으로 빌드 속도 10x 향상. `@apply` 지양, 컴포넌트 기반 스타일링 |
+| [Next.js](https://nextjs.org/) | 16.1.6 | React 프레임워크 | App Router 기반. `(public)`, `(dashboard)`, `(admin)` 라우트 그룹으로 레이아웃 분리 |
+| [React](https://react.dev/) | 19.2.3 | UI 라이브러리 | Server Components로 번들 사이즈 40% 감소. `use client` 최소화 전략 |
+| [TypeScript](https://www.typescriptlang.org/) | 5.9.3 | 타입 안전성 | Zod 스키마와 연동하여 런타임 + 컴파일타임 이중 검증 |
+| [TailwindCSS](https://tailwindcss.com/) | 4.1.18 | 유틸리티 CSS | v4의 Lightning CSS 엔진으로 빌드 속도 10x 향상. `@apply` 지양, 컴포넌트 기반 스타일링 |
 | [Zustand](https://zustand-demo.pmnd.rs/) | 5.0.10 | 클라이언트 상태 관리 | 모달, 토스트, 사이드바 토글 등 UI 상태 전용. 서버 상태는 TanStack Query로 분리 |
 | [TanStack Query](https://tanstack.com/query) | 5.62.7 | 서버 상태 관리 | 자동 캐싱, 백그라운드 리패치, 낙관적 업데이트. `staleTime: 5분` 기본 설정 |
 | [Plyr](https://plyr.io/) | 3.8.4 | 영상 플레이어 | ⚠️ Legacy - 단순 미리보기용. 메인 플레이어는 Cloudflare Stream으로 마이그레이션 완료 |
@@ -129,11 +129,11 @@ apps/api/src/modules/
 
 | 도구 | 버전 | 용도 |
 |------|------|------|
-| pnpm | 9.x | 패키지 매니저 |
+| pnpm | 10.x | 패키지 매니저 |
 | Turborepo | 2.7.5 | 모노레포 빌드 |
-| ESLint | 9.17.0 | `.eslintrc.cjs` (ESM 호환) |
+| ESLint | 9.39.2 | Flat Config (ESM) |
 | Prettier | 3.8.0 | 포매터 |
-| Vitest | 2.1.8 | 프론트엔드 테스트 |
+| Vitest | 2.1.9 | 프론트엔드 테스트 |
 | Jest | 29.7.0 | 백엔드 테스트 |
 | Docker Compose | - | 로컬 환경 |
 

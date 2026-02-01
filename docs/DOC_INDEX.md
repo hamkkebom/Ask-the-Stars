@@ -1,6 +1,6 @@
 # 📚 프로젝트 문서 인덱스
 
-> **마지막 업데이트**: 2026-01-30
+> **마지막 업데이트**: 2026-02-01
 > **플랫폼 비전**: 영상 갤러리 + 프리랜서 + 관리자
 
 ---
@@ -9,7 +9,7 @@
 
 | 문서 | 설명 |
 |------|------|
-| [SITEMAP.md](./02-architecture/SITEMAP.md) | 사이트맵 (37 페이지) |
+| [SITEMAP.md](./02-architecture/SITEMAP.md) | 사이트맵 (46 페이지) |
 | [OVERVIEW.md](./02-architecture/OVERVIEW.md) | 시스템 아키텍처 |
 | [TECH_STACK.md](./02-architecture/TECH_STACK.md) | 기술 스택 |
 | [ENDPOINTS.md](./03-api/ENDPOINTS.md) | API 엔드포인트 |
@@ -130,4 +130,4 @@
 | [2026-01-16_작업일지.md](./korean_logs/2026-01-16_작업일지.md) | 2026-01-16 |
 
 ---
-*총 문서 수: ~65개 (삭제 후)*
+*총 문서 수: ~70개 (2026-02-01 기준)*

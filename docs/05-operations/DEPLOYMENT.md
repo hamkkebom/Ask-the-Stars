@@ -1,6 +1,6 @@
 # 🚀 배포 가이드
 
-> **최종 수정일**: 2026-01-23
+> **최종 수정일**: 2026-02-01
 
 ---
 
@@ -37,7 +37,7 @@
          ▼                               ▼
 ┌─────────────────┐             ┌─────────────────┐
 │  Vercel (서울)  │             │ Cloud Run (서울)│
-│   Next.js 15    │────────────▶│   NestJS 11     │
+│   Next.js 16   │────────────▶│   NestJS 11     │
 └─────────────────┘     API     └────────┬────────┘
                                          │
                     ┌────────────────────┼────────────────────┐
@@ -104,11 +104,27 @@ SENTRY_DSN=xxx
 
 #### [Vercel UI 설정 - 중요]
 모노레포 구조이므로 Vercel 대시보드에서 다음 설정을 수동으로 적용해야 합니다.
-- **Root Directory**: `apps/web`
-- **Output Directory**: `Default` (`.next`) - **절대 수정 금지**
-- **Build Command**: `cd ../.. && pnpm --filter @ask-the-stars/database db:generate && pnpm --filter @ask-the-stars/web build`
-- **Install Command**: `cd ../.. && pnpm install --no-frozen-lockfile`
+- **Root Directory**: `.` (루트)
+- **Output Directory**: `.next`
+- **Build Command**: `pnpm turbo run build --filter=@ask-the-stars/web`
+- **Install Command**: `pnpm install`
 - **Root Directory 옵션**: "Include files outside of the root directory..." **활성화**
+
+#### Turborepo 환경변수 설정 (`turbo.json`)
+
+```json
+{
+  "tasks": {
+    "build": {
+      "env": ["DATABASE_URL", "DIRECT_URL", "NEXT_PUBLIC_*"],
+      "outputs": ["dist/**", ".next/**"]
+    }
+  }
+}
+```
+
+> [!IMPORTANT]
+> `turbo.json`의 `env` 배열에 빌드 시 필요한 환경변수를 명시적으로 선언해야 합니다.
 
 #### 자동 배포 (GitHub Actions):
 

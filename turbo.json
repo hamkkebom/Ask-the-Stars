@@ -4,7 +4,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "build/**"]
+      "env": ["DATABASE_URL", "DIRECT_URL", "NEXT_PUBLIC_*"],
+      "outputs": ["apps/web/.next/**", ".next/**", "dist/**", "build/**"]
     },
     "dev": {
       "cache": false,

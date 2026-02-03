@@ -21,6 +21,10 @@ playwright-report/
 test-results/
 blob-report/
 reports/load/
+.lighthouseci/
+*-report.json
+audit-report.json
+security-report.json
 
 # Cache
 .turbo/

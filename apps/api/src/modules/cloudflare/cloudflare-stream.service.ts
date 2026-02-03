@@ -10,6 +10,7 @@ export class CloudflareStreamService {
   private readonly signingKeyId: string;
   private readonly signingKeyPem: string;
   private readonly webhookSecret: string;
+  private readonly imageDeliveryHash: string;
 
   constructor(private readonly configService: ConfigService) {
     this.accountId =
@@ -37,6 +38,80 @@ export class CloudflareStreamService {
 
     this.webhookSecret =
       this.configService.get<string>('CLOUDFLARE_WEBHOOK_SECRET') || '';
+
+    this.imageDeliveryHash =
+      this.configService.get<string>('CLOUDFLARE_IMAGE_DELIVERY_HASH') || '';
+  }
+
+  private getImageDeliveryUrl(imageId: string, variant: string): string {
+    return `https://imagedelivery.net/${this.imageDeliveryHash}/${imageId}/${variant}`;
+  }
+
+  getStreamThumbnailBaseUrl(uid: string): string {
+    return `https://customer-${this.accountId}.cloudflarestream.com/${uid}/thumbnails/thumbnail.jpg`;
+  }
+
+  getStreamThumbnailVariants(uid: string): {
+    sizes: string;
+    sources: { type: string; srcSet: string }[];
+    fallbackUrl: string;
+    variants: {
+      sm: { width: number; avif: string; webp: string; jpeg: string };
+      md: { width: number; avif: string; webp: string; jpeg: string };
+      lg: { width: number; avif: string; webp: string; jpeg: string };
+    };
+  } | null {
+    if (!this.imageDeliveryHash) return null;
+
+    const sizes = {
+      sm: { width: 320, name: 'thumbnail-sm' },
+      md: { width: 640, name: 'thumbnail-md' },
+      lg: { width: 1280, name: 'thumbnail-lg' },
+    };
+
+    const variants = {
+      sm: {
+        width: sizes.sm.width,
+        avif: this.getImageDeliveryUrl(uid, `${sizes.sm.name}-avif`),
+        webp: this.getImageDeliveryUrl(uid, `${sizes.sm.name}-webp`),
+        jpeg: this.getImageDeliveryUrl(uid, `${sizes.sm.name}-jpeg`),
+      },
+      md: {
+        width: sizes.md.width,
+        avif: this.getImageDeliveryUrl(uid, `${sizes.md.name}-avif`),
+        webp: this.getImageDeliveryUrl(uid, `${sizes.md.name}-webp`),
+        jpeg: this.getImageDeliveryUrl(uid, `${sizes.md.name}-jpeg`),
+      },
+      lg: {
+        width: sizes.lg.width,
+        avif: this.getImageDeliveryUrl(uid, `${sizes.lg.name}-avif`),
+        webp: this.getImageDeliveryUrl(uid, `${sizes.lg.name}-webp`),
+        jpeg: this.getImageDeliveryUrl(uid, `${sizes.lg.name}-jpeg`),
+      },
+    };
+
+    const sizesAttr =
+      '(max-width: 640px) 320px, (max-width: 1024px) 640px, 1280px';
+
+    return {
+      sizes: sizesAttr,
+      sources: [
+        {
+          type: 'image/avif',
+          srcSet: `${variants.sm.avif} 320w, ${variants.md.avif} 640w, ${variants.lg.avif} 1280w`,
+        },
+        {
+          type: 'image/webp',
+          srcSet: `${variants.sm.webp} 320w, ${variants.md.webp} 640w, ${variants.lg.webp} 1280w`,
+        },
+        {
+          type: 'image/jpeg',
+          srcSet: `${variants.sm.jpeg} 320w, ${variants.md.jpeg} 640w, ${variants.lg.jpeg} 1280w`,
+        },
+      ],
+      fallbackUrl: variants.md.jpeg,
+      variants,
+    };
   }
 
   async copyFromUrl(url: string, meta?: any): Promise<string> {

@@ -10,6 +10,43 @@ import { CreateFeedbackDto, UpdateFeedbackDto } from './dto';
 export class FeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Check if user can update feedback
+   * - Author can update everything
+   * - Submission owner can update status only
+   * - Project owner can update status only
+   */
+  private async canUpdateFeedback(
+    feedbackId: string,
+    userId: string,
+    isStatusUpdate: boolean
+  ): Promise<boolean> {
+    const feedback = await this.prisma.feedback.findUnique({
+      where: { id: feedbackId },
+      include: {
+        submission: {
+          include: {
+            project: true,
+          },
+        },
+      },
+    });
+
+    if (!feedback) return false;
+
+    // Author can update everything
+    if (feedback.userId === userId) return true;
+
+    // For status updates only, check if user is submission/project owner
+    if (isStatusUpdate) {
+      const isSubmissionOwner = feedback.submission?.userId === userId;
+      const isProjectOwner = feedback.submission?.project?.ownerId === userId;
+      return isSubmissionOwner || isProjectOwner;
+    }
+
+    return false;
+  }
+
   async create(
     userId: string,
     createFeedbackDto: CreateFeedbackDto
@@ -63,12 +100,15 @@ export class FeedbackService {
     userId: string,
     updateFeedbackDto: UpdateFeedbackDto
   ): Promise<any> {
-    const feedback = await this.findOne(id);
+    // Determine if this is a status-only update
+    const isStatusUpdate =
+      Object.keys(updateFeedbackDto).length === 1 &&
+      'status' in updateFeedbackDto;
 
-    // Only allow author to update content/priority
-    // But allow submission owner or project owner to update status (RESOLVED) - TODO: refinement
-    // For now strict to author
-    if (feedback.userId !== userId) {
+    // Check permission using refined logic
+    const canUpdate = await this.canUpdateFeedback(id, userId, isStatusUpdate);
+
+    if (!canUpdate) {
       throw new ForbiddenException('수정 권한이 없습니다.');
     }
 
@@ -81,6 +121,7 @@ export class FeedbackService {
   async remove(id: string, userId: string): Promise<any> {
     const feedback = await this.findOne(id);
 
+    // Only author can delete
     if (feedback.userId !== userId) {
       throw new ForbiddenException('삭제 권한이 없습니다.');
     }

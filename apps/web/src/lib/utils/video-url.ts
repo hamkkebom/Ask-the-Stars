@@ -40,7 +40,10 @@ export function getThumbnailSrc(
   if (typeof input === 'string') {
     rawUrl = input;
   } else if (typeof input === 'object') {
-    rawUrl = input.thumbnailUrl || input.thumbnail;
+    rawUrl =
+      input.thumbnailVariants?.fallbackUrl ||
+      input.thumbnailUrl ||
+      input.thumbnail;
   }
 
   // 2. Derive rawUrl if missing but r2Key exists (Video -> Thumb pattern)
@@ -96,4 +99,25 @@ export function getThumbnailSrc(
       .join('/');
     return `${cleanBase}/${encodedKey}`;
   }
+}
+
+export function getThumbnailSources(input: any | null | undefined):
+  | {
+      sizes: string;
+      sources: { type: string; srcSet: string }[];
+      fallbackUrl: string;
+      variants: {
+        sm: { width: number; avif: string; webp: string; jpeg: string };
+        md: { width: number; avif: string; webp: string; jpeg: string };
+        lg: { width: number; avif: string; webp: string; jpeg: string };
+      };
+    }
+  | undefined {
+  if (!input || typeof input !== 'object') return undefined;
+
+  return (
+    input.thumbnailVariants ||
+    input.technicalSpec?.thumbnailVariants ||
+    undefined
+  );
 }

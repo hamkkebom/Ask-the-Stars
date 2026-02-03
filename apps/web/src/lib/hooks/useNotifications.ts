@@ -27,7 +27,7 @@ export function useNotifications() {
     } finally {
       setLoading(false);
     }
-  }, [user, notificationsApi]);
+  }, [user]);
 
   // 실시간 구독 설정
   useEffect(() => {
@@ -51,7 +51,7 @@ export function useNotifications() {
         notificationsApi.unsubscribe(realtimeChannel);
       }
     };
-  }, [user, loadNotifications, notificationsApi]);
+  }, [user, loadNotifications]);
 
   // 읽음 처리
   const markAsRead = useCallback(async (id: string) => {

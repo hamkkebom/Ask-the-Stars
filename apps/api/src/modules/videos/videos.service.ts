@@ -60,6 +60,11 @@ export class VideosService {
             video.technicalSpec.streamUid
           )
         : video.technicalSpec?.thumbnailUrl,
+      thumbnailVariants: video.technicalSpec?.streamUid
+        ? this.cloudflareService.getStreamThumbnailVariants(
+            video.technicalSpec.streamUid
+          )
+        : null,
       status: video.status,
     };
   }
@@ -128,6 +133,11 @@ export class VideosService {
               video.technicalSpec.streamUid
             )
           : video.technicalSpec?.thumbnailUrl,
+        thumbnailVariants: video.technicalSpec?.streamUid
+          ? this.cloudflareService.getStreamThumbnailVariants(
+              video.technicalSpec.streamUid
+            )
+          : null,
       },
     };
   }
@@ -304,6 +314,11 @@ export class VideosService {
         videos.map(async (video) => {
           let previewUrl = null;
           let thumbnailUrl = video.technicalSpec?.thumbnailUrl;
+          const thumbnailVariants = video.technicalSpec?.streamUid
+            ? this.cloudflareService.getStreamThumbnailVariants(
+                video.technicalSpec.streamUid
+              )
+            : null;
 
           if (video.technicalSpec?.streamUid) {
             const urls = await this.cloudflareService.getSignedThumbnailUrls(
@@ -320,8 +335,10 @@ export class VideosService {
             technicalSpec: {
               ...video.technicalSpec,
               thumbnailUrl,
+              thumbnailVariants,
               previewUrl, // Add previewUrl to technicalSpec or root
             },
+            thumbnailVariants,
             previewUrl, // Add to root for convenience
           };
         })
@@ -623,7 +640,9 @@ export class VideosService {
                 format: format,
                 streamUid: uploadResult.streamId,
                 thumbnailUrl: uploadResult.streamId
-                  ? `https://customer-${process.env.CLOUDFLARE_ACCOUNT_ID}.cloudflarestream.com/${uploadResult.streamId}/thumbnails/thumbnail.jpg`
+                  ? this.cloudflareService.getStreamThumbnailBaseUrl(
+                      uploadResult.streamId
+                    )
                   : undefined,
               },
             },

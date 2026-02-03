@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
+import { axiosInstance } from './axios';
 
 // ============================================
 // 🎬 MOCK DATA FOR TESTING (DB 데이터 연결 전 임시)
@@ -126,8 +127,24 @@ const MOCK_VIDEOS: VideoDetails[] = [
   },
 ];
 
-// Set this to false when real DB data is available
 const USE_MOCK_DATA = false;
+const USE_E2E_MOCK_DETAIL = process.env.NEXT_PUBLIC_E2E_MOCK_API === 'true';
+
+const MOCK_VIDEO_DETAIL = {
+  id: 'video-1',
+  project: {
+    title: 'E2E Featured Video',
+    client: { name: 'E2E Client' },
+  },
+  created_at: '2026-01-10T10:00:00Z',
+  views: 1200,
+  likes: 45,
+  feedback: 'E2E video detail description.',
+  technicalSpec: {
+    videoUrl: '/videos/sample.mp4',
+    thumbnailUrl: 'https://picsum.photos/seed/e2e-detail/1280/720',
+  },
+};
 
 // Supabase-based video API
 export interface VideoDetails {
@@ -154,25 +171,23 @@ export interface VideoDetails {
 }
 
 export const videosApi = {
-  // 단일 영상 조회
-  getVideoById: async (id: string): Promise<VideoDetails | null> => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) {
+  // 단일 영상 조회 (백엔드 API 사용 - Cloudflare Stream signed token 포함)
+  getVideoById: async (id: string): Promise<any | null> => {
+    if (USE_E2E_MOCK_DETAIL) {
+      return { ...MOCK_VIDEO_DETAIL, id };
+    }
+    try {
+      const response = await axiosInstance.get(`/videos/${id}`);
+      return response.data;
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('getVideoById error:', error);
       }
       return null;
     }
-    return data;
   },
 
-  // 공개 영상 목록 (갤러리용)
+  // 공개 영상 목록 (갤러리용) - 백엔드 API 사용
   listAllFinalVideos: async (params?: {
     page?: number;
     limit?: number;
@@ -201,49 +216,21 @@ export const videosApi = {
       };
     }
 
-    const supabase = createClient();
-    const page = params?.page || 1;
-    const limit = params?.limit || 20;
-    const offset = (page - 1) * limit;
-
-    let query = supabase
-      .from('videos')
-      .select('*', { count: 'exact' })
-      .eq('status', 'PUBLIC');
-
-    if (params?.category && params.category !== '전체') {
-      query = query.eq('category', params.category);
-    }
-
-    if (params?.sort === 'popular') {
-      query = query.order('views', { ascending: false });
-    } else {
-      query = query.order('created_at', { ascending: false });
-    }
-
-    const { data, count, error } = await query.range(
-      offset,
-      offset + limit - 1
-    );
-
-    if (error) {
+    try {
+      const response = await axiosInstance.get('/videos', { params });
+      return response.data;
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('listAllFinalVideos error:', error);
       }
       return {
         data: [],
-        meta: { total: 0, page, lastPage: 1, has_more: false },
+        meta: { total: 0, page: 1, lastPage: 1, has_more: false },
       };
     }
-
-    const total = count || 0;
-    const lastPage = Math.ceil(total / limit);
-    const has_more = page < lastPage;
-
-    return { data: data || [], meta: { total, page, lastPage, has_more } };
   },
 
-  // 카테고리별 영상
+  // 카테고리별 영상 - 백엔드 API 사용
   listVideosByCategory: async (category: string, limit = 10) => {
     // 🎬 Return mock data for testing
     if (USE_MOCK_DATA) {
@@ -256,37 +243,21 @@ export const videosApi = {
       return { data: filtered.slice(0, limit) };
     }
 
-    const supabase = createClient();
+    try {
+      const sort = category === '인기' ? 'popular' : 'latest';
+      const categoryParam =
+        category !== '전체' && category !== '인기' ? category : undefined;
 
-    let query = supabase
-      .from('videos')
-      .select('*')
-      .eq('status', 'PUBLIC')
-      .order('created_at', { ascending: false })
-      .limit(limit);
-
-    // "전체" 또는 "인기"는 특수 처리
-    if (category === '인기') {
-      query = supabase
-        .from('videos')
-        .select('*')
-        .eq('status', 'PUBLIC')
-        .order('views', { ascending: false })
-        .limit(limit);
-    } else if (category !== '전체') {
-      query = query.eq('category', category);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
+      const response = await axiosInstance.get('/videos', {
+        params: { category: categoryParam, sort, limit },
+      });
+      return { data: response.data.data || [] };
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('listVideosByCategory error:', error);
       }
       return { data: [] };
     }
-
-    return { data: data || [] };
   },
 
   // 인기 영상
@@ -316,25 +287,19 @@ export const videosApi = {
     return { data: data || [] };
   },
 
-  // 검색
+  // 검색 - 백엔드 API 사용
   search: async (query: string) => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*')
-      .eq('status', 'PUBLIC')
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if (error) {
+    try {
+      const response = await axiosInstance.get('/videos/search', {
+        params: { q: query },
+      });
+      return response.data;
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('search error:', error);
       }
       return [];
     }
-
-    return data || [];
   },
 
   // 조회수 증가
@@ -421,45 +386,21 @@ export const videosApi = {
     return data?.stream_url || data?.r2_url || null;
   },
 
-  // AI 추천 영상 (similarity search)
+  // AI 추천 영상 (similarity search) - 백엔드 API 사용
   getRecommendations: async (videoId: string, limit = 8): Promise<any[]> => {
-    const supabase = createClient();
-
-    // First, get the current video's category
-    const { data: currentVideo } = await supabase
-      .from('videos')
-      .select('category, title')
-      .eq('id', videoId)
-      .single();
-
-    if (!currentVideo) return [];
-
-    // Get similar videos from same category, excluding current video
-    let query = supabase
-      .from('videos')
-      .select('*')
-      .eq('status', 'PUBLIC')
-      .neq('id', videoId)
-      .order('views', { ascending: false })
-      .limit(limit);
-
-    if (currentVideo.category) {
-      query = query.eq('category', currentVideo.category);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
+    try {
+      const response = await axiosInstance.get(
+        `/videos/${videoId}/recommendations`,
+        {
+          params: { limit },
+        }
+      );
+      return response.data;
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('getRecommendations error:', error);
       }
       return [];
     }
-
-    // Add distance score (mock for now - would use embeddings in production)
-    return (data || []).map((video: any, index: number) => ({
-      ...video,
-      distance: index * 0.1, // Mock distance - lower is better match
-    }));
   },
 };

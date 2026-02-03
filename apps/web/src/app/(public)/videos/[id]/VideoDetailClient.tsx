@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { videosApi } from '@/lib/api/videos';
 import { useEffect } from 'react';
+import { getThumbnailSources } from '@/lib/utils/video-url';
 
 interface VideoDetailClientProps {
   video: any;
@@ -39,6 +40,8 @@ export default function VideoDetailClient({
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(video.likes);
   const [recommendations, setRecommendations] = useState<VideoProps[]>([]);
+  const posterSrc =
+    video.thumbnailSources?.fallbackUrl || video.thumbnailUrl || '';
 
   useEffect(() => {
     async function fetchRecommendations() {
@@ -51,6 +54,7 @@ export default function VideoDetailClient({
             v.technicalSpec?.thumbnailUrl ||
             v.thumbnailUrl ||
             '/placeholder.jpg',
+          thumbnailSources: getThumbnailSources(v),
           counselor: { name: v.project?.counselor?.name || '상담사' },
           category: v.project?.category?.name || '영상',
           tags: [],
@@ -84,7 +88,7 @@ export default function VideoDetailClient({
               <StreamPlayer
                 uid={video.streamUid}
                 token={video.technicalSpec?.streamToken}
-                poster={video.thumbnailUrl}
+                poster={posterSrc}
                 autoplay={false}
               />
             ) : video.videoUrl ? (
@@ -95,7 +99,7 @@ export default function VideoDetailClient({
                 autoPlay={false}
                 muted={false}
                 playsInline
-                poster={video.thumbnailUrl}
+                poster={posterSrc}
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">

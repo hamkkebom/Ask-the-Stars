@@ -62,6 +62,7 @@
 | [TESTING.md](./04-development/TESTING.md) | 테스트 가이드 |
 | [LOCAL_SITEMAP.md](./04-development/LOCAL_SITEMAP.md) | 로컬 사이트맵 (자동생성) |
 | [CLOUDFLARE_HYBRID_ARCHITECTURE.md](./04-development/CLOUDFLARE_HYBRID_ARCHITECTURE.md) | 하이브리드 아키텍처 |
+| [THUMBNAIL_OPTIMIZATION.md](./04-development/THUMBNAIL_OPTIMIZATION.md) | 썸네일 최적화 (Cloudflare Variants) |
 | [VAMS_INTEGRATION_REPORT.md](./04-development/VAMS_INTEGRATION_REPORT.md) | VAMS 연동 |
 | [react-performance-rules.md](./04-development/react-performance-rules.md) | React 성능 규칙 |
 

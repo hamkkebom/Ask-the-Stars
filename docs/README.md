@@ -39,7 +39,8 @@
 |---|---|
 | [CODING_CONVENTION.md](./04-development/CODING_CONVENTION.md) | 코딩 컨벤션 |
 | [GIT_WORKFLOW.md](./04-development/GIT_WORKFLOW.md) | Git 워크플로우 |
-| [TESTING.md](./04-development/TESTING.md) | 테스트 가이드 |
+| [TESTING.md](./04-development/TESTING.md) | 테스트 가이드 (Vitest + Jest + Playwright) ⭐ |
+| [THUMBNAIL_OPTIMIZATION.md](./04-development/THUMBNAIL_OPTIMIZATION.md) | 썸네일 최적화 |
 | [LABEL_GUIDE.md](./04-development/LABEL_GUIDE.md) | 라벨 가이드 |
 
 ## ⚙️ 운영 및 배포 (Operations)

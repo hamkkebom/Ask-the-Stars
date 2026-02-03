@@ -11,7 +11,7 @@ import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service
 import { VideosService } from './videos.service';
 import { Request } from 'express';
 
-@Controller('videos/webhook/cloudflare')
+@Controller({ path: 'videos/webhook/cloudflare', version: '1' })
 export class CloudflareWebhookController {
   private readonly logger = new Logger(CloudflareWebhookController.name);
 

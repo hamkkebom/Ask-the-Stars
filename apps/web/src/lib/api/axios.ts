@@ -1,12 +1,14 @@
 import axios from 'axios';
 
+const API_VERSION = 'v1';
+
 const getBaseUrl = () => {
-  const url = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-  // Ensure we don't double-slash or miss the /api suffix if the env var doesn't have it
-  if (!url.endsWith('/api') && !url.endsWith('/api/')) {
-    return `${url.replace(/\/$/, '')}/api`;
+  const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+  const url = rawUrl.replace(/\/$/, '');
+  if (url.endsWith('/api')) {
+    return `${url}/${API_VERSION}`;
   }
-  return url;
+  return `${url}/api/${API_VERSION}`;
 };
 
 const API_URL = getBaseUrl();

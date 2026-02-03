@@ -2,7 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 // import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'; // Uncomment when Auth is ready
 
-@Controller('analytics')
+@Controller({ path: 'analytics', version: '1' })
 export class AnalyticsController {
   constructor(private readonly cloudflareService: CloudflareStreamService) {}
 

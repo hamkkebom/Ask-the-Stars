@@ -17,7 +17,7 @@ import {
   UpdatePortfolioItemDto,
 } from './dto';
 
-@Controller('portfolios')
+@Controller({ path: 'portfolios', version: '1' })
 export class PortfoliosController {
   constructor(private readonly portfoliosService: PortfoliosService) {}
 

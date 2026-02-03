@@ -14,7 +14,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ResourceCategory } from '@prisma/client';
 import { CreateResourceDto, UpdateResourceDto } from './dto';
 
-@Controller('resources')
+@Controller({ path: 'resources', version: '1' })
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 

@@ -22,7 +22,7 @@ import {
   GenerateUploadUrlDto,
 } from './dto';
 
-@Controller('submissions')
+@Controller({ path: 'submissions', version: '1' })
 @UseGuards(JwtAuthGuard)
 export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}

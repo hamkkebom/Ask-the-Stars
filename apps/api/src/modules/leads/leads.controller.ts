@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 
-@Controller('leads')
+@Controller({ path: 'leads', version: '1' })
 export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
 

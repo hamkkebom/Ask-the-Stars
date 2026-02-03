@@ -16,7 +16,7 @@ import { UploadsService } from './uploads.service';
 import { VideosService, CreateVideoDto } from '../videos/videos.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 
-@Controller('uploads')
+@Controller({ path: 'uploads', version: '1' })
 export class UploadsController {
   constructor(
     private readonly uploadsService: UploadsService,

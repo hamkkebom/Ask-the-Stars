@@ -1,0 +1,21 @@
+name: Setup Turborepo
+description: Configure Turborepo remote cache environment
+inputs:
+  turbo-token:
+    description: Turborepo remote cache token
+    required: false
+  turbo-team:
+    description: Turborepo team slug
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Export Turborepo environment
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.turbo-token }}" ]; then
+          echo "TURBO_TOKEN=${{ inputs.turbo-token }}" >> $GITHUB_ENV
+        fi
+        if [ -n "${{ inputs.turbo-team }}" ]; then
+          echo "TURBO_TEAM=${{ inputs.turbo-team }}" >> $GITHUB_ENV
+        fi

@@ -1,0 +1,123 @@
+name: Security Audit
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+  schedule:
+    # 매주 월요일 09:00 UTC에 실행
+    - cron: '0 9 * * 1'
+
+jobs:
+  npm-audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run npm audit (moderate level)
+        id: audit
+        run: |
+          pnpm security:audit > audit-report.txt 2>&1 || true
+          cat audit-report.txt
+
+      - name: Check for high/critical vulnerabilities
+        id: check-critical
+        run: |
+          if pnpm audit --audit-level=high > /dev/null 2>&1; then
+            echo "has_critical=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_critical=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report
+          path: audit-report.txt
+          retention-days: 30
+
+      - name: Comment on PR with audit results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const auditReport = fs.readFileSync('audit-report.txt', 'utf8');
+
+            const comment = `## 🔒 Security Audit Report
+
+            \`\`\`
+            ${auditReport}
+            \`\`\`
+
+            **Status**: ${auditReport.includes('0 vulnerabilities') ? '✅ No vulnerabilities found' : '⚠️ Vulnerabilities detected'}
+
+            For more details, check the [audit report artifact](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Fail on high/critical vulnerabilities
+        if: steps.check-critical.outputs.has_critical == 'true'
+        run: |
+          echo "❌ High or critical vulnerabilities detected!"
+          echo "Please fix them before merging."
+          exit 1
+
+  dependency-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check production dependencies only
+        run: pnpm security:check
+
+      - name: Generate SBOM (Software Bill of Materials)
+        run: |
+          pnpm audit --json > sbom.json 2>&1 || true
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
+          retention-days: 90

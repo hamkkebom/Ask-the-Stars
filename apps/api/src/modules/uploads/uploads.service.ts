@@ -8,6 +8,7 @@ import {
 // import { getSignedUrl } from '@aws-sdk/s3-request-presigner'; // Removed unused
 import axios from 'axios';
 import FormData from 'form-data';
+import { FfprobeService, VideoMetadata } from '../ffprobe/ffprobe.service';
 
 @Injectable()
 export class UploadsService {
@@ -16,7 +17,10 @@ export class UploadsService {
   private cloudflareAccountId: string;
   private cloudflareStreamToken: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly ffprobeService: FfprobeService
+  ) {
     this.cloudflareAccountId = this.configService.get<string>(
       'CLOUDFLARE_ACCOUNT_ID',
       ''
@@ -55,12 +59,33 @@ export class UploadsService {
   async uploadFile(
     file: any,
     folder: string = 'misc'
-  ): Promise<{ url: string; key: string; streamId?: string }> {
+  ): Promise<{
+    url: string;
+    key: string;
+    streamId?: string;
+    metadata?: VideoMetadata;
+  }> {
     try {
       const isVideo = file.mimetype.startsWith('video/');
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const extension = file.originalname.split('.').pop();
       const key = `${folder}/${uniqueSuffix}.${extension}`;
+
+      // Extract metadata for videos before upload
+      let metadata: VideoMetadata | undefined;
+      if (isVideo && file.buffer) {
+        try {
+          const extracted = await this.ffprobeService.extractMetadata(
+            file.buffer,
+            file.originalname
+          );
+          if (extracted) {
+            metadata = extracted;
+          }
+        } catch (metaError: any) {
+          console.warn('⚠️ Metadata extraction failed:', metaError.message);
+        }
+      }
 
       // 1. R2 원본 저장 (백업용)
       try {
@@ -91,7 +116,7 @@ export class UploadsService {
         // Stream ID가 있으면 기본 URL을 Stream용으로 사용할 수도 있음 (선택 사항)
       }
 
-      return { url, key, streamId };
+      return { url, key, streamId, metadata };
     } catch (error) {
       console.error('Upload Error:', error);
       throw new InternalServerErrorException('파일 업로드에 실패했습니다.');

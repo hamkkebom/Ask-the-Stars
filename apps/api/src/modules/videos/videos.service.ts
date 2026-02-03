@@ -590,6 +590,20 @@ export class VideosService {
       size: number;
       filename: string;
       mimetype: string;
+      metadata?: {
+        width?: number;
+        height?: number;
+        duration?: number;
+        fps?: number;
+        videoCodec?: string;
+        audioCodec?: string | null;
+        audioChannels?: number | null;
+        sampleRate?: number | null;
+        overallBitrate?: number;
+        format?: string;
+        aspectRatio?: string;
+        pixelFormat?: string | null;
+      };
     },
     meta: CreateVideoDto,
     userId: string
@@ -614,9 +628,11 @@ export class VideosService {
       });
     }
 
-    // Determine format
+    // Determine format from FFprobe metadata or filename extension
     const format =
-      uploadResult.filename.split('.').pop()?.toLowerCase() || 'unknown';
+      uploadResult.metadata?.format ||
+      uploadResult.filename.split('.').pop()?.toLowerCase() ||
+      'unknown';
 
     const result = await this.prisma.project.create({
       data: {
@@ -644,6 +660,18 @@ export class VideosService {
                       uploadResult.streamId
                     )
                   : undefined,
+                // Auto-extracted metadata from FFprobe
+                width: uploadResult.metadata?.width,
+                height: uploadResult.metadata?.height,
+                duration: uploadResult.metadata?.duration,
+                fps: uploadResult.metadata?.fps,
+                videoCodec: uploadResult.metadata?.videoCodec,
+                audioCodec: uploadResult.metadata?.audioCodec,
+                audioChannels: uploadResult.metadata?.audioChannels,
+                sampleRate: uploadResult.metadata?.sampleRate,
+                overallBitrate: uploadResult.metadata?.overallBitrate,
+                aspectRatio: uploadResult.metadata?.aspectRatio,
+                pixelFormat: uploadResult.metadata?.pixelFormat,
               },
             },
           },

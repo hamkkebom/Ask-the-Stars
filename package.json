@@ -35,7 +35,11 @@
     "postinstall": "prisma generate --schema=packages/database/prisma/schema.prisma",
     "security:audit": "pnpm audit --audit-level=moderate",
     "security:fix": "pnpm audit --fix",
-    "security:check": "pnpm audit --production"
+    "security:check": "pnpm audit --production",
+    "setup:wizard": "node scripts/user-actions-wizard.js",
+    "setup:verify": "node scripts/verify-env-setup.js",
+    "setup:hash": "node scripts/generate-bcrypt-hash.js",
+    "setup:e2e-accounts": "cd apps/api && node ../../scripts/create-e2e-accounts.js"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.713.0",

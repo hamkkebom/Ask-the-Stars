@@ -14,6 +14,8 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "lighthouse": "lhci autorun",
+    "lighthouse:desktop": "lhci autorun --preset=desktop",
     "clean": "turbo clean && rimraf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:generate": "turbo db:generate",
@@ -21,14 +23,24 @@
     "db:studio": "turbo db:studio",
     "test": "turbo test",
     "test:e2e": "turbo test:e2e",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
     "prepare": "husky",
     "sync:stack": "node scripts/sync-tech-stack.js",
-    "postinstall": "prisma generate --schema=packages/database/prisma/schema.prisma"
+    "postinstall": "prisma generate --schema=packages/database/prisma/schema.prisma",
+    "security:audit": "pnpm audit --audit-level=moderate",
+    "security:fix": "pnpm audit --fix",
+    "security:check": "pnpm audit --production"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.713.0",
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.58.1",
     "dotenv": "^17.2.3",
     "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
     "tsx": "^4.21.0",
@@ -37,6 +49,15 @@
   },
   "dependencies": {
     "prisma": "6.3.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   },
   "pnpm": {
     "overrides": {

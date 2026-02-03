@@ -1,25 +1,32 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env"],
+  "remoteCache": {
+    "enabled": true,
+    "signature": true
+  },
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "env": ["DATABASE_URL", "DIRECT_URL", "NEXT_PUBLIC_*"],
-      "outputs": ["apps/web/.next/**", ".next/**", "dist/**", "build/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "cache": true
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "outputs": [],
+      "cache": true
     },
     "type-check": {
       "dependsOn": ["^build"]
     },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "cache": true
     },
     "db:generate": {
       "cache": false

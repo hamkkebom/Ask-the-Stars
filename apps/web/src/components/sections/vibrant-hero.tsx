@@ -53,16 +53,16 @@ export function VibrantHero() {
   }
 
   return (
-    <section className="relative w-full h-[85vh] bg-black overflow-hidden font-sans">
+    <section className="relative w-full h-[85vh] min-h-[600px] bg-black overflow-hidden font-sans">
       {/* 1. Background Image/Video */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0" style={{ aspectRatio: '16/9' }}>
         <Image
           src={activeHero.imageUrl || '/placeholder.jpg'}
           alt={activeHero.title}
           fill
           className="object-cover opacity-80"
           priority
-          unoptimized
+          sizes="100vw"
         />
         {/* Cinematic Gradient Overlay (Bottom to Top) */}
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent" />
@@ -108,10 +108,14 @@ export function VibrantHero() {
           </Link>
 
           {/* More Info Button */}
-          <button className="flex items-center gap-2 md:gap-3 px-6 md:px-8 py-3 md:py-4 bg-gray-500/70 hover:bg-gray-500/50 text-white rounded-md transition-all font-bold text-lg md:text-xl backdrop-blur-md shadow-lg hover:scale-105 active:scale-95">
-            <Info className="w-6 h-6 md:w-8 md:h-8" />
+          <Link
+            href={`/videos/${activeHero.id}`}
+            aria-label={`${activeHero.title} 상세 정보 보기`}
+            className="flex items-center gap-2 md:gap-3 px-6 md:px-8 py-3 md:py-4 bg-gray-500/70 hover:bg-gray-500/50 text-white rounded-md transition-all font-bold text-lg md:text-xl backdrop-blur-md shadow-lg hover:scale-105 active:scale-95"
+          >
+            <Info className="w-6 h-6 md:w-8 md:h-8" aria-hidden="true" />
             상세 정보
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

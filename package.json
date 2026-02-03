@@ -57,11 +57,7 @@
     "prisma": "6.3.1"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
+    "*.{ts,tsx,json,md}": [
       "prettier --write"
     ]
   },

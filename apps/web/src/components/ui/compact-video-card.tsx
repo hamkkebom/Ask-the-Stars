@@ -198,11 +198,11 @@ function CompactVideoCardImpl({
                 }
                 alt={title}
                 fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                 className={cn(
                   'object-cover transition-opacity duration-300',
                   isActuallyPlaying ? 'opacity-0' : 'opacity-90'
                 )}
-                unoptimized
                 onError={() => setImgError(true)}
               />
             )}

@@ -258,9 +258,26 @@ graph LR
 | Turborepo | 2.7.5 | 모노레포 빌드 시스템 |
 | ESLint | 9.17.0 | JavaScript/TypeScript 린터 |
 | Prettier | 3.8.0 | 코드 포매터 |
-| Vitest | 2.1.8 | 프론트엔드 테스트 프레임워크 |
-| Jest | 29.7.0 | 백엔드 테스트 프레임워크 |
+| Vitest | 2.1.8 | 프론트엔드 테스트 (17 test files, **94.72% coverage**) |
+| Jest | 29.7.0 | 백엔드 테스트 (13 test files, **93.57% coverage**) |
+| Playwright | 1.58.1 | E2E 테스트 (12 test suites) |
+| k6 | 0.x | 부하 테스트 (5 scenarios) |
+| Lighthouse CI | 0.15.1 | 성능 모니터링 (자동화) |
+| Husky | 9.1.7 | Git hooks (pre-commit, commit-msg) |
+| lint-staged | 16.2.7 | 스테이징된 파일 린트 |
+| commitlint | 20.4.1 | Conventional Commits 검증 |
 | Docker Compose | - | 로컬 개발 환경 |
+
+### Quality & Security
+
+| 항목 | 상태 | 상세 |
+|------|------|------|
+| **테스트 커버리지** | ✅ **94%** | Frontend 94.72%, Backend 93.57% |
+| **보안 취약점** | ✅ **0개** | 프로덕션 의존성 (2 low in devDependencies) |
+| **성능 모니터링** | ✅ 자동화 | Lighthouse CI (PR마다 실행) |
+| **코드 품질** | ✅ 자동화 | Pre-commit hooks + Commitlint |
+| **API 버전 관리** | ✅ 구현됨 | URI Versioning (/api/v1/*) |
+| **CI/CD** | ✅ GitHub Actions | 테스트, 린트, 빌드, 배포, 보안 스캔 |
 
 ## Project Structure
 
@@ -403,17 +420,34 @@ pnpm build --filter=api
 ### 테스트
 
 ```bash
-# 전체 테스트
+# 전체 테스트 (Unit + Integration)
 pnpm test
 
-# 프론트엔드 테스트
-pnpm test --filter=web
+# 프론트엔드 테스트 (Vitest)
+pnpm test --filter=web              # 17 test files
+pnpm test --filter=web -- --coverage # 94.72% coverage
 
-# 백엔드 테스트
-pnpm test --filter=api
+# 백엔드 테스트 (Jest)
+pnpm test --filter=api              # 13 test files
+pnpm test --filter=api -- --coverage # 93.57% coverage
 
-# 커버리지
-pnpm test:coverage
+# E2E 테스트 (Playwright)
+pnpm e2e                            # Headless 모드
+pnpm e2e:headed                     # UI 모드
+
+# 성능 테스트 (Lighthouse CI)
+pnpm lighthouse                     # 성능, 접근성, SEO 측정
+pnpm lighthouse:desktop             # 데스크탑 프리셋
+
+# 부하 테스트 (k6) - k6 설치 필요
+pnpm load:auth                      # Auth 엔드포인트
+pnpm load:videos                    # Videos 엔드포인트
+pnpm load:full                      # 전체 시나리오
+
+# 보안 감사
+pnpm security:audit                 # npm audit (moderate+)
+pnpm security:check                 # 프로덕션만
+pnpm security:fix                   # 자동 수정
 ```
 
 ### 린트 및 포맷
@@ -428,6 +462,16 @@ pnpm lint:fix
 # 코드 포맷팅
 pnpm format
 ```
+
+### CI/CD
+
+프로젝트는 GitHub Actions를 통해 자동화되어 있습니다:
+
+- **CI (Continuous Integration)**: PR마다 테스트, 린트, 빌드, 보안 스캔 실행
+- **Lighthouse**: PR마다 성능 리포트 생성
+- **Security**: 매주 취약점 스캔 (Dependabot)
+- **CD (Continuous Deployment)**:
+  - `main` 브랜치 푸시 시 Vercel (프론트엔드) + Cloud Run (백엔드) 자동 배포
 
 ## Deployment
 
@@ -479,6 +523,15 @@ gcloud run deploy api \
 
 ## API Documentation
 
+### API Versioning
+
+API는 **URI Versioning** 전략을 사용합니다:
+
+- **Current Version**: `/api/v1/*` (모든 엔드포인트)
+- **Legacy Support**: `/api/*` → `/api/v1/*` (HTTP 308 Redirect)
+- **Swagger UI**: <http://localhost:4000/api/v1/docs>
+- **OpenAPI JSON**: <http://localhost:4000/api/v1/docs-json>
+
 ### Authentication
 
 모든 API 요청은 JWT 토큰을 사용합니다:
@@ -487,46 +540,50 @@ gcloud run deploy api \
 Authorization: Bearer <access_token>
 ```
 
-### 주요 엔드포인트
+### 주요 엔드포인트 (v1)
 
 #### 인증 (Auth)
 
 ```http
-POST /api/auth/login
-POST /api/auth/signup
-POST /api/auth/refresh
-POST /api/auth/logout
+POST /api/v1/auth/login
+POST /api/v1/auth/signup
+POST /api/v1/auth/refresh
+POST /api/v1/auth/logout
 ```
 
 #### 프리랜서 (Stars)
 
 ```http
-GET /api/stars/projects
-GET /api/stars/projects/:id
-POST /api/stars/projects/:id/apply
-POST /api/stars/videos/upload
-GET /api/stars/earnings
+GET /api/v1/stars/projects
+GET /api/v1/stars/projects/:id
+POST /api/v1/stars/projects/:id/apply
+POST /api/v1/stars/videos/upload
+GET /api/v1/stars/earnings
 ```
 
 #### 관리자 (Admin)
 
 ```http
-GET /api/admin/dashboard
-GET /api/admin/talent
-GET /api/admin/clients
-GET /api/admin/finance/revenue
-POST /api/admin/projects/create
+GET /api/v1/admin/dashboard
+GET /api/v1/admin/talent
+GET /api/v1/admin/clients
+GET /api/v1/admin/finance/revenue
+POST /api/v1/admin/projects/create
 ```
 
 #### 영상 (Videos)
 
 ```http
-GET /api/videos
-GET /api/videos/:id
-POST /api/videos/:id/feedback
+GET /api/v1/videos
+GET /api/v1/videos/:id
+POST /api/v1/videos/:id/feedback
 ```
 
-자세한 API 문서는 <http://localhost:4000/api/docs>에서 확인하세요.
+### 문서 링크
+
+- **Swagger UI**: <http://localhost:4000/api/v1/docs> (인터랙티브 API 문서)
+- **API Versioning Guide**: [docs/03-api/VERSIONING.md](./docs/03-api/VERSIONING.md)
+- **Testing Guide**: [docs/04-development/TESTING.md](./docs/04-development/TESTING.md)
 
 ## Contributing
 

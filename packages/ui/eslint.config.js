@@ -24,6 +24,7 @@ export default [
         HTMLDivElement: 'readonly',
         HTMLButtonElement: 'readonly',
         HTMLVideoElement: 'readonly',
+        HTMLMediaElement: 'readonly',
         HTMLTableElement: 'readonly',
         HTMLTableRowElement: 'readonly',
         HTMLTableCellElement: 'readonly',

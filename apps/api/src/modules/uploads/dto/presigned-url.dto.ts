@@ -20,7 +20,7 @@ export class PresignedUrlDto {
     pattern: '^(video|image)/[a-z0-9+\\-]+$',
   })
   @IsString({ message: 'MIME 타입은 문자열이어야 합니다' })
-  @Matches(/^(video|image)\/[a-z0-9+\-]+$/, {
+  @Matches(/^(video|image)\/[a-z0-9+-]+$/, {
     message: 'MIME 타입은 video/* 또는 image/*만 허용됩니다',
   })
   contentType!: string;

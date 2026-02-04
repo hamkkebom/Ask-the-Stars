@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-// @ts-ignore - HLS.js types not properly exported
+// @ts-expect-error - HLS.js types not properly exported
 import Hls from 'hls.js';
 import 'plyr/dist/plyr.css';
 
@@ -15,7 +15,7 @@ export interface VideoPlayerProps {
   /** Called when player seeks to a time */
   onSeek?: (time: number) => void;
   /** Called when video is ready */
-  onReady?: (player: any) => void;
+  onReady?: (player: unknown) => void;
   /** Called when video ends */
   onEnded?: () => void;
   /** Called when error occurs */
@@ -51,8 +51,8 @@ export function VideoPlayer({
   className = '',
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const playerRef = useRef<any>(null);
-  const hlsRef = useRef<any>(null);
+  const playerRef = useRef<unknown>(null);
+  const hlsRef = useRef<unknown>(null);
   const [isReady, setIsReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -75,8 +75,20 @@ export function VideoPlayer({
         if (!mounted) return;
 
         // Setup HLS if needed
-        if (isHls && (Hls as any).isSupported()) {
-          const hls = new (Hls as any)({
+        if (isHls && (Hls as { isSupported: () => boolean }).isSupported()) {
+          const hls = new (Hls as unknown as new (config: unknown) => {
+            loadSource: (src: string) => void;
+            attachMedia: (element: HTMLMediaElement) => void;
+            on: (
+              event: string,
+              callback: (event: string, data: unknown) => void
+            ) => void;
+            off: (event: string, callback: () => void) => void;
+            detachMedia: () => void;
+            destroy: () => void;
+            startLoad: () => void;
+            recoverMediaError: () => void;
+          })({
             enableWorker: true,
             lowLatencyMode: true,
             maxBufferLength: 30,
@@ -88,32 +100,31 @@ export function VideoPlayer({
           hls.attachMedia(video);
           hlsRef.current = hls;
 
-          hls.on((Hls as any).Events.MANIFEST_PARSED, () => {
+          hls.on('hlsManifestParsed', () => {
             initPlyr();
           });
 
-          // @ts-ignore
-          hls.on(Hls.Events.ERROR, (_: any, data: any) => {
-            console.error('HLS Error:', data);
-            if (data.fatal) {
-              switch (data.type) {
-                case Hls.ErrorTypes.NETWORK_ERROR:
-                  console.log('Attempting to restart HLS stream...');
-                  hls.startLoad();
-                  break;
-                case Hls.ErrorTypes.MEDIA_ERROR:
-                  console.log('Attempting to recover from media error...');
-                  hls.recoverMediaError();
-                  break;
-                default:
-                  console.log('Destroying HLS instance due to fatal error');
-                  hls.destroy();
-                  hlsRef.current = null;
-                  onError?.(new Error(`HLS Error: ${data.type}`));
-                  break;
+          hls.on(
+            'hlsError',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (_event: string, data: any) => {
+              if (data.fatal) {
+                switch (data.type) {
+                  case Hls.ErrorTypes.NETWORK_ERROR:
+                    hls.startLoad();
+                    break;
+                  case Hls.ErrorTypes.MEDIA_ERROR:
+                    hls.recoverMediaError();
+                    break;
+                  default:
+                    hls.destroy();
+                    hlsRef.current = null;
+                    onError?.(new Error(`HLS Error: ${data.type}`));
+                    break;
+                }
               }
             }
-          });
+          );
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
           // Native HLS support (Safari)
           video.src = src;
@@ -205,7 +216,6 @@ export function VideoPlayer({
           });
         }
       } catch (error) {
-        console.error('Failed to load video player dependencies:', error);
         onError?.(
           error instanceof Error ? error : new Error('Failed to load player')
         );
@@ -216,7 +226,6 @@ export function VideoPlayer({
 
     return () => {
       mounted = false;
-      console.log('Cleaning up video player resources...');
 
       // Clean up HLS instance
       if (hlsRef.current) {
@@ -251,8 +260,6 @@ export function VideoPlayer({
           video.srcObject = null;
         }
       }
-
-      console.log('Video player cleanup completed');
     };
   }, [
     src,
@@ -266,28 +273,6 @@ export function VideoPlayer({
     onEnded,
     onError,
   ]);
-
-  // Seek to specific time
-  const seekTo = useCallback((time: number) => {
-    if (playerRef.current) {
-      playerRef.current.currentTime = time;
-    }
-  }, []);
-
-  // Play video
-  const play = useCallback(() => {
-    playerRef.current?.play();
-  }, []);
-
-  // Pause video
-  const pause = useCallback(() => {
-    playerRef.current?.pause();
-  }, []);
-
-  // Toggle play/pause
-  const togglePlay = useCallback(() => {
-    playerRef.current?.togglePlay();
-  }, []);
 
   return (
     <div className={`video-player-wrapper relative ${className}`}>

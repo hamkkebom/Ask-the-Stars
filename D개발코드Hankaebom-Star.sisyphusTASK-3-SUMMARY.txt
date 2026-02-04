@@ -1,0 +1,110 @@
+================================================================================
+TASK 3: DEPLOY AND VERIFY IN PRODUCTION - COMPLETE ✅
+================================================================================
+
+OBJECTIVE:
+Deploy Task 1 code changes to production and verify normal operation.
+
+EXECUTION SUMMARY:
+================================================================================
+
+1. GIT PUSH
+   ✅ Command: git push origin main
+   ✅ Commit: 1cded9f (fix: use backend api for getfeaturedvideos)
+   ✅ Status: SUCCESS
+
+2. VERCEL DEPLOYMENT
+   ✅ Automatic deployment triggered
+   ✅ Deployment time: ~2-3 minutes
+   ✅ Region: Seoul PoP
+   ✅ URL: https://www.hamkkebom.com/videos
+
+3. PRODUCTION VERIFICATION
+   ✅ Page loads successfully
+   ✅ VibrantHero component renders (fallback state)
+   ✅ All API calls return 200 OK
+   ✅ No Supabase 400 errors
+   ✅ Screenshots captured
+
+CRITICAL FINDINGS:
+================================================================================
+
+BEFORE DEPLOYMENT (Task 1):
+❌ Supabase 400 error: "status=eq.PUBLIC" query failed
+❌ Direct Supabase client call in production
+
+AFTER DEPLOYMENT (Task 3):
+✅ NO Supabase direct calls
+✅ All API calls go through backend (api.hamkkebom.com)
+✅ All API endpoints return 200 OK
+✅ VibrantHero renders with fallback (DB is empty - expected)
+
+API VERIFICATION:
+================================================================================
+
+Endpoint                                          Status  Response
+────────────────────────────────────────────────────────────────────
+/api/videos?sort=latest&limit=5                  200     ✅
+/api/videos?sort=latest&limit=15                 200     ✅
+/api/videos?sort=popular&limit=15                200     ✅
+/api/videos?category=신년운세&sort=latest        200     ✅
+/api/videos?category=타로&sort=latest            200     ✅
+/api/videos?category=사주&sort=latest            200     ✅
+/api/videos?page=1&limit=25&...                  200     ✅
+
+CONSOLE ERRORS:
+================================================================================
+
+Total Errors: 1 (Non-critical)
+- 404 for /search?_rsc=10lpc (Next.js RSC request - not critical)
+
+ELIMINATED ERRORS:
+✅ Supabase 400 error (FIXED)
+✅ Direct Supabase calls (FIXED)
+✅ /api/videos 404 errors (FIXED)
+
+COMPONENT VERIFICATION:
+================================================================================
+
+VibrantHero Component:
+- Status: ✅ RENDERING
+- H1 Text: "별들에게 물어봐: 공모전 시즌 2"
+- State: Fallback (DB is empty - expected)
+- Screenshot: task-3-hero-loaded.png
+
+Page Load:
+- Status: ✅ SUCCESS
+- Title: "별들에게 물어봐 | Ask the Stars"
+- Load Time: < 3 seconds
+- Screenshot: task-3-video-page.png
+
+EVIDENCE:
+================================================================================
+
+Files Created:
+- .sisyphus/TASK-3-VERIFICATION.md (detailed report)
+- .sisyphus/evidence/task-3-video-page.png (full page screenshot)
+- .sisyphus/evidence/task-3-hero-loaded.png (hero section screenshot)
+
+CONCLUSION:
+================================================================================
+
+✅ TASK 3 COMPLETE
+
+The code changes from Task 1 have been successfully deployed to production.
+The critical Supabase 400 error has been eliminated. All API calls are now
+going through the backend API as intended. The VibrantHero component is
+rendering correctly with the fallback state (since the DB is empty).
+
+PRODUCTION STATUS: ✅ READY
+
+Next Steps:
+- Task 2: Verify backend API implementation
+- Task 4: Populate database with test data (if needed)
+- Task 5: Monitor production metrics
+
+================================================================================
+Verified: 2026-02-04 07:10 UTC
+Deployment: Vercel (Seoul PoP)
+Status: ✅ PRODUCTION READY
+================================================================================

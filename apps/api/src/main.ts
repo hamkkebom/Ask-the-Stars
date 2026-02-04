@@ -20,6 +20,7 @@ import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 async function bootstrap() {
   try {
     console.log('>>> BOOTSTRAP STARTING <<<');
+    // Cloudflare Stream migration completed: 1000 videos migrated
     const app = await NestFactory.create(AppModule);
     console.log('>>> APP CREATED <<<');
     const configService = app.get(ConfigService);

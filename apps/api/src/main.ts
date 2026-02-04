@@ -15,6 +15,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response, NextFunction } from 'express';
 import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   try {
@@ -42,6 +43,9 @@ async function bootstrap() {
         '⚠️ REDIS_URL not found. Skipping Redis adapter registration.'
       );
     }
+
+    // Global exception filter (must be before validation pipe)
+    app.useGlobalFilters(new AllExceptionsFilter());
 
     // Global validation pipe
     app.useGlobalPipes(

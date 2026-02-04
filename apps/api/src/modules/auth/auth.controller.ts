@@ -21,6 +21,8 @@ import {
   RefreshTokenDto,
   AuthTokensResponseDto,
   MessageResponseDto,
+  RequestPasswordResetDto,
+  ConfirmPasswordResetDto,
 } from './dto';
 
 @ApiTags('auth')
@@ -82,50 +84,27 @@ export class AuthController {
   @Post('password-reset/request')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['email'],
-      properties: {
-        email: { type: 'string', example: 'user@example.com' },
-      },
-    },
-  })
+  @ApiBody({ type: RequestPasswordResetDto })
   @ApiResponse({
     status: 200,
     description: 'Password reset email sent',
     type: MessageResponseDto,
   })
-  async requestPasswordReset(@Body('email') email: string) {
-    return this.authService.requestPasswordReset(email);
+  async requestPasswordReset(@Body() dto: RequestPasswordResetDto) {
+    return this.authService.requestPasswordReset(dto.email);
   }
 
   @Patch('password-reset/confirm')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Confirm password reset' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      required: ['token', 'newPassword'],
-      properties: {
-        token: {
-          type: 'string',
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        },
-        newPassword: { type: 'string', example: 'newPassword123!' },
-      },
-    },
-  })
+  @ApiBody({ type: ConfirmPasswordResetDto })
   @ApiResponse({
     status: 200,
     description: 'Password reset complete',
     type: MessageResponseDto,
   })
   @ApiUnauthorizedResponse({ description: 'Invalid or expired token' })
-  async confirmPasswordReset(
-    @Body('token') token: string,
-    @Body('newPassword') newPassword: string
-  ) {
-    return this.authService.confirmPasswordReset(token, newPassword);
+  async confirmPasswordReset(@Body() dto: ConfirmPasswordResetDto) {
+    return this.authService.confirmPasswordReset(dto.token, dto.newPassword);
   }
 }

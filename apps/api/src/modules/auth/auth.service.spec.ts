@@ -151,7 +151,8 @@ describe('AuthService', () => {
       const result = await service.refresh('refresh-token');
 
       expect(result.access_token).toBe('access-token');
-      expect(result.refresh_token).toBe('refresh-token');
+      expect(result.expires_in).toBe(3600);
+      expect(result.token_type).toBe('Bearer');
     });
 
     it('throws when user does not exist', async () => {

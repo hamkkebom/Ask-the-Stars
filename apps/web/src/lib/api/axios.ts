@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { captureError } from '@/lib/sentry';
 
 const API_VERSION = 'v1';
 
@@ -47,14 +48,40 @@ axiosInstance.interceptors.request.use(
 // Response interceptor for error handling
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
+  (error: AxiosError) => {
+    // Extract error details
+    const status = error.response?.status;
+    const url = error.config?.url;
+    const method = error.config?.method?.toUpperCase();
+
+    // Log to Sentry with context
+    captureError(error as Error, {
+      api_error: true,
+      status,
+      url,
+      method,
+      response_data: error.response?.data,
+    });
+
+    // Handle specific status codes
+    if (status === 401) {
       // Handle unauthorized - redirect to login
       if (typeof window !== 'undefined') {
         localStorage.removeItem('auth-storage');
         window.location.href = '/auth/login';
       }
+    } else if (status === 403) {
+      console.error('Access forbidden:', url);
+    } else if (status === 404) {
+      console.error('Resource not found:', url);
+    } else if (status && status >= 500) {
+      console.error('Server error:', status, url);
+    } else if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout:', url);
+    } else if (error.code === 'ERR_NETWORK') {
+      console.error('Network error - server may be down');
     }
+
     return Promise.reject(error);
   }
 );

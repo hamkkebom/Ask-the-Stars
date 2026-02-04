@@ -74,7 +74,9 @@ describe('AuthController', () => {
       message: 'ok',
     });
 
-    const result = await controller.requestPasswordReset('test@example.com');
+    const result = await controller.requestPasswordReset({
+      email: 'test@example.com',
+    });
 
     expect(service.requestPasswordReset).toHaveBeenCalledWith(
       'test@example.com'
@@ -87,11 +89,14 @@ describe('AuthController', () => {
       message: 'ok',
     });
 
-    const result = await controller.confirmPasswordReset('token', 'newPass');
+    const result = await controller.confirmPasswordReset({
+      token: 'valid-token-with-minimum-20-chars',
+      newPassword: 'NewPassword123!',
+    });
 
     expect(service.confirmPasswordReset).toHaveBeenCalledWith(
-      'token',
-      'newPass'
+      'valid-token-with-minimum-20-chars',
+      'NewPassword123!'
     );
     expect(result.message).toBe('ok');
   });

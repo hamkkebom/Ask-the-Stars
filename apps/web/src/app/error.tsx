@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { captureError } from '@/lib/sentry';
 
 export default function Error({
   error,
@@ -12,7 +13,11 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
+    // Log the error to Sentry
+    captureError(error, {
+      error_boundary: 'page',
+      digest: error.digest,
+    });
     console.error('Error:', error);
   }, [error]);
 

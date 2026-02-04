@@ -84,3 +84,8 @@ export class MessageResponseDto {
   })
   message!: string;
 }
+
+export {
+  RequestPasswordResetDto,
+  ConfirmPasswordResetDto,
+} from './password-reset.dto';

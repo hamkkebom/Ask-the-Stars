@@ -1,6 +1,8 @@
 'use client';
 
 import { Inter } from 'next/font/google';
+import { useEffect } from 'react';
+import { captureError } from '@/lib/sentry';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,6 +13,16 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    // Log critical error to Sentry
+    captureError(error, {
+      error_boundary: 'global',
+      digest: error.digest,
+      critical: true,
+    });
+    console.error('Global Error:', error);
+  }, [error]);
+
   return (
     <html lang="ko">
       <body

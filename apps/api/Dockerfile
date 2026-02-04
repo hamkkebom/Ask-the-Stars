@@ -47,6 +47,6 @@ ENV NODE_ENV=production
 
 EXPOSE 8080
 
-# Now move to the app dir for execution
-WORKDIR /app/apps/api
-CMD ["node", "dist/main.js"]
+# Stay at root and use correct build output path
+WORKDIR /app
+CMD ["node", "apps/api/dist/apps/api/src/main.js"]

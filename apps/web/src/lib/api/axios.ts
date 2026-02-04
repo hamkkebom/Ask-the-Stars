@@ -1,11 +1,23 @@
 import axios, { AxiosError } from 'axios';
 import { captureError } from '@/lib/sentry';
 
-const API_VERSION = 'v1';
+// Temporarily disable versioning until backend is redeployed with URI versioning support
+// TODO: Restore API_VERSION = 'v1' after backend supports /api/v1/* routes
+const API_VERSION = '';
 
 const getBaseUrl = () => {
   const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
   const url = rawUrl.replace(/\/$/, '');
+
+  // If API_VERSION is empty, return /api only
+  if (!API_VERSION) {
+    if (url.endsWith('/api')) {
+      return url;
+    }
+    return `${url}/api`;
+  }
+
+  // Otherwise append version
   if (url.endsWith('/api')) {
     return `${url}/${API_VERSION}`;
   }

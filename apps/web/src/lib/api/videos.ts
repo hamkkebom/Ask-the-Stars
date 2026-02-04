@@ -269,22 +269,17 @@ export const videosApi = {
       };
     }
 
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*')
-      .eq('status', 'PUBLIC')
-      .order('views', { ascending: false })
-      .limit(5);
-
-    if (error) {
+    try {
+      const response = await axiosInstance.get('/videos', {
+        params: { sort: 'latest', limit: 5 },
+      });
+      return { data: response.data.data || [] };
+    } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error('getFeaturedVideos error:', error);
       }
       return { data: [] };
     }
-
-    return { data: data || [] };
   },
 
   // 검색 - 백엔드 API 사용

@@ -140,12 +140,14 @@ describe('videosApi', () => {
   });
 
   it('gets featured videos via supabase', async () => {
-    const query = createQuery({ data: [{ id: 'v1' }], error: null });
-    mockSupabase.from.mockReturnValue(query);
+    const axios = mockAxios();
+    axios.get.mockResolvedValue({ data: { data: [{ id: 'v1' }] } });
 
     const response = await videosApi.getFeaturedVideos();
 
-    expect(mockSupabase.from).toHaveBeenCalledWith('videos');
+    expect(axios.get).toHaveBeenCalledWith('/videos', {
+      params: { sort: 'latest', limit: 5 },
+    });
     expect(response.data).toEqual([{ id: 'v1' }]);
   });
 
@@ -177,8 +179,8 @@ describe('videosApi', () => {
   });
 
   it('returns empty featured videos on error', async () => {
-    const query = createQuery({ data: null, error: new Error('fail') });
-    mockSupabase.from.mockReturnValue(query);
+    const axios = mockAxios();
+    axios.get.mockRejectedValue(new Error('fail'));
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.stubEnv('NODE_ENV', 'development');

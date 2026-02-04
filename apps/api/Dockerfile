@@ -22,7 +22,7 @@ RUN pnpm --filter @ask-the-stars/api build
 # Production stage
 FROM node:22-slim AS runner
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y openssl ffmpeg
 
 WORKDIR /app
 

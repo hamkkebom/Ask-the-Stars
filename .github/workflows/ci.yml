@@ -26,6 +26,10 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+        env:
+          # Required for Next.js build (prerendering pages that use Supabase)
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
 
       # TODO: Fix test dependency issue (@testing-library/jest-dom/vitest)
       # - name: Test
@@ -33,3 +37,7 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          # Required for Next.js build (prerendering pages that use Supabase)
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://vxyzqymlnqxlcbqbrvip.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}

@@ -2,7 +2,17 @@
 FROM node:22 AS builder
 
 RUN npm install -g pnpm@9.15.2
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y \
+    openssl \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    python3 \
+    make \
+    g++
 
 WORKDIR /app
 

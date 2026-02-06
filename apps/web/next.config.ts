@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'videodelivery.net', // Cloudflare Stream Signed URLs
+      },
+      {
+        protocol: 'https',
         hostname: '*.supabase.co', // Supabase Storage
       },
       {

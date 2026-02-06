@@ -77,7 +77,6 @@ jobs:
             CLOUDFLARE_ACCOUNT_ID=CLOUDFLARE_ACCOUNT_ID:latest
             CLOUDFLARE_R2_ACCESS_KEY_ID=CLOUDFLARE_R2_ACCESS_KEY_ID:latest
             CLOUDFLARE_R2_SECRET_ACCESS_KEY=CLOUDFLARE_R2_SECRET_ACCESS_KEY:latest
-            RESEND_API_KEY=RESEND_API_KEY:latest
 
       - name: Show Cloud Run URL
         run: |

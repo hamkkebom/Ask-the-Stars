@@ -139,7 +139,7 @@ describe('videosApi', () => {
     expect(response.data).toEqual([]);
   });
 
-  it('gets featured videos via supabase', async () => {
+  it('gets featured videos from backend API', async () => {
     const axios = mockAxios();
     axios.get.mockResolvedValue({ data: { data: [{ id: 'v1' }] } });
 

@@ -3,11 +3,18 @@ import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  private resend: Resend;
+  private resend: Resend | null = null;
   private readonly logger = new Logger(MailService.name);
 
   constructor() {
-    this.resend = new Resend(process.env.RESEND_API_KEY);
+    const apiKey = process.env.RESEND_API_KEY;
+    if (apiKey) {
+      this.resend = new Resend(apiKey);
+    } else {
+      this.logger.warn(
+        '⚠️ RESEND_API_KEY not configured. Email sending disabled.'
+      );
+    }
   }
 
   async sendPasswordResetEmail(to: string, token: string) {
@@ -17,6 +24,11 @@ export class MailService {
       'http://localhost:3000';
     const resetLink = `${appUrl}/auth/reset-password?token=${token}`;
     const mailFrom = process.env.MAIL_FROM || 'onboarding@resend.dev';
+
+    if (!this.resend) {
+      this.logger.warn('Email sending skipped: RESEND_API_KEY not configured');
+      return;
+    }
 
     try {
       const data = await this.resend.emails.send({

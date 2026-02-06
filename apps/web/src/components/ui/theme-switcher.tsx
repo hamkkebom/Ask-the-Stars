@@ -3,6 +3,7 @@
 import { Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { safeLocalStorage } from '@/lib/storage';
 
 export default function ThemeSwitcher() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -12,7 +13,7 @@ export default function ThemeSwitcher() {
   useEffect(() => {
     setMounted(true);
     // localStorage에서 현재 테마 읽기
-    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light';
+    const savedTheme = safeLocalStorage.getItem('theme') as 'dark' | 'light';
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
@@ -38,7 +39,7 @@ export default function ThemeSwitcher() {
     }
 
     // localStorage에 저장
-    localStorage.setItem('theme', newTheme);
+    safeLocalStorage.setItem('theme', newTheme);
   };
 
   // Hydration 방지용 렌더링

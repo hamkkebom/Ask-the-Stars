@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { UserRole, UserRoleType } from '@/types';
+import { safeLocalStorage } from '@/lib/storage';
 
 interface User {
   id: string;
@@ -44,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage', // key in localStorage
-      storage: createJSONStorage(() => localStorage), // utilize localStorage
+      storage: createJSONStorage(() => safeLocalStorage), // utilize localStorage
       partialize: (state) => ({
         accessToken: state.accessToken,
         user: state.user,

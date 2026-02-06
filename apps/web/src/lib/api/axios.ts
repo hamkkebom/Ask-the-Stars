@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { captureError } from '@/lib/sentry';
+import { safeLocalStorage } from '@/lib/storage';
 
 // API versioning enabled - backend uses @Controller({ version: '1' })
 // with URI versioning and /api/v1/* routes + redirect from /api/*
@@ -38,7 +39,7 @@ axiosInstance.interceptors.request.use(
   (config) => {
     // Only run on client side
     if (typeof window !== 'undefined') {
-      const authStorage = localStorage.getItem('auth-storage');
+      const authStorage = safeLocalStorage.getItem('auth-storage');
       if (authStorage) {
         try {
           const { state } = JSON.parse(authStorage);
@@ -79,7 +80,7 @@ axiosInstance.interceptors.response.use(
     if (status === 401) {
       // Handle unauthorized - redirect to login
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth-storage');
+        safeLocalStorage.removeItem('auth-storage');
         window.location.href = '/auth/login';
       }
     } else if (status === 403) {

@@ -219,6 +219,13 @@ export class VideoQueryService {
             previewUrl = urls.gif;
             if (!thumbnailUrl || thumbnailUrl.includes('videodelivery.net'))
               thumbnailUrl = urls.jpg;
+
+            // Fallback: if signed URL generation failed (empty string), use unsigned thumbnail
+            if (!thumbnailUrl) {
+              thumbnailUrl = this.videoStorage.getStreamThumbnailBaseUrl(
+                video.technicalSpec.streamUid
+              );
+            }
           }
 
           return {

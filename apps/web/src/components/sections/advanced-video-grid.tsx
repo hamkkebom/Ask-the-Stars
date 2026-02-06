@@ -53,7 +53,12 @@ export function AdvancedVideoGrid() {
 
   const videos: VideoProps[] = allVideos.map((v: any) => ({
     id: v.id,
-    title: v.title || v.project?.title || v.versionLabel || '제목 없음',
+    title:
+      v.title ||
+      v.technicalSpec?.filename?.replace(/\.[^/.]+$/, '') ||
+      v.project?.title ||
+      v.versionLabel ||
+      '제목 없음',
     thumbnailUrl:
       v.thumbnail_url ||
       getThumbnailSrc(v.technicalSpec) ||

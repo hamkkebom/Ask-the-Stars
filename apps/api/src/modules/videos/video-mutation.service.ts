@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { VideoStatus } from '@prisma/client';
+import { Video, VideoStatus } from '@prisma/client';
 import { AiService } from '../ai/ai.service';
 import { VideoStorageService } from './video-storage.service';
 import { CreateVideoDto } from './videos.service';
@@ -13,7 +13,10 @@ export class VideoMutationService {
     private readonly videoStorage: VideoStorageService
   ) {}
 
-  async updateVideoStatus(videoId: string, status: VideoStatus) {
+  async updateVideoStatus(
+    videoId: string,
+    status: VideoStatus
+  ): Promise<Video> {
     return this.prisma.video.update({
       where: { id: videoId },
       data: { status },
@@ -114,19 +117,13 @@ export class VideoMutationService {
       },
     });
 
-    try {
-      if (result.videos && result.videos.length > 0) {
-        const video = result.videos[0];
-        const embeddingText = `Title: ${meta.title}\nDescription: ${meta.description || ''}\nCategory: ${meta.categoryName || '기타'}\nCounselor: ${meta.counselorName || '대상없음'}`;
+    if (result.videos && result.videos.length > 0) {
+      const video = result.videos[0];
+      const embeddingText = `Title: ${meta.title}\nDescription: ${meta.description || ''}\nCategory: ${meta.categoryName || '기타'}\nCounselor: ${meta.counselorName || '대상없음'}`;
 
-        this.aiService
-          .createVideoEmbedding(video.id, embeddingText)
-          .catch((e) =>
-            console.error(`AI Embedding failed for ${video.id}:`, e)
-          );
-      }
-    } catch (e) {
-      console.error('Error triggering AI embedding:', e);
+      this.aiService.createVideoEmbedding(video.id, embeddingText).catch(() => {
+        // Silent fail — not critical
+      });
     }
 
     return result;

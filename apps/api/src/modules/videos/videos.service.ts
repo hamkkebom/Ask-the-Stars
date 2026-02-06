@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { VideoStatus } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { VideoQueryService } from './video-query.service';
@@ -41,6 +42,10 @@ export class VideosService {
     duration?: number
   ) {
     return this.videoSyncService.syncVideoStatus(streamUid, status, duration);
+  }
+
+  async updateVideoStatus(videoId: string, status: VideoStatus) {
+    return this.videoMutationService.updateVideoStatus(videoId, status);
   }
 
   async generateCaptions(videoId: string) {

@@ -1,6 +1,7 @@
 name: Deploy API (Cloud Run)
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -8,6 +9,7 @@ on:
       - 'packages/database/**'
       - 'packages/types/**'
       - 'packages/utils/**'
+      - '.github/workflows/cd-api.yml'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}

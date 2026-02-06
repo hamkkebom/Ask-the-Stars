@@ -154,7 +154,7 @@ docker-compose up -d        # PostgreSQL 17 + Redis 7.4
 
 | 파일 | 줄수 | 비고 |
 |------|------|------|
-| `apps/api/.../videos/videos.service.ts` | 162 | Facade (4개 서비스로 분할 완료) |
+| `apps/api/.../videos/videos.service.ts` | 148 | Facade (4개 서비스로 분할 완료) |
 | `apps/web/src/lib/api/projects.ts` | 594 | 대부분 타입 정의 |
 | `apps/web/.../advanced-video-grid.tsx` | 184 | 서브컴포넌트 추출 완료 |
 | `apps/api/.../cloudflare-stream.service.ts` | 544 | 어댑터 분리 |

@@ -44,23 +44,23 @@ Controller → Service → (Repository) → Prisma
 
 ## WHERE TO LOOK
 
-| 작업 | 위치 |
-|------|------|
-| 엔트리포인트 | `src/main.ts` (dev:4000, prod:8080) |
-| 루트 모듈 | `src/app.module.ts` |
-| Prisma 서비스 | `src/database/prisma.service.ts` |
-| JWT 전략 | `src/modules/auth/strategies/jwt.strategy.ts` |
-| 인증 가드 | `src/common/guards/jwt-auth.guard.ts` |
-| 역할 가드 | `src/common/guards/roles.guard.ts` |
-| 역할 데코레이터 | `src/common/decorators/roles.decorator.ts` |
-| 현재 유저 | `src/common/decorators/current-user.decorator.ts` |
-| Redis 어댑터 | `src/common/adapters/redis-io.adapter.ts` |
-| HTTP 예외 필터 | `src/common/filters/http-exception.filter.ts` |
-| Sentry | `src/common/sentry.ts` |
-| BetterStack 로거 | `src/common/betterstack-logger.ts` |
-| 헬스체크 | `src/common/health.controller.ts` |
-| Cloudflare webhook | `src/modules/videos/webhook.controller.ts` |
-| Swagger | `/api/v1/docs` (NestJS Swagger) |
+| 작업 | 위치 | 비고 |
+|------|------|------|
+| 엔트리포인트 | `src/main.ts` | dev:4000, prod:8080 |
+| 루트 모듈 | `src/app.module.ts` | 18개 모듈 등록 |
+| Prisma 서비스 | `src/database/prisma.service.ts` | ORM 싱글톤 |
+| JWT 전략 | `src/modules/auth/strategies/jwt.strategy.ts` | Passport JWT |
+| 인증 가드 | `src/common/guards/jwt-auth.guard.ts` | 모든 보호 엔드포인트 |
+| 역할 가드 | `src/common/guards/roles.guard.ts` | RBAC 구현 완료 |
+| 역할 데코레이터 | `src/common/decorators/roles.decorator.ts` | @Roles('admin') 등 |
+| 현재 유저 | `src/common/decorators/current-user.decorator.ts` | @CurrentUser() |
+| Redis 어댑터 | `src/common/adapters/redis-io.adapter.ts` | Socket.io Upstash |
+| HTTP 예외 필터 | `src/common/filters/http-exception.filter.ts` | 글로벌 에러 처리 |
+| Sentry | `src/common/sentry.ts` | 에러 추적 |
+| BetterStack 로거 | `src/common/betterstack-logger.ts` | 구조화된 로깅 |
+| 헬스체크 | `src/common/health.controller.ts` | /health 엔드포인트 |
+| Cloudflare webhook | `src/modules/videos/webhook.controller.ts` | Stream 이벤트 |
+| Swagger | `/api/v1/docs` | NestJS Swagger |
 
 ## CONVENTIONS (API 전용)
 
@@ -87,8 +87,8 @@ Controller → Service → (Repository) → Prisma
 
 - **포트**: 개발 4000, Cloud Run 8080
 - **테스트**: Jest 29 + @nestjs/testing. 커버리지 93.57%
-- **videos 아키텍처**: VideosService(Facade) → VideoQueryService, VideoMutationService, VideoSyncService, VideoStorageService
-- **settlements**: RoleGuard 구현 완료 (@UseGuards + @Roles)
-- **feedback**: canUpdateFeedback 권한 로직 구현 완료
-- **auth**: token refresh 구현 완료 (AuthService.refresh)
+- **videos 아키텍처**: VideosService(Facade, 148줄) → VideoQueryService, VideoMutationService, VideoSyncService, VideoStorageService (분할 완료)
+- **settlements**: RoleGuard 구현 완료 (@UseGuards + @Roles decorator)
+- **feedback**: canUpdateFeedback 권한 로직 구현 완료 (FeedbackService L13-23)
+- **auth**: token refresh 구현 완료 (AuthService.refresh method)
 - **Firebase Admin**: 푸시 알림용 (firebase-admin 패키지)

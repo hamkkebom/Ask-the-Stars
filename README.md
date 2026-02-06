@@ -226,7 +226,7 @@ graph LR
 | 기술 | 버전 | 용도 |
 |------|------|------|
 | NestJS | 11.1.12 | Node.js 프레임워크 |
-| Node.js | 20.x (LTS) | JavaScript 런타임 |
+| Node.js | 22.x (LTS) | JavaScript 런타임 |
 | Prisma | 6.3.1 | ORM (Object-Relational Mapping) |
 | PostgreSQL | 17 | 관계형 데이터베이스 |
 | BullMQ | 5.66.5 | 작업 큐 |
@@ -315,7 +315,7 @@ ask-the-stars/
 
 시스템 요구사항:
 
-- **Node.js**: 20.x (LTS)
+- **Node.js**: 22.x (LTS)
 - **pnpm**: 9.x 이상
 - **PostgreSQL**: 17 이상 (로컬 개발 시)
 - **Redis**: 최신 버전 (로컬 개발 시)

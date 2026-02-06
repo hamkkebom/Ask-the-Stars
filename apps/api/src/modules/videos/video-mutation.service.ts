@@ -3,7 +3,7 @@ import { PrismaService } from '../../database/prisma.service';
 import { Video, VideoStatus } from '@prisma/client';
 import { AiService } from '../ai/ai.service';
 import { VideoStorageService } from './video-storage.service';
-import { CreateVideoDto } from './videos.service';
+import { CreateVideoDto } from './dto/create-video.dto';
 
 @Injectable()
 export class VideoMutationService {

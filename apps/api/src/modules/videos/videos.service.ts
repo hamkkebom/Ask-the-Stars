@@ -1,27 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { VideoStatus } from '@prisma/client';
-import { PrismaService } from '../../database/prisma.service';
-import { UploadsService } from '../uploads/uploads.service';
 import { VideoQueryService } from './video-query.service';
 import { VideoMutationService } from './video-mutation.service';
 import { VideoSyncService } from './video-sync.service';
 import { VideoStorageService } from './video-storage.service';
+import { CreateVideoDto } from './dto/create-video.dto';
 
-export interface CreateVideoDto {
-  title: string;
-  versionLabel: string;
-  versionTitle?: string;
-  description?: string;
-  categoryName?: string;
-  counselorName?: string;
-  creatorId?: string; // Optional: if we want to link to a specific creator
-}
+export { CreateVideoDto } from './dto/create-video.dto';
 
 @Injectable()
 export class VideosService {
   constructor(
-    private readonly prisma: PrismaService,
-    private readonly uploadsService: UploadsService,
     private readonly videoQueryService: VideoQueryService,
     private readonly videoMutationService: VideoMutationService,
     private readonly videoSyncService: VideoSyncService,
@@ -85,13 +74,7 @@ export class VideosService {
   }
 
   async getPresignedUrl(videoId: string): Promise<string> {
-    const spec = await this.prisma.videoTechnicalSpec.findUnique({
-      where: { video_id: videoId },
-    });
-    if (!spec || !spec.r2Key) {
-      throw new NotFoundException(`R2 Key for video ${videoId} not found`);
-    }
-    return this.uploadsService.getPresignedUrl(spec.r2Key);
+    return this.videoQueryService.getPresignedUrl(videoId);
   }
 
   async getDirectUploadUrl(

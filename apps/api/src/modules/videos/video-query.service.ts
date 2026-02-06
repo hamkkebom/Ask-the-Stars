@@ -141,6 +141,19 @@ export class VideoQueryService {
     });
   }
 
+  async getPresignedUrl(videoId: string): Promise<string> {
+    const spec = await this.prisma.videoTechnicalSpec.findUnique({
+      where: { video_id: videoId },
+      select: { r2Key: true },
+    });
+
+    if (!spec?.r2Key) {
+      throw new NotFoundException(`R2 Key for video ${videoId} not found`);
+    }
+
+    return this.videoStorage.getR2PresignedUrl(spec.r2Key);
+  }
+
   async listAllFinalVideos(params?: {
     page?: number;
     limit?: number;

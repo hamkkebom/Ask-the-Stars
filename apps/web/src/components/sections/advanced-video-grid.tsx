@@ -92,13 +92,12 @@ export function AdvancedVideoGrid() {
     counselor: {
       name: v.counselor?.name || v.project?.counselor?.name || '상담사',
     },
-    creator: {
-      name:
-        v.freelancer?.name ||
-        v.maker?.name ||
-        v.project?.owner?.name ||
-        '함께봄',
-    },
+    creator:
+      v.freelancer?.name || v.maker?.name
+        ? {
+            name: v.freelancer?.name || v.maker?.name,
+          }
+        : undefined,
     createdAt: new Date(v.created_at || v.createdAt)
       .toLocaleDateString('ko-KR', {
         year: '2-digit',

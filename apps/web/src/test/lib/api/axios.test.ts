@@ -53,7 +53,7 @@ describe('axiosInstance configuration', () => {
     vi.restoreAllMocks();
   });
 
-  it('sets baseURL with /api/v1 when missing', async () => {
+  it('sets baseURL with /api when missing', async () => {
     const { mockInstance } = createMockAxios();
     const create = vi.fn(() => mockInstance);
     vi.doMock('axios', () => ({
@@ -64,12 +64,12 @@ describe('axiosInstance configuration', () => {
     process.env.NEXT_PUBLIC_API_URL = 'http://localhost:4000';
     await import('@/lib/api/axios');
     expect(create).toHaveBeenCalledWith({
-      baseURL: 'http://localhost:4000/api/v1',
+      baseURL: 'http://localhost:4000/api',
       headers: { 'Content-Type': 'application/json' },
     });
   });
 
-  it('appends /v1 when /api suffix exists', async () => {
+  it('uses /api when /api suffix exists', async () => {
     const { mockInstance } = createMockAxios();
     const create = vi.fn(() => mockInstance);
     vi.doMock('axios', () => ({
@@ -81,7 +81,7 @@ describe('axiosInstance configuration', () => {
     const module = await import('@/lib/api/axios');
 
     expect(create).toHaveBeenCalledWith({
-      baseURL: 'http://localhost:4000/api/v1',
+      baseURL: 'http://localhost:4000/api',
       headers: { 'Content-Type': 'application/json' },
     });
     expect(module.axiosInstance).toBe(mockInstance);

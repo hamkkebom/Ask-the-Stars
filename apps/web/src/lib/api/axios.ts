@@ -1,9 +1,9 @@
 import axios, { AxiosError } from 'axios';
 import { captureError } from '@/lib/sentry';
 
-// API versioning enabled - backend uses @Controller({ version: '1' })
-// This creates /api/v1/* routes via NestJS URI versioning
-const API_VERSION = 'v1';
+// API versioning temporarily disabled - backend doesn't support @Controller({ version: '1' }) yet
+// TODO: Re-enable versioning when backend is updated
+const API_VERSION = '';
 
 const getBaseUrl = () => {
   const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';

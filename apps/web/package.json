@@ -16,7 +16,7 @@
     "@ask-the-stars/utils": "file:../../packages/utils",
     "@cloudflare/stream-react": "^1.9.3",
     "@hookform/resolvers": "3.9.1",
-    "@sentry/nextjs": "^9.4.0",
+    "@sentry/nextjs": "^10.38.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.1",
     "@tanstack/react-query": "^5.62.7",

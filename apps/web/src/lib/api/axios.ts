@@ -1,9 +1,9 @@
 import axios, { AxiosError } from 'axios';
 import { captureError } from '@/lib/sentry';
 
-// API versioning temporarily disabled - backend doesn't support @Controller({ version: '1' }) yet
-// TODO: Re-enable versioning when backend is updated
-const API_VERSION = '';
+// API versioning enabled - backend uses @Controller({ version: '1' })
+// with URI versioning and /api/v1/* routes + redirect from /api/*
+const API_VERSION = 'v1';
 
 const getBaseUrl = () => {
   const rawUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';

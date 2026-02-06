@@ -22,17 +22,13 @@ import {
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { VideosService } from './videos.service';
-import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 // import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'; // Assuming Auth Guard exists
 
 @ApiTags('videos')
 @ApiResponse({ status: 500, description: 'Internal server error' })
 @Controller({ path: 'videos', version: '1' })
 export class VideosController {
-  constructor(
-    private readonly videosService: VideosService,
-    private readonly cloudflareService: CloudflareStreamService
-  ) {}
+  constructor(private readonly videosService: VideosService) {}
 
   @Get()
   @ApiOperation({ summary: 'List videos' })
@@ -218,7 +214,7 @@ export class VideosController {
     // 1. Get User ID from Auth (req.user.id) - Mocking for now if Auth not fully setup in this context
     const userId = req.user?.id || 'system_test_user';
 
-    const url = await this.cloudflareService.getDirectUploadUrl(
+    const url = await this.videosService.getDirectUploadUrl(
       userId,
       body.uploadLength,
       body.metadata

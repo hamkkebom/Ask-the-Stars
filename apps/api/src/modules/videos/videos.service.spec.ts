@@ -5,6 +5,10 @@ import { PrismaService } from '../../database/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
 import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 import { AiService } from '../ai/ai.service';
+import { VideoStorageService } from './video-storage.service';
+import { VideoQueryService } from './video-query.service';
+import { VideoMutationService } from './video-mutation.service';
+import { VideoSyncService } from './video-sync.service';
 import { createPrismaMock } from '../../../test/utils/prisma.mock';
 
 describe('VideosService', () => {
@@ -13,6 +17,7 @@ describe('VideosService', () => {
   let uploadsService: UploadsService;
   let cloudflareService: CloudflareStreamService;
   let aiService: AiService;
+  let videoStorageService: VideoStorageService;
 
   beforeEach(async () => {
     prisma = createPrismaMock(() => jest.fn());
@@ -20,6 +25,9 @@ describe('VideosService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         VideosService,
+        VideoQueryService,
+        VideoMutationService,
+        VideoSyncService,
         { provide: PrismaService, useValue: prisma },
         {
           provide: UploadsService,
@@ -31,6 +39,14 @@ describe('VideosService', () => {
         {
           provide: CloudflareStreamService,
           useValue: {
+            generateCaptions: jest.fn(),
+            uploadCaption: jest.fn(),
+            copyFromUrl: jest.fn(),
+          },
+        },
+        {
+          provide: VideoStorageService,
+          useValue: {
             getSignedThumbnailUrl: jest.fn(),
             getSignedThumbnailUrls: jest.fn(),
             getStreamThumbnailVariants: jest.fn(),
@@ -38,9 +54,6 @@ describe('VideosService', () => {
             generateSignedToken: jest.fn(),
             getVideoAnalytics: jest.fn(),
             getDownloadUrl: jest.fn(),
-            generateCaptions: jest.fn(),
-            uploadCaption: jest.fn(),
-            copyFromUrl: jest.fn(),
           },
         },
         {
@@ -60,6 +73,7 @@ describe('VideosService', () => {
       CloudflareStreamService
     );
     aiService = module.get<AiService>(AiService);
+    videoStorageService = module.get<VideoStorageService>(VideoStorageService);
   });
 
   it('throws when project video not found', async () => {
@@ -89,12 +103,12 @@ describe('VideosService', () => {
         },
       ],
     });
-    (cloudflareService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
+    (videoStorageService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
       'thumb-url'
     );
-    (cloudflareService.getStreamThumbnailVariants as jest.Mock).mockReturnValue(
-      null
-    );
+    (
+      videoStorageService.getStreamThumbnailVariants as jest.Mock
+    ).mockReturnValue(null);
 
     const result = await service.getVideoByProjectNo(1);
 
@@ -134,25 +148,27 @@ describe('VideosService', () => {
       maker: null,
       eventLogs: [],
     });
-    (cloudflareService.generateSignedToken as jest.Mock).mockResolvedValue(
+    (videoStorageService.generateSignedToken as jest.Mock).mockResolvedValue(
       'token-1'
     );
-    (cloudflareService.getVideoAnalytics as jest.Mock).mockResolvedValue({
+    (videoStorageService.getVideoAnalytics as jest.Mock).mockResolvedValue({
       views: 5,
     });
-    (cloudflareService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
+    (videoStorageService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
       'thumb-url'
     );
-    (cloudflareService.getDownloadUrl as jest.Mock).mockReturnValue(
+    (videoStorageService.getDownloadUrl as jest.Mock).mockReturnValue(
       'download-url'
     );
-    (cloudflareService.getStreamThumbnailVariants as jest.Mock).mockReturnValue(
-      null
-    );
+    (
+      videoStorageService.getStreamThumbnailVariants as jest.Mock
+    ).mockReturnValue(null);
 
     const result = await service.getVideoById('video-1');
 
-    expect(cloudflareService.generateSignedToken).toHaveBeenCalledWith('uid-1');
+    expect(videoStorageService.generateSignedToken).toHaveBeenCalledWith(
+      'uid-1'
+    );
     expect(result.streamToken).toBe('token-1');
     expect(result.views).toBe(5);
   });
@@ -277,13 +293,15 @@ describe('VideosService', () => {
       },
     ]);
     prisma.video.count.mockResolvedValue(1);
-    (cloudflareService.getSignedThumbnailUrls as jest.Mock).mockResolvedValue({
-      jpg: 'thumb.jpg',
-      gif: 'thumb.gif',
-    });
-    (cloudflareService.getStreamThumbnailVariants as jest.Mock).mockReturnValue(
-      null
+    (videoStorageService.getSignedThumbnailUrls as jest.Mock).mockResolvedValue(
+      {
+        jpg: 'thumb.jpg',
+        gif: 'thumb.gif',
+      }
     );
+    (
+      videoStorageService.getStreamThumbnailVariants as jest.Mock
+    ).mockReturnValue(null);
 
     const result = await service.listAllFinalVideos({ page: 1, limit: 1 });
 
@@ -318,9 +336,9 @@ describe('VideosService', () => {
       videos: [{ id: 'video-1' }],
     });
     (aiService.createVideoEmbedding as jest.Mock).mockResolvedValue(true);
-    (cloudflareService.getStreamThumbnailBaseUrl as jest.Mock).mockReturnValue(
-      'thumb-url'
-    );
+    (
+      videoStorageService.getStreamThumbnailBaseUrl as jest.Mock
+    ).mockReturnValue('thumb-url');
 
     const result = await service.createVideoRecord(
       {
@@ -348,13 +366,15 @@ describe('VideosService', () => {
       eventLogs: [],
     });
     (cloudflareService.generateCaptions as jest.Mock).mockResolvedValue(true);
-    (cloudflareService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
+    (videoStorageService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
       ''
     );
-    (cloudflareService.getVideoAnalytics as jest.Mock).mockResolvedValue({
+    (videoStorageService.getVideoAnalytics as jest.Mock).mockResolvedValue({
       views: 0,
     });
-    (cloudflareService.generateSignedToken as jest.Mock).mockResolvedValue('');
+    (videoStorageService.generateSignedToken as jest.Mock).mockResolvedValue(
+      ''
+    );
 
     const result = await service.generateCaptions('video-1');
 
@@ -370,13 +390,15 @@ describe('VideosService', () => {
       eventLogs: [],
     });
     (cloudflareService.uploadCaption as jest.Mock).mockResolvedValue(true);
-    (cloudflareService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
+    (videoStorageService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
       ''
     );
-    (cloudflareService.getVideoAnalytics as jest.Mock).mockResolvedValue({
+    (videoStorageService.getVideoAnalytics as jest.Mock).mockResolvedValue({
       views: 0,
     });
-    (cloudflareService.generateSignedToken as jest.Mock).mockResolvedValue('');
+    (videoStorageService.generateSignedToken as jest.Mock).mockResolvedValue(
+      ''
+    );
 
     const result = await service.uploadCaption(
       'video-1',

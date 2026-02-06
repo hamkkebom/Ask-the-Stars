@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VideosController } from './videos.controller';
 import { VideosService } from './videos.service';
-import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 
 describe('VideosController', () => {
   let controller: VideosController;
   let service: VideosService;
-  let cloudflareService: CloudflareStreamService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,11 +25,6 @@ describe('VideosController', () => {
             importVideoFromR2: jest.fn(),
             getAllRegisteredSpecs: jest.fn(),
             syncWithStorage: jest.fn(),
-          },
-        },
-        {
-          provide: CloudflareStreamService,
-          useValue: {
             getDirectUploadUrl: jest.fn(),
           },
         },
@@ -40,9 +33,6 @@ describe('VideosController', () => {
 
     controller = module.get<VideosController>(VideosController);
     service = module.get<VideosService>(VideosService);
-    cloudflareService = module.get<CloudflareStreamService>(
-      CloudflareStreamService
-    );
   });
 
   it('lists videos with pagination', async () => {
@@ -107,9 +97,7 @@ describe('VideosController', () => {
   });
 
   it('creates direct upload url', async () => {
-    (cloudflareService.getDirectUploadUrl as jest.Mock).mockResolvedValue(
-      'url'
-    );
+    (service.getDirectUploadUrl as jest.Mock).mockResolvedValue('url');
 
     const result = await controller.getDirectUploadUrl(
       { uploadLength: 10 },
@@ -120,16 +108,14 @@ describe('VideosController', () => {
   });
 
   it('uses system user when request user is missing', async () => {
-    (cloudflareService.getDirectUploadUrl as jest.Mock).mockResolvedValue(
-      'url'
-    );
+    (service.getDirectUploadUrl as jest.Mock).mockResolvedValue('url');
 
     await controller.getDirectUploadUrl(
       { uploadLength: 10 },
       {} as { user?: { id?: string } }
     );
 
-    expect(cloudflareService.getDirectUploadUrl).toHaveBeenCalledWith(
+    expect(service.getDirectUploadUrl).toHaveBeenCalledWith(
       'system_test_user',
       10,
       undefined

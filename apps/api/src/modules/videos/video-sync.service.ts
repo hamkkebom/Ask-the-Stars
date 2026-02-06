@@ -7,8 +7,8 @@ import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service
 export class VideoSyncService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly uploadsService: UploadsService,
-    private readonly cloudflareService: CloudflareStreamService
+    private readonly cloudflareStream: CloudflareStreamService,
+    private readonly uploadsService: UploadsService
   ) {}
 
   async syncVideoStatus(
@@ -43,7 +43,7 @@ export class VideoSyncService {
   }
 
   async importVideoFromR2(url: string, creator?: string): Promise<string> {
-    return this.cloudflareService.copyFromUrl(url, { creator });
+    return this.cloudflareStream.copyFromUrl(url, { creator });
   }
 
   async getAllRegisteredSpecs(): Promise<

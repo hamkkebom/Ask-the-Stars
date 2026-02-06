@@ -5,6 +5,13 @@ import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service
 export class VideoStorageService {
   constructor(private readonly cloudflareStream: CloudflareStreamService) {}
 
+  async generateStreamSignedUrl(streamUid: string): Promise<string> {
+    const token = await this.cloudflareStream.generateSignedToken(streamUid);
+    return token
+      ? `https://videodelivery.net/${token}/manifest/video.m3u8`
+      : '';
+  }
+
   async getSignedThumbnailUrl(streamUid: string): Promise<string> {
     return this.cloudflareStream.getSignedThumbnailUrl(streamUid);
   }
@@ -25,6 +32,18 @@ export class VideoStorageService {
 
   async generateSignedToken(uid: string): Promise<string> {
     return this.cloudflareStream.generateSignedToken(uid);
+  }
+
+  async generateCaptions(streamUid: string): Promise<boolean> {
+    return this.cloudflareStream.generateCaptions(streamUid);
+  }
+
+  async uploadCaption(
+    streamUid: string,
+    language: string,
+    fileBuffer: Buffer
+  ): Promise<boolean> {
+    return this.cloudflareStream.uploadCaption(streamUid, language, fileBuffer);
   }
 
   getDownloadUrl(uid: string): string {

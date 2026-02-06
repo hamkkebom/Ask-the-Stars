@@ -52,6 +52,10 @@ describe('VideosService', () => {
             getStreamThumbnailVariants: jest.fn(),
             getStreamThumbnailBaseUrl: jest.fn(),
             generateSignedToken: jest.fn(),
+            generateStreamSignedUrl: jest.fn(),
+            generateCaptions: jest.fn(),
+            uploadCaption: jest.fn(),
+            getDirectUploadUrl: jest.fn(),
             getVideoAnalytics: jest.fn(),
             getDownloadUrl: jest.fn(),
           },
@@ -365,7 +369,7 @@ describe('VideosService', () => {
       maker: null,
       eventLogs: [],
     });
-    (cloudflareService.generateCaptions as jest.Mock).mockResolvedValue(true);
+    (videoStorageService.generateCaptions as jest.Mock).mockResolvedValue(true);
     (videoStorageService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
       ''
     );
@@ -389,7 +393,7 @@ describe('VideosService', () => {
       maker: null,
       eventLogs: [],
     });
-    (cloudflareService.uploadCaption as jest.Mock).mockResolvedValue(true);
+    (videoStorageService.uploadCaption as jest.Mock).mockResolvedValue(true);
     (videoStorageService.getSignedThumbnailUrl as jest.Mock).mockResolvedValue(
       ''
     );

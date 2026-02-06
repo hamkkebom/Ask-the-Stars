@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { UploadsService } from '../uploads/uploads.service';
-import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
 import { VideoQueryService } from './video-query.service';
 import { VideoMutationService } from './video-mutation.service';
 import { VideoSyncService } from './video-sync.service';
@@ -22,7 +21,6 @@ export class VideosService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly uploadsService: UploadsService,
-    private readonly cloudflareService: CloudflareStreamService,
     private readonly videoQueryService: VideoQueryService,
     private readonly videoMutationService: VideoMutationService,
     private readonly videoSyncService: VideoSyncService,
@@ -50,7 +48,7 @@ export class VideosService {
     if (!video.technicalSpec?.streamUid) {
       throw new Error('Video stream not ready');
     }
-    return this.cloudflareService.generateCaptions(
+    return this.videoStorageService.generateCaptions(
       video.technicalSpec.streamUid
     );
   }
@@ -60,7 +58,7 @@ export class VideosService {
     if (!video.technicalSpec?.streamUid) {
       throw new Error('Video stream not ready');
     }
-    return this.cloudflareService.uploadCaption(
+    return this.videoStorageService.uploadCaption(
       video.technicalSpec.streamUid,
       language,
       fileBuffer

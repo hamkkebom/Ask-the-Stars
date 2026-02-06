@@ -22,7 +22,7 @@ Route Group 레이아웃 구조:
 ```
 src/components/
 ├── ui/            # 16개: button, card, glass-card, modal, skeleton, toast, breadcrumb, file-uploader, stream-uploader...
-├── sections/      # 8개: vibrant-hero, advanced-video-grid (589줄), category-swimlane, filterable-video-grid, testimonials...
+├── sections/      # 8개: vibrant-hero, advanced-video-grid (210줄, 분할완료), video-grid-filter-bar, video-grid-filter-tray, category-swimlane, filterable-video-grid, testimonials...
 ├── features/      # portfolio (Card, Grid, EditorModal, DetailModal), leads (lead-form)
 ├── layout/        # simple-header, main-footer, award-header (451줄), page-transition
 ├── player/        # StreamPlayer (Plyr + HLS.js)
@@ -45,9 +45,13 @@ src/lib/
 │   ├── axios.ts   # baseURL, 인터셉터, 토큰 주입
 │   └── index.ts   # 전체 export
 ├── hooks/         # TanStack Query 커스텀 훅 (useAuth, useVideos, useProjects, useNotifications)
+├── storage.ts     # SSR-safe localStorage 래퍼 (safeLocalStorage)
 ├── supabase/      # client.ts, server.ts, middleware.ts (세션 관리)
 ├── validation/    # Zod 스키마
 └── utils/         # video-url 등
+
+src/hooks/
+└── useVideoGridFilters.ts  # 영상 그리드 필터 상태 관리 훅
 ```
 
 ## WHERE TO LOOK
@@ -61,6 +65,8 @@ src/lib/
 | 페이지 전환 | `src/app/template.tsx` (PageTransition) |
 | 에러 처리 | `src/app/error.tsx`, `not-found.tsx` |
 | 미들웨어 | `src/middleware.ts` (Supabase 세션 refresh) |
+| localStorage 래퍼 | `src/lib/storage.ts` (SSR-safe, layout.tsx 인라인 제외) |
+| 영상 필터 훅 | `src/hooks/useVideoGridFilters.ts` (필터 상태 관리) |
 | 글로벌 CSS | `src/app/globals.css` (Tailwind v4 @theme, 125줄) |
 
 ## ANTI-PATTERNS (웹 전용)
@@ -69,7 +75,7 @@ src/lib/
 - RSC에서 `.toSorted()`, `.filter()` 후 클라이언트 전달 금지 (중복 직렬화)
 - `{count && <Component />}` 금지 → 삼항 연산자 사용
 - SVG 직접 애니메이션 금지 → div 래퍼 사용
-- `localStorage` 직접 호출 금지 → 캐시 래퍼 사용
+- `localStorage` 직접 호출 금지 → `safeLocalStorage` 래퍼 사용 (`src/lib/storage.ts`)
 - Server Action 인증 체크 누락 금지
 
 ## NOTES
@@ -77,6 +83,8 @@ src/lib/
 - **린트 비활성화**: ESLint 9 + Next.js 호환성 이슈로 임시 스킵
 - **React Compiler**: 주석 처리 (babel-plugin-react-compiler 미설치)
 - **테스트**: Vitest + jsdom. `src/test/setup.ts`. 커버리지 94.72%
+- **컴포넌트 분할**: advanced-video-grid (589→210줄) → filter-bar, filter-tray, useVideoGridFilters 추출
+- **localStorage**: SSR-safe 래퍼 적용. layout.tsx 인라인 스크립트는 예외 (FOUC 방지)
 - **이미지 최적화**: AVIF/WebP, remotePatterns: R2/Stream/Supabase/DiceBear/Unsplash
 - **패키지 최적화**: lucide-react, framer-motion, date-fns, @radix-ui, socket.io-client
 - **transpilePackages**: @ask-the-stars/ui, types, utils

@@ -64,7 +64,7 @@ ask-the-stars/
 4. **after() 사용**: 로깅, 분석, 비중요 DB 업데이트는 `after()`로 비차단 처리
 5. **깜빡임 없는 UI**: 테마/상태는 layout.tsx 인라인 스크립트로 하이드레이션 전 적용
 6. **Controller 순수성**: Controller는 라우팅만. 비즈니스 로직 → Service
-7. **Repository 패턴**: Service에서 직접 Prisma 호출 지양. Repository로 캡슐화
+7. **서비스 분리 패턴**: 갓 클래스 → Facade + 도메인 서비스 분할 (videos 모듈 참조)
 
 ### 네이밍
 
@@ -103,7 +103,7 @@ ask-the-stars/
 - `{count && <Component />}` → `{count > 0 ? <Component /> : null}` 사용
 - `useEffect` 의존성에 객체 전달 금지 → 원시 타입으로 좁히기
 - Controller에 비즈니스 로직 금지 → Service 분리
-- Service에서 직접 Prisma 호출 지양 → Repository 패턴
+- Service에서 직접 Prisma 호출 지양 → Repository 패턴 (현재 미도입, 별도 태스크)
 - `localStorage` 직접 호출 금지 → 캐시 래퍼 사용
 - RSC에서 `.toSorted()`, `.filter()` 후 클라이언트 전달 금지 (중복 직렬화)
 - SVG 직접 애니메이션 금지 → div 래퍼 사용
@@ -154,9 +154,12 @@ docker-compose up -d        # PostgreSQL 17 + Redis 7.4
 
 | 파일 | 줄수 | 비고 |
 |------|------|------|
-| `apps/api/.../videos/videos.service.ts` | 148 | Facade (4개 서비스로 분할 완료) |
+| `apps/api/.../videos/videos.service.ts` | 148 | Facade → storage/query/mutation/sync 4개 서비스 위임 |
+| `apps/api/.../videos/video-query.service.ts` | 297 | 조회 전용 (getVideoById, listAllFinalVideos, search) |
+| `apps/api/.../videos/video-sync.service.ts` | 263 | 동기화/임포트 (syncWithStorage 220줄) |
+| `apps/api/.../videos/video-mutation.service.ts` | 131 | 생성/수정 (createVideoRecord, updateVideoStatus) |
 | `apps/web/src/lib/api/projects.ts` | 594 | 대부분 타입 정의 |
-| `apps/web/.../advanced-video-grid.tsx` | 184 | 서브컴포넌트 추출 완료 |
+| `apps/web/.../advanced-video-grid.tsx` | 210 | 오케스트레이터 (filter-bar, filter-tray, useVideoGridFilters 추출) |
 | `apps/api/.../cloudflare-stream.service.ts` | 544 | 어댑터 분리 |
 | `packages/database/prisma/schema.prisma` | 929 | 33 모델 |
 

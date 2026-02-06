@@ -10,7 +10,7 @@ src/modules/
 ├── auth/          # JWT + Passport (login, signup, refresh, logout). strategies/jwt.strategy.ts
 ├── users/         # 사용자 CRUD, 프로필
 ├── projects/      # 프로젝트 생성/매칭. dto/create-project-request.dto.ts
-├── videos/        # 영상 CRUD + Cloudflare Stream webhook (712줄 service — 분리 필요)
+├── videos/        # 영상 CRUD + Cloudflare Stream webhook. Facade 패턴 (4개 서비스 분할 완료)
 ├── submissions/   # 과제 제출. dto/generate-upload-url.dto.ts
 ├── feedback/      # 영상 피드백 (타임코드 마킹)
 ├── portfolios/    # 포트폴리오 CRUD (create, update DTOs)
@@ -37,7 +37,7 @@ Controller → Service → (Repository) → Prisma
 
 - **Controller**: 라우팅 + 요청/응답만. 비즈니스 로직 금지
 - **Service**: 순수 비즈니스 로직
-- **Repository**: Prisma 캡슐화 (Service→Prisma 직접 호출 지양)
+- **Repository**: Prisma 캡슐화 (현재 미도입 — Service에서 직접 Prisma 호출)
 - **DTO**: class-validator 데코레이터. Request/Response 분리
 - **Guard**: `JwtAuthGuard` → `@UseGuards(JwtAuthGuard)`
 - **Decorator**: `@CurrentUser()` → 현재 인증 사용자
@@ -79,7 +79,7 @@ Controller → Service → (Repository) → Prisma
 ## ANTI-PATTERNS (API 전용)
 
 - Controller에 비즈니스 로직 금지 → Service 분리
-- Service에서 직접 Prisma 호출 지양 → Repository 패턴
+- Service에서 직접 Prisma 호출 지양 → Repository 패턴 (현재 미도입, 별도 태스크)
 - NestJS field injection 금지 → constructor injection 사용
 - `DROP/TRUNCATE/DELETE FROM` (WHERE 없이) 프로덕션 금지
 

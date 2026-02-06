@@ -226,13 +226,11 @@ function CompactVideoCardImpl({
 
           {/* --- Overlays --- */}
           {/* Top Left: Creator Name (glassmorphism badge) */}
-          {creator?.name && (
-            <div className="absolute top-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
-              <span className="text-[11px] text-white/90 font-medium tracking-tight">
-                {creator.name}
-              </span>
-            </div>
-          )}
+          <div className="absolute top-2.5 left-2.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center pointer-events-none z-20">
+            <span className="text-[11px] text-white/90 font-medium tracking-tight">
+              {creator?.name}
+            </span>
+          </div>
 
           {/* Top Right: Badges (Ad Approved + Likes) */}
           <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 items-end pointer-events-none z-20">

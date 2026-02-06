@@ -13,12 +13,18 @@ export class CloudflareStreamService {
   private readonly imageDeliveryHash: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.accountId =
-      this.configService.get<string>('CLOUDFLARE_ACCOUNT_ID') || '';
-    this.apiToken =
+    // Sanitize env values: strip BOM (\uFEFF), CR/LF, and whitespace
+    const sanitize = (val: string) =>
+      val.replace(/[\uFEFF\r\n\s]+/g, '').trim();
+
+    this.accountId = sanitize(
+      this.configService.get<string>('CLOUDFLARE_ACCOUNT_ID') || ''
+    );
+    this.apiToken = sanitize(
       this.configService.get<string>('CLOUDFLARE_API_TOKEN') ||
-      this.configService.get<string>('CLOUDFLARE_STREAM_TOKEN') ||
-      '';
+        this.configService.get<string>('CLOUDFLARE_STREAM_TOKEN') ||
+        ''
+    );
 
     // For Signed Tokens (PEM key from Cloudflare Dashboard)
     this.signingKeyId =

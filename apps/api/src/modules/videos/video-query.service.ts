@@ -228,16 +228,20 @@ export class VideoQueryService {
             }
           }
 
+          // Sanitize URLs: strip BOM, CR/LF that may have been stored in DB
+          const sanitizeUrl = (url: string | null | undefined) =>
+            url ? url.replace(/[\uFEFF\r\n]+/g, '').trim() : url;
+
           return {
             ...video,
             technicalSpec: {
               ...video.technicalSpec,
-              thumbnailUrl,
+              thumbnailUrl: sanitizeUrl(thumbnailUrl),
               thumbnailVariants,
-              previewUrl,
+              previewUrl: sanitizeUrl(previewUrl),
             },
             thumbnailVariants,
-            previewUrl,
+            previewUrl: sanitizeUrl(previewUrl),
           };
         })
       );

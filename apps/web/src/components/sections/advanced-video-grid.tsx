@@ -12,6 +12,27 @@ import { useVideoGridFilters } from '@/hooks/useVideoGridFilters';
 import { VideoGridFilterBar } from './video-grid-filter-bar';
 import { VideoGridFilterTray } from './video-grid-filter-tray';
 
+/**
+ * Extract a human-readable title from an encoded file path.
+ * e.g. "uploads/%EC%83%81%EB%8B%B4%EC%82%AC%20.../[상담사] 운경_v1.0.mp4" → "[상담사] 운경_v1.0"
+ */
+function extractTitleFromFilename(
+  filename: string | null | undefined
+): string | undefined {
+  if (!filename) return undefined;
+  try {
+    const decoded = decodeURIComponent(filename);
+    // Get just the filename (last path segment)
+    const basename = decoded.split('/').pop() || decoded;
+    // Remove file extension
+    return basename.replace(/\.[^/.]+$/, '');
+  } catch {
+    // Fallback if decode fails
+    const basename = filename.split('/').pop() || filename;
+    return basename.replace(/\.[^/.]+$/, '');
+  }
+}
+
 export function AdvancedVideoGrid() {
   const filters = useVideoGridFilters();
   const {
@@ -55,7 +76,7 @@ export function AdvancedVideoGrid() {
     id: v.id,
     title:
       v.title ||
-      v.technicalSpec?.filename?.replace(/\.[^/.]+$/, '') ||
+      extractTitleFromFilename(v.technicalSpec?.filename) ||
       v.project?.title ||
       v.versionLabel ||
       '제목 없음',

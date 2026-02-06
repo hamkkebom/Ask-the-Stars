@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CloudflareStreamService } from '../cloudflare/cloudflare-stream.service';
+import { UploadsService } from '../uploads/uploads.service';
 
 @Injectable()
 export class VideoStorageService {
-  constructor(private readonly cloudflareStream: CloudflareStreamService) {}
+  constructor(
+    private readonly cloudflareStream: CloudflareStreamService,
+    private readonly uploadsService: UploadsService
+  ) {}
+
+  async getR2PresignedUrl(r2Key: string): Promise<string> {
+    return this.uploadsService.getPresignedUrl(r2Key);
+  }
 
   async generateStreamSignedUrl(streamUid: string): Promise<string> {
     const token = await this.cloudflareStream.generateSignedToken(streamUid);

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { UploadsService } from '../uploads/uploads.service';
 import { AiService } from '../ai/ai.service';
 import { VideoStorageService } from './video-storage.service';
 
@@ -8,7 +7,6 @@ import { VideoStorageService } from './video-storage.service';
 export class VideoQueryService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly uploadsService: UploadsService,
     private readonly aiService: AiService,
     private readonly videoStorage: VideoStorageService
   ) {}
@@ -82,7 +80,7 @@ export class VideoQueryService {
         video.technicalSpec.streamUid
       );
     } else if (video.technicalSpec?.r2Key) {
-      signedUrl = await this.uploadsService.getPresignedUrl(
+      signedUrl = await this.videoStorage.getR2PresignedUrl(
         video.technicalSpec.r2Key
       );
     }
@@ -121,10 +119,10 @@ export class VideoQueryService {
     };
   }
 
-  async listVideosByChannel(channelName: string): Promise<any> {
+  async listVideosByChannel(channelId: string): Promise<any> {
     return this.prisma.project.findMany({
       where: {
-        channel: { name: channelName },
+        channel: { name: channelId },
         videos: { some: { status: 'FINAL' } },
       },
       select: {
@@ -261,8 +259,23 @@ export class VideoQueryService {
     }
   }
 
-  async search(query: string) {
+  async searchVideos(
+    query: string,
+    filters?: {
+      page?: number;
+      limit?: number;
+      category?: string;
+      counselor?: string;
+      creator?: string;
+      sort?: 'latest' | 'popular';
+    }
+  ) {
+    void filters;
     return this.aiService.searchSimilarVideos(query);
+  }
+
+  async search(query: string) {
+    return this.searchVideos(query);
   }
 
   async getRecommendations(videoId: string) {

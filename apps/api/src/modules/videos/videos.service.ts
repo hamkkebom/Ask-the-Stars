@@ -151,7 +151,7 @@ export class VideosService {
   }
 
   async search(query: string) {
-    return this.videoQueryService.search(query);
+    return this.videoQueryService.searchVideos(query);
   }
 
   async getRecommendations(videoId: string) {

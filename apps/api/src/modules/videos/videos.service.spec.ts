@@ -51,6 +51,7 @@ describe('VideosService', () => {
             getSignedThumbnailUrls: jest.fn(),
             getStreamThumbnailVariants: jest.fn(),
             getStreamThumbnailBaseUrl: jest.fn(),
+            getR2PresignedUrl: jest.fn(),
             generateSignedToken: jest.fn(),
             generateStreamSignedUrl: jest.fn(),
             generateCaptions: jest.fn(),
@@ -185,11 +186,15 @@ describe('VideosService', () => {
       maker: null,
       eventLogs: [],
     });
-    (uploadsService.getPresignedUrl as jest.Mock).mockResolvedValue('r2-url');
+    (videoStorageService.getR2PresignedUrl as jest.Mock).mockResolvedValue(
+      'r2-url'
+    );
 
     const result = await service.getVideoById('video-1');
 
-    expect(uploadsService.getPresignedUrl).toHaveBeenCalledWith('r2-key');
+    expect(videoStorageService.getR2PresignedUrl).toHaveBeenCalledWith(
+      'r2-key'
+    );
     expect(result.technicalSpec.videoUrl).toBe('r2-url');
   });
 

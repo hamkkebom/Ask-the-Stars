@@ -87,8 +87,8 @@ Controller → Service → (Repository) → Prisma
 
 - **포트**: 개발 4000, Cloud Run 8080
 - **테스트**: Jest 29 + @nestjs/testing. 커버리지 93.57%
-- **TODO**: videos controller 로직 → service 이동 필요
-- **TODO**: settlements RoleGuard 미구현
-- **TODO**: feedback permission 리팩토링 필요
-- **TODO**: auth token refresh 로직 미구현
+- **videos 아키텍처**: VideosService(Facade) → VideoQueryService, VideoMutationService, VideoSyncService, VideoStorageService
+- **settlements**: RoleGuard 구현 완료 (@UseGuards + @Roles)
+- **feedback**: canUpdateFeedback 권한 로직 구현 완료
+- **auth**: token refresh 구현 완료 (AuthService.refresh)
 - **Firebase Admin**: 푸시 알림용 (firebase-admin 패키지)

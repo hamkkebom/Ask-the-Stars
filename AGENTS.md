@@ -154,9 +154,9 @@ docker-compose up -d        # PostgreSQL 17 + Redis 7.4
 
 | 파일 | 줄수 | 비고 |
 |------|------|------|
-| `apps/api/.../videos/videos.service.ts` | 712 | Service 분리 필요 |
-| `apps/web/src/lib/api/projects.ts` | 594 | API 클라이언트 분리 |
-| `apps/web/.../advanced-video-grid.tsx` | 589 | 서브컴포넌트 추출 |
+| `apps/api/.../videos/videos.service.ts` | 162 | Facade (4개 서비스로 분할 완료) |
+| `apps/web/src/lib/api/projects.ts` | 594 | 대부분 타입 정의 |
+| `apps/web/.../advanced-video-grid.tsx` | 184 | 서브컴포넌트 추출 완료 |
 | `apps/api/.../cloudflare-stream.service.ts` | 544 | 어댑터 분리 |
 | `packages/database/prisma/schema.prisma` | 929 | 33 모델 |
 
@@ -172,13 +172,13 @@ docker-compose up -d        # PostgreSQL 17 + Redis 7.4
 
 ## NOTES
 
-- **Node 버전 불일치**: CI Node 20, cd-web Node 22
+- **Node 버전**: CI/CD/로컬 모두 Node 22 통일
 - **웹 린트 스킵**: ESLint 9 + Next.js 호환성 이슈
 - **React Compiler**: next.config.ts 주석 처리 (미설치)
 - **루트 Dockerfile**: 진단용. 프로덕션 아님
 - **Conventional Commits**: Husky + commitlint 적용
 - **Supabase Auth**: 미들웨어 세션 관리 (`src/middleware.ts`)
-- **TODO**: videos controller→service 이동, auth refresh 미구현, settlements RoleGuard 미구현
+- **localStorage**: SSR-safe 래퍼 (`src/lib/storage.ts`) 사용. layout.tsx 인라인 스크립트는 예외 (FOUC 방지)
 - 성능 최적화 상세 → `docs/04-development/react-performance-rules.md`
 
 ---

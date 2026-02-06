@@ -6,6 +6,21 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
+  constructor() {
+    // Strip BOM and whitespace from DATABASE_URL if present
+    const rawUrl = process.env.DATABASE_URL ?? '';
+    const cleanUrl = rawUrl.replace(/^\uFEFF/, '').trim();
+    if (rawUrl !== cleanUrl) {
+      console.warn(
+        '⚠️ DATABASE_URL contained BOM or whitespace — stripped automatically'
+      );
+      process.env.DATABASE_URL = cleanUrl;
+    }
+    super({
+      datasourceUrl: cleanUrl || undefined,
+    });
+  }
+
   async onModuleInit() {
     await this.$connect();
     console.log('✅ Prisma connected to database');

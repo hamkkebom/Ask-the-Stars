@@ -16,7 +16,7 @@ export class HealthController {
   root() {
     return {
       name: 'Ask the Stars API',
-      version: '1.0.3',
+      version: '1.0.4',
       status: 'running',
     };
   }

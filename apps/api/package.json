@@ -69,7 +69,7 @@
     "@types/express": "^5.0.0",
     "@types/fluent-ffmpeg": "^2.1.28",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.2",
+    "@types/node": "^25.2.2",
     "@types/passport-jwt": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^8.18.2",
     "@typescript-eslint/parser": "^8.18.2",

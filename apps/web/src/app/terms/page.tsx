@@ -42,7 +42,7 @@ export default function TermsPage() {
       icon: <Scale className="w-5 h-5 text-blue-600" />,
       content: (
         <p className="m-0">
-          이 약관은 한깨봄(이하 &quot;회사&quot;)이 운영하는 &quot;별들에게
+          이 약관은 함께봄(이하 &quot;회사&quot;)이 운영하는 &quot;별들에게
           물어봐&quot; 플랫폼(이하 &quot;서비스&quot;)의 이용과 관련하여 회사와
           이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을
           목적으로 합니다.
@@ -387,7 +387,7 @@ export default function TermsPage() {
       {/* Footer */}
       <footer className="py-8 px-6 border-t bg-gray-50">
         <div className="max-w-4xl mx-auto text-center text-sm text-gray-500">
-          <p>© 2026 한깨봄 (별들에게 물어봐). All rights reserved.</p>
+          <p>© 2026 함께봄 (별들에게 물어봐). All rights reserved.</p>
         </div>
       </footer>
     </div>

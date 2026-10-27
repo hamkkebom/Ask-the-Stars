@@ -36,18 +36,18 @@ export default function ForgotPasswordPage() {
   if (success) {
     return (
       <div className="text-center py-8">
-        <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
           <span className="text-3xl">📧</span>
         </div>
         <h2 className="text-xl font-bold text-white mb-2">
           이메일을 확인하세요
         </h2>
-        <p className="text-[#aaa] mb-6">
+        <p className="text-muted-foreground mb-6">
           {email}로 비밀번호 재설정 링크를
           <br />
           발송했습니다.
         </p>
-        <Link href="/auth/login" className="text-yellow-500 hover:underline">
+        <Link href="/auth/login" className="text-primary hover:underline">
           로그인 페이지로 돌아가기
         </Link>
       </div>
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
     <div>
       <Link
         href="/auth/login"
-        className="inline-flex items-center gap-1 text-[#aaa] hover:text-white transition-colors mb-6"
+        className="inline-flex items-center gap-1 text-muted-foreground hover:text-white transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         로그인으로 돌아가기
@@ -67,13 +67,13 @@ export default function ForgotPasswordPage() {
       <h1 className="text-2xl font-bold text-white text-center mb-2">
         비밀번호 찾기
       </h1>
-      <p className="text-[#aaa] text-center mb-8">
+      <p className="text-muted-foreground text-center mb-8">
         가입하신 이메일 주소를 입력하세요
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-[#aaa] mb-2">
+          <label className="block text-sm font-medium text-muted-foreground mb-2">
             이메일
           </label>
           <input
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email@example.com"
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary"
             disabled={loading}
           />
         </div>
@@ -95,7 +95,7 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+          className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

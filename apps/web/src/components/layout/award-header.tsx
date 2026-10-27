@@ -158,7 +158,7 @@ export function AwardHeader() {
                 isCompanySite ? 'text-black' : 'text-white'
               )}
             >
-              {isCompanySite ? '한깨봄' : '별들에게 물어봐'}
+              {isCompanySite ? '함께봄' : '별들에게 물어봐'}
             </Link>
           </div>
 

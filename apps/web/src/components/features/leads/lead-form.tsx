@@ -56,7 +56,7 @@ export default function LeadForm() {
 
       // Redirect after 3 seconds
       setTimeout(() => {
-        router.push('/education');
+        router.push('/');
       }, 3000);
     } catch (err: any) {
       const errorMessage =
@@ -87,11 +87,11 @@ export default function LeadForm() {
           <br />
           <br />
           <span className="text-sm text-primary">
-            3초 후 교육 페이지로 이동합니다...
+            3초 후 홈으로 이동합니다...
           </span>
         </p>
         <button
-          onClick={() => router.push('/education')}
+          onClick={() => router.push('/')}
           className="px-8 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors font-semibold"
         >
           확인

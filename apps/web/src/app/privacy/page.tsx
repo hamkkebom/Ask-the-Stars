@@ -46,7 +46,7 @@ export default function PrivacyPage() {
       content: (
         <>
           <p className="m-0 mb-4">
-            한깨봄(이하 &quot;회사&quot;)은 다음의 목적을 위하여 개인정보를 수집
+            함께봄(이하 &quot;회사&quot;)은 다음의 목적을 위하여 개인정보를 수집
             및 이용합니다:
           </p>
           <ul className="list-disc pl-5 space-y-2 m-0">
@@ -449,7 +449,7 @@ export default function PrivacyPage() {
       {/* Footer */}
       <footer className="py-8 px-6 border-t bg-gray-50">
         <div className="max-w-4xl mx-auto text-center text-sm text-gray-500">
-          <p>© 2026 한깨봄 (별들에게 물어봐). All rights reserved.</p>
+          <p>© 2026 함께봄 (별들에게 물어봐). All rights reserved.</p>
         </div>
       </footer>
     </div>

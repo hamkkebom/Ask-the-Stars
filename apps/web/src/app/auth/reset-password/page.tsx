@@ -59,7 +59,9 @@ export default function ResetPasswordPage() {
         <h2 className="text-xl font-bold text-white mb-2">
           비밀번호 변경 완료
         </h2>
-        <p className="text-[#aaa] mb-6">로그인 페이지로 이동합니다...</p>
+        <p className="text-muted-foreground mb-6">
+          로그인 페이지로 이동합니다...
+        </p>
       </div>
     );
   }
@@ -69,13 +71,13 @@ export default function ResetPasswordPage() {
       <h1 className="text-2xl font-bold text-white text-center mb-2">
         비밀번호 재설정
       </h1>
-      <p className="text-[#aaa] text-center mb-8">
+      <p className="text-muted-foreground text-center mb-8">
         새로운 비밀번호를 입력하세요
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-[#aaa] mb-2">
+          <label className="block text-sm font-medium text-muted-foreground mb-2">
             새 비밀번호
           </label>
           <div className="relative">
@@ -84,13 +86,13 @@ export default function ResetPasswordPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="8자 이상"
-              className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 pr-12 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-primary"
               disabled={loading}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-white"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -102,7 +104,7 @@ export default function ResetPasswordPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-[#aaa] mb-2">
+          <label className="block text-sm font-medium text-muted-foreground mb-2">
             비밀번호 확인
           </label>
           <input
@@ -110,7 +112,7 @@ export default function ResetPasswordPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="비밀번호 재입력"
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary"
             disabled={loading}
           />
         </div>
@@ -124,7 +126,7 @@ export default function ResetPasswordPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
+          className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -140,7 +142,7 @@ export default function ResetPasswordPage() {
       <div className="mt-6 text-center">
         <Link
           href="/auth/login"
-          className="text-[#aaa] hover:text-white text-sm"
+          className="text-muted-foreground hover:text-white text-sm"
         >
           로그인 페이지로 돌아가기
         </Link>

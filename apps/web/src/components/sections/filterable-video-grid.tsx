@@ -57,7 +57,7 @@ export function FilterableVideoGrid() {
   };
 
   return (
-    <div className="w-full bg-black min-h-screen">
+    <div className="w-full bg-background min-h-screen">
       {/* Sticky Filter Bar */}
       <div className="sticky top-[0px] z-40 bg-black/90 backdrop-blur-xl border-b border-white/10 px-6 py-4 transition-all">
         <div className="flex items-center justify-between max-w-[1920px] mx-auto">

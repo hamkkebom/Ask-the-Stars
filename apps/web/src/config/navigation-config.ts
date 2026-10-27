@@ -7,13 +7,11 @@ import {
   Users,
   Building2,
   Phone,
-  HelpCircle,
   PlayCircle,
   TrendingUp,
   FolderKanban,
   Upload,
   Briefcase,
-  FileText,
 } from 'lucide-react';
 
 export interface NavChild {
@@ -100,33 +98,15 @@ export const navigationConfig: NavSection[] = [
     children: [
       {
         label: '비전',
-        href: '/about/vision',
-        description: '함께봄이 그리는 미래',
+        href: '/about#vision',
+        description: '별들에게 물어봐가 그리는 미래',
         icon: Star,
       },
       {
-        label: '연혁',
-        href: '/about/history',
-        description: '우리의 발자취',
-        icon: FileText,
-      },
-      {
-        label: '기업문화',
-        href: '/about/culture',
-        description: '함께봄 사람들',
-        icon: Users,
-      },
-      {
-        label: '연락처',
-        href: '/about/contact',
-        description: '문의하기',
+        label: '문의하기',
+        href: '/about#contact',
+        description: '제휴·이용 문의',
         icon: Phone,
-      },
-      {
-        label: '고객센터',
-        href: '/help',
-        description: 'FAQ 및 지원',
-        icon: HelpCircle,
       },
     ],
   },
@@ -147,18 +127,13 @@ export const footerLinks = {
     { label: '프리랜서 매칭', href: '/stars' },
     { label: '맞춤 의뢰', href: '/stars/project-board' },
   ],
-  education: [
-    { label: '교육 프로그램', href: '/education' },
-    { label: '설명회 신청', href: '/education/session' },
-  ],
+  education: [{ label: '설명회 신청', href: '/education/session' }],
   company: [
-    { label: '회사 소개', href: '/about' },
-    { label: '비전', href: '/about/vision' },
-    { label: '연혁', href: '/about/history' },
+    { label: '서비스 소개', href: '/about' },
+    { label: '비전', href: '/about#vision' },
   ],
   support: [
-    { label: '고객센터', href: '/help' },
-    { label: 'FAQ', href: '/help/faq' },
+    { label: '문의하기', href: '/about#contact' },
     { label: '이용약관', href: '/terms' },
     { label: '개인정보처리방침', href: '/privacy' },
   ],

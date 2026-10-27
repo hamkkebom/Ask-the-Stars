@@ -11,7 +11,9 @@ export default function PublicLayout({
   return (
     <>
       <SimpleHeader />
-      <main className="min-h-screen bg-black text-white pt-16">{children}</main>
+      <main className="min-h-screen bg-background text-white pt-16">
+        {children}
+      </main>
       <MainFooter />
       <FloatingCTA />
     </>

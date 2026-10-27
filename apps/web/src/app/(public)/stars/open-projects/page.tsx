@@ -91,7 +91,8 @@ export default function ProjectBoardPage() {
             영상 제작 의뢰 게시판
           </h1>
           <p className="text-neutral-400 max-w-2xl mx-auto">
-            함께봄의 새로운 프로젝트를 확인하고 원하는 작업에 지원하세요.
+            별들에게 물어봐의 새로운 프로젝트를 확인하고 원하는 작업에
+            지원하세요.
             <br />
             수락 즉시 제작이 확정되며, 마감 기한을 준수해야 합니다.
           </p>

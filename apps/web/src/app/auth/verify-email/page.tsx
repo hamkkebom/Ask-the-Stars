@@ -10,7 +10,7 @@ export default function VerifyEmailPage() {
 
       <h1 className="text-2xl font-bold text-white mb-2">이메일 인증 완료!</h1>
 
-      <p className="text-[#aaa] mb-8">
+      <p className="text-muted-foreground mb-8">
         계정이 성공적으로 활성화되었습니다.
         <br />
         이제 로그인하여 서비스를 이용할 수 있습니다.
@@ -18,7 +18,7 @@ export default function VerifyEmailPage() {
 
       <Link
         href="/auth/login"
-        className="inline-flex px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg transition-colors"
+        className="inline-flex px-6 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors"
       >
         로그인하기
       </Link>

@@ -19,6 +19,7 @@ import {
   Wallet,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { BrandLogo } from './brand-logo';
 
 // 사용자 역할 타입
 type UserRole = 'GUEST' | 'STAR' | 'ADMIN';
@@ -100,12 +101,7 @@ export function SimpleHeader() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* 로고 */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="text-2xl group-hover:scale-110 transition-transform">
-              🌟
-            </span>
-            <span className="text-lg font-bold text-white">함께봄</span>
-          </Link>
+          <BrandLogo />
 
           {/* 데스크탑 네비게이션 */}
           <nav className="hidden md:flex items-center gap-1">
@@ -133,7 +129,7 @@ export function SimpleHeader() {
           <div className="flex items-center gap-2">
             {/* 검색 */}
             <Link
-              href="/search"
+              href="/videos#browse"
               className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-full transition-colors"
               aria-label="검색"
             >
@@ -279,7 +275,7 @@ export function SimpleHeader() {
 
               {/* 모바일 검색 */}
               <Link
-                href="/search"
+                href="/videos#browse"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-white/5 rounded-xl"
               >

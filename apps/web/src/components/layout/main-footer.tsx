@@ -13,6 +13,7 @@ import {
   Linkedin,
 } from 'lucide-react';
 import { footerLinks } from '@/config/navigation-config';
+import { BrandLogo, BRAND_NAME, COMPANY_NAME } from './brand-logo';
 
 const socials = [
   {
@@ -39,7 +40,7 @@ const socials = [
 
 export function MainFooter() {
   return (
-    <footer className="relative bg-black border-t border-white/5">
+    <footer className="relative bg-background border-t border-white/5">
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
 
@@ -47,12 +48,7 @@ export function MainFooter() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <span className="text-3xl">🌟</span>
-              <span className="text-2xl font-bold text-white tracking-tight">
-                함께봄
-              </span>
-            </Link>
+            <BrandLogo size="lg" className="mb-4" />
             <p className="text-gray-400 mb-6 max-w-sm text-sm leading-relaxed">
               AI 기반 영상 제작 인재 생태계. 프리랜서 150명+와 함께하는 영상
               협업 플랫폼입니다.
@@ -192,17 +188,17 @@ export function MainFooter() {
         <div className="mt-8 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4">
             <p className="text-sm text-gray-600">
-              © 2026 함께봄. All rights reserved.
+              © 2026 {COMPANY_NAME} ({BRAND_NAME}). All rights reserved.
             </p>
             <div className="flex gap-4">
               <Link
-                href="/help/terms"
+                href="/terms"
                 className="text-sm text-gray-600 hover:text-white transition-colors"
               >
                 이용약관
               </Link>
               <Link
-                href="/help/privacy"
+                href="/privacy"
                 className="text-sm text-gray-600 hover:text-white transition-colors"
               >
                 개인정보처리방침

@@ -23,7 +23,7 @@ const features = [
   {
     icon: Users,
     title: '커뮤니티',
-    description: '함께봄 전문가 네트워크에 참여하세요.',
+    description: '별들에게 물어봐 전문가 네트워크에 참여하세요.',
   },
 ];
 
@@ -50,7 +50,7 @@ export default function StarsLandingPage() {
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-neutral-400">
-              함께봄의 전문가가 되어보세요
+              별들에게 물어봐의 전문가가 되어보세요
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-10">
@@ -88,7 +88,7 @@ export default function StarsLandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              왜 함께봄인가요?
+              왜 별들에게 물어봐인가요?
             </h2>
             <p className="text-neutral-400">전문가로서 누릴 수 있는 혜택들</p>
           </motion.div>

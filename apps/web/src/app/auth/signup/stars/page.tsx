@@ -78,12 +78,12 @@ export default function StarsSignupPage() {
           <span className="text-3xl">✉️</span>
         </div>
         <h2 className="text-xl font-bold text-white mb-2">가입 완료!</h2>
-        <p className="text-[#aaa] mb-6">
+        <p className="text-muted-foreground mb-6">
           입력하신 이메일로 인증 링크를 발송했습니다.
           <br />
           이메일을 확인해주세요.
         </p>
-        <Link href="/auth/login" className="text-yellow-500 hover:underline">
+        <Link href="/auth/login" className="text-primary hover:underline">
           로그인 페이지로 이동
         </Link>
       </div>
@@ -95,7 +95,7 @@ export default function StarsSignupPage() {
       {/* Back Button */}
       <Link
         href="/auth/signup"
-        className="inline-flex items-center gap-1 text-[#aaa] hover:text-white transition-colors mb-6"
+        className="inline-flex items-center gap-1 text-muted-foreground hover:text-white transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         뒤로
@@ -104,14 +104,16 @@ export default function StarsSignupPage() {
       <h1 className="text-2xl font-bold text-white text-center mb-2">
         프리랜서 가입
       </h1>
-      <p className="text-[#aaa] text-center mb-8">영상 제작자로 시작하세요</p>
+      <p className="text-muted-foreground text-center mb-8">
+        영상 제작자로 시작하세요
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             이름 *
           </label>
@@ -122,7 +124,7 @@ export default function StarsSignupPage() {
             value={formData.name}
             onChange={handleChange}
             placeholder="홍길동"
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
 
@@ -130,7 +132,7 @@ export default function StarsSignupPage() {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             이메일 *
           </label>
@@ -141,7 +143,7 @@ export default function StarsSignupPage() {
             value={formData.email}
             onChange={handleChange}
             placeholder="email@example.com"
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
 
@@ -149,7 +151,7 @@ export default function StarsSignupPage() {
         <div>
           <label
             htmlFor="specialty"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             전문 분야
           </label>
@@ -158,7 +160,7 @@ export default function StarsSignupPage() {
             name="specialty"
             value={formData.specialty}
             onChange={handleChange}
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
           >
             <option value="">선택해주세요</option>
             <option value="editing">영상 편집</option>
@@ -174,7 +176,7 @@ export default function StarsSignupPage() {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             비밀번호 *
           </label>
@@ -186,12 +188,12 @@ export default function StarsSignupPage() {
               value={formData.password}
               onChange={handleChange}
               placeholder="8자 이상"
-              className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 pr-12 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -206,7 +208,7 @@ export default function StarsSignupPage() {
         <div>
           <label
             htmlFor="confirmPassword"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             비밀번호 확인 *
           </label>
@@ -217,7 +219,7 @@ export default function StarsSignupPage() {
             value={formData.confirmPassword}
             onChange={handleChange}
             placeholder="비밀번호 재입력"
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
           />
         </div>
 
@@ -228,14 +230,14 @@ export default function StarsSignupPage() {
             name="agreeTerms"
             checked={formData.agreeTerms}
             onChange={handleChange}
-            className="mt-1 w-4 h-4 rounded border-[#3f3f3f]"
+            className="mt-1 w-4 h-4 rounded border-white/10"
           />
-          <span className="text-sm text-[#aaa]">
-            <Link href="/terms" className="text-yellow-500 hover:underline">
+          <span className="text-sm text-muted-foreground">
+            <Link href="/terms" className="text-primary hover:underline">
               이용약관
             </Link>{' '}
             및{' '}
-            <Link href="/privacy" className="text-yellow-500 hover:underline">
+            <Link href="/privacy" className="text-primary hover:underline">
               개인정보처리방침
             </Link>
             에 동의합니다
@@ -253,7 +255,7 @@ export default function StarsSignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           {loading ? (
             <>

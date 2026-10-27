@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: '%s | 별들에게 물어봐',
   },
   description:
-    '사주천궁 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
+    'AI 영상 제작 인재를 키우고 연결하는 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
   keywords: [
     '사주천궁',
     '영상제작',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: '별들에게 물어봐',
     title: '별들에게 물어봐 | Ask the Stars',
     description:
-      '사주천궁 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
+      'AI 영상 제작 인재를 키우고 연결하는 영상 협업 플랫폼. 프리랜서와 클라이언트를 연결하는 B2B2C 영상 제작 서비스.',
     images: [
       {
         url: '/og-image.png',
@@ -51,13 +51,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '별들에게 물어봐 | Ask the Stars',
-    description: '사주천궁 영상 협업 플랫폼',
+    description: 'AI 영상 제작 인재를 키우고 연결하는 영상 협업 플랫폼',
     images: ['/og-image.png'],
-  },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
   },
 };
 

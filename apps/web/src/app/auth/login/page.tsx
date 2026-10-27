@@ -45,7 +45,7 @@ function LoginContent() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-white text-center mb-2">로그인</h1>
-      <p className="text-[#aaa] text-center mb-8">
+      <p className="text-muted-foreground text-center mb-8">
         계정에 접속하여 작업을 시작하세요
       </p>
 
@@ -54,7 +54,7 @@ function LoginContent() {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             이메일
           </label>
@@ -64,7 +64,7 @@ function LoginContent() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email@example.com"
-            className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
             disabled={loading}
           />
         </div>
@@ -73,7 +73,7 @@ function LoginContent() {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-[#aaa] mb-2"
+            className="block text-sm font-medium text-muted-foreground mb-2"
           >
             비밀번호
           </label>
@@ -84,13 +84,13 @@ function LoginContent() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-[#121212] border border-[#3f3f3f] rounded-lg px-4 py-3 pr-12 text-white placeholder-[#666] focus:outline-none focus:border-yellow-500 transition-colors"
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
               disabled={loading}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -105,7 +105,7 @@ function LoginContent() {
         <div className="text-right">
           <Link
             href="/auth/forgot-password"
-            className="text-sm text-yellow-500 hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             비밀번호를 잊으셨나요?
           </Link>
@@ -122,7 +122,7 @@ function LoginContent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -136,9 +136,9 @@ function LoginContent() {
       </form>
 
       {/* Signup Link */}
-      <div className="mt-6 text-center text-sm text-[#aaa]">
+      <div className="mt-6 text-center text-sm text-muted-foreground">
         계정이 없으신가요?{' '}
-        <Link href="/auth/signup" className="text-yellow-500 hover:underline">
+        <Link href="/auth/signup" className="text-primary hover:underline">
           회원가입
         </Link>
       </div>
@@ -149,7 +149,7 @@ function LoginContent() {
 function LoginFallback() {
   return (
     <div className="flex items-center justify-center py-20">
-      <Loader2 className="w-8 h-8 animate-spin text-yellow-500" />
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
     </div>
   );
 }

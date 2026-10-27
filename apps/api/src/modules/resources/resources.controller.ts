@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  ParseEnumPipe,
 } from '@nestjs/common';
 import { ResourcesService } from './resources.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -21,9 +22,11 @@ export class ResourcesController {
   // ==================== Public ====================
 
   @Get()
-  async findAll(@Query('category') category?: string): Promise<any> {
-    const categoryEnum = category as ResourceCategory | undefined;
-    return this.resourcesService.findAll(categoryEnum, true);
+  async findAll(
+    @Query('category', new ParseEnumPipe(ResourceCategory, { optional: true }))
+    category?: ResourceCategory
+  ): Promise<any> {
+    return this.resourcesService.findAll(category, true);
   }
 
   @Get('popular')

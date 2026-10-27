@@ -12,6 +12,10 @@ permissions:
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
+    env:
+      # Required for Next.js build and dev server (pages that use Supabase)
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://vxyzqymlnqxlcbqbrvip.supabase.co' }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key' }}
     steps:
       - uses: actions/checkout@v4
 

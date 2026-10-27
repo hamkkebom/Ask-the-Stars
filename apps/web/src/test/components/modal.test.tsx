@@ -53,7 +53,7 @@ describe('Modal Component', () => {
 
     const closeButton = container.querySelector('button');
     expect(closeButton).toBeTruthy();
-    await user.click(closeButton);
+    await user.click(closeButton!);
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });

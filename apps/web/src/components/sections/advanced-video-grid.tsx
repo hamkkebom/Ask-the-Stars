@@ -11,6 +11,8 @@ import { getThumbnailSrc } from '@/lib/utils/video-url';
 import { useVideoGridFilters } from '@/hooks/useVideoGridFilters';
 import { VideoGridFilterBar } from './video-grid-filter-bar';
 import { VideoGridFilterTray } from './video-grid-filter-tray';
+import { EmptyState } from '@/components/common/EmptyState';
+import { AlertCircle, Film, SearchX } from 'lucide-react';
 
 /**
  * Extract a human-readable title from an encoded file path.
@@ -43,32 +45,38 @@ export function AdvancedVideoGrid() {
     selectedSort,
   } = filters;
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useInfiniteQuery({
-      queryKey: [
-        'final-videos',
-        selectedCategory,
-        selectedCounselor,
-        selectedCreator,
-        selectedSort,
-      ],
-      queryFn: ({ pageParam = 1 }) =>
-        videosApi.listAllFinalVideos({
-          page: pageParam as number,
-          limit: 25,
-          category: selectedCategory,
-          counselor: selectedCounselor,
-          creator: selectedCreator,
-          sort: selectedSort === '최신순' ? 'latest' : 'popular',
-        }),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage) => {
-        if (lastPage.meta?.has_more) {
-          return lastPage.meta.page + 1;
-        }
-        return undefined;
-      },
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: [
+      'final-videos',
+      selectedCategory,
+      selectedCounselor,
+      selectedCreator,
+      selectedSort,
+    ],
+    queryFn: ({ pageParam = 1 }) =>
+      videosApi.listAllFinalVideos({
+        page: pageParam as number,
+        limit: 25,
+        category: selectedCategory,
+        counselor: selectedCounselor,
+        creator: selectedCreator,
+        sort: selectedSort === '최신순' ? 'latest' : 'popular',
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.meta?.has_more) {
+        return lastPage.meta.page + 1;
+      }
+      return undefined;
+    },
+  });
 
   const allVideos = data?.pages.flatMap((page) => page.data) || [];
 
@@ -97,7 +105,7 @@ export function AdvancedVideoGrid() {
         v.freelancer?.name ||
         v.maker?.name ||
         v.project?.owner?.name ||
-        '함께봄',
+        '함께봄 스튜디오',
     },
     createdAt: new Date(v.created_at || v.createdAt)
       .toLocaleDateString('ko-KR', {
@@ -151,7 +159,7 @@ export function AdvancedVideoGrid() {
   }, [sentinelRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="w-full bg-black min-h-screen relative">
+    <div className="w-full bg-background relative">
       {/* Filter Bar */}
       <VideoGridFilterBar
         filters={filters}
@@ -168,9 +176,31 @@ export function AdvancedVideoGrid() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : status === 'error' ? (
-          <div className="text-center py-20 text-red-400">
-            영상을 불러오는 중 오류가 발생했습니다.
-          </div>
+          <EmptyState
+            icon={AlertCircle}
+            title="영상을 불러오지 못했어요"
+            description="일시적인 문제일 수 있어요. 잠시 후 다시 시도해 주세요."
+            action={{ label: '다시 불러오기', onClick: () => refetch() }}
+            className="my-12"
+          />
+        ) : filteredVideos.length === 0 ? (
+          searchQuery.trim() ? (
+            <EmptyState
+              icon={SearchX}
+              title="검색 결과가 없어요"
+              description="다른 검색어나 필터로 다시 찾아보세요."
+              className="my-12"
+            />
+          ) : (
+            // API 래퍼가 오류를 빈 목록으로 돌려주므로, 빈 목록도 재시도를 안내한다
+            <EmptyState
+              icon={Film}
+              title="아직 볼 수 있는 영상이 없어요"
+              description="영상을 불러오지 못했거나 아직 공개된 영상이 없습니다. 잠시 후 다시 시도해 주세요."
+              action={{ label: '다시 불러오기', onClick: () => refetch() }}
+              className="my-12"
+            />
+          )
         ) : (
           <>
             <motion.div

@@ -114,11 +114,16 @@ export function CategorySwimlane({
     <section className="py-8 relative group/section">
       {/* Header */}
       <div className="px-4 md:px-12 mb-4 flex items-end justify-between">
-        <h2 className="text-xl md:text-2xl font-bold text-white hover:text-vibrant-cyan transition-colors cursor-pointer flex items-center gap-2">
+        <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
           {title}
-          <span className="text-sm font-normal text-vibrant-cyan opacity-0 group-hover/section:opacity-100 transition-opacity flex items-center gap-1">
-            모두 보기 <ChevronRight className="w-3 h-3" />
-          </span>
+          {viewAllLink && (
+            <Link
+              href={viewAllLink}
+              className="text-sm font-normal text-vibrant-cyan opacity-0 group-hover/section:opacity-100 transition-opacity flex items-center gap-1"
+            >
+              모두 보기 <ChevronRight className="w-3 h-3" />
+            </Link>
+          )}
         </h2>
 
         {/* Pagination Indicators (Optional) */}

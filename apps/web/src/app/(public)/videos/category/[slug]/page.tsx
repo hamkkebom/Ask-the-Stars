@@ -84,7 +84,7 @@ export default function CategoryPage({
   const category = categories[slug] || { name: slug, description: '' };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div className="relative py-16 px-4 bg-gradient-to-b from-primary/20 to-black">
         <div className="container mx-auto">

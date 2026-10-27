@@ -83,9 +83,9 @@ export function MainFooter() {
 
           {/* Services */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
+            <h2 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
               서비스
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {footerLinks.services.map((item) => (
                 <li key={item.href}>
@@ -102,9 +102,9 @@ export function MainFooter() {
 
           {/* Education */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
+            <h2 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
               교육
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {footerLinks.education.map((item) => (
                 <li key={item.href}>
@@ -121,9 +121,9 @@ export function MainFooter() {
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
+            <h2 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
               회사
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {footerLinks.company.map((item) => (
                 <li key={item.href}>
@@ -140,9 +140,9 @@ export function MainFooter() {
 
           {/* Support */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
+            <h2 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
               고객지원
-            </h4>
+            </h2>
             <ul className="space-y-2.5">
               {footerLinks.support.map((item) => (
                 <li key={item.href}>
@@ -162,7 +162,7 @@ export function MainFooter() {
         <div className="mt-12 pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <h4 className="text-white font-semibold mb-1">뉴스레터 구독</h4>
+              <h2 className="text-white font-semibold mb-1">뉴스레터 구독</h2>
               <p className="text-sm text-gray-500">
                 최신 소식과 교육 정보를 받아보세요.
               </p>
@@ -178,6 +178,7 @@ export function MainFooter() {
               />
               <button
                 type="submit"
+                aria-label="뉴스레터 구독"
                 className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors flex items-center gap-2"
               >
                 <Send className="w-4 h-4" />
